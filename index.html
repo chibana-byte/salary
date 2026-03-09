@@ -3,112 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Salary Center</title>
+    <title>Salary Center Pro</title>
     <style>
-        :root { --bg-color: #f2f2f7; --card-bg: #ffffff; --text-main: #1c1c1e; --text-sub: #8e8e93; --color-1: #007AFF; --color-2: #FF3B30; --color-3: #34C759; --color-4: #FF9500; }
-        body { font-family: -apple-system, sans-serif; background-color: var(--bg-color); margin: 0; padding: 15px 10px 100px; user-select: none; }
-        .hint-btn { position: fixed; top: 15px; left: 15px; width: 35px; height: 35px; background: rgba(0,0,0,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-sub); z-index: 1000; }
+        :root {
+            --bg-color: #f2f2f7; --card-bg: #ffffff;
+            --text-main: #1c1c1e; --text-sub: #8e8e93;
+            --color-1: #007AFF; --color-2: #FF3B30; --color-3: #34C759; --color-4: #FF9500;
+        }
+        body {
+            font-family: -apple-system, sans-serif; background-color: var(--bg-color);
+            margin: 0; padding: 15px 10px 100px; user-select: none; -webkit-tap-highlight-color: transparent;
+        }
+
+        /* UI Elements */
+        .hint-btn { position: fixed; top: 15px; left: 15px; width: 35px; height: 35px; background: rgba(0,0,0,0.03); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-sub); font-size: 14px; z-index: 1000; }
         #allTotalOverlay { display: none; position: fixed; top: 15px; right: 15px; background: rgba(0,0,0,0.85); color: #fff; padding: 12px 22px; border-radius: 40px; z-index: 3000; font-weight: 700; }
-        .year-section { background: var(--card-bg); border-radius: 14px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        
+        /* Year/Month Layout */
+        .year-section { background: var(--card-bg); border-radius: 14px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); transition: all 0.3s ease; }
         .year-header { padding: 18px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .month-content { max-height: 0; opacity: 0; display: grid; padding: 0 10px; grid-template-columns: repeat(2, 1fr); gap: 10px; transition: all 0.4s ease; }
-        .year-section.active .month-content { max-height: 1000px; opacity: 1; padding: 0 10px 15px; }
-        .month-card { background: var(--bg-color); padding: 12px; border-radius: 12px; min-height: 60px; display: flex; flex-direction: column; justify-content: center; }
+        .year-title { font-size: 1.1rem; font-weight: 700; }
+        .month-content { max-height: 0; opacity: 0; display: grid; padding: 0 10px; grid-template-columns: repeat(2, 1fr); gap: 10px; background: var(--card-bg); transition: max-height 0.4s ease, opacity 0.3s ease; }
+        .year-section.active .month-content { max-height: 2000px; opacity: 1; padding: 0 10px 15px; }
+        .month-card { background: var(--bg-color); padding: 12px; border-radius: 12px; min-height: 60px; display: flex; flex-direction: column; justify-content: center; position: relative; }
         .has-data { border-left: 4px solid var(--color-1); background-color: #f0f7ff; }
+
+        /* Graph Overlay */
+        #graphOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 2500; flex-direction: column; padding: 50px 5px; box-sizing: border-box; }
+        #graphSvgContainer { width: 100%; height: 400px; overflow: visible; }
+        .axis-label { font-size: 10px; fill: var(--text-sub); }
+        .data-label { font-size: 9px; font-weight: 900; }
+
+        /* Footer Input */
         .footer-fixed { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); padding: 15px 20px 35px; z-index: 900; border-top: 1px solid #d1d1d6; }
         .input-container { display: flex; gap: 10px; max-width: 600px; margin: 0 auto; }
         input[type="text"] { flex: 1; padding: 14px; font-size: 18px; border: 1px solid #d1d1d6; border-radius: 12px; outline: none; }
         button.save-btn { padding: 0 25px; background-color: var(--color-1); color: white; border: none; border-radius: 12px; font-weight: 700; }
-        #customModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2000; align-items: center; justify-content: center; }
+
+        /* Modal */
+        #hintModal, #customModal, #alertModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .modal-content { background: #fff; width: 85%; max-width: 320px; padding: 30px 20px; border-radius: 20px; text-align: center; }
+        
+        /* Animations */
+        .pop-in { animation: popIn 0.3s forwards; }
+        @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
-    <div class="hint-btn" onclick="alert('a: 合計\ncopy: バックアップ')">?</div>
+
+    <div class="hint-btn" onclick="openHint()">?</div>
     <div id="allTotalOverlay" onclick="this.style.display='none'"></div>
+    
+    <div id="graphOverlay">
+        <h2 id="graphTitle" style="text-align:center; font-weight: 800; font-size:0.9rem; margin-bottom:10px;"></h2>
+        <svg id="graphSvgContainer" viewBox="0 0 380 400"></svg>
+        <p style="text-align:center; color:#ccc; font-size:0.7rem; margin-top:20px;">ダブルタップで閉じる</p>
+    </div>
+
     <div id="calendar-container"></div>
+
     <div class="footer-fixed">
         <div class="input-container">
-            <input type="text" id="salaryInput" placeholder="25/3/250000" inputmode="text">
+            <input type="text" id="salaryInput" placeholder="25/3/250000/メモ" inputmode="text" autocomplete="off">
             <button class="save-btn" onclick="handleInput()">保存</button>
         </div>
     </div>
+
+    <div id="hintModal" onclick="this.style.display='none'">
+        <div class="modal-content" style="text-align: left; font-family: monospace;">
+            <p>【コマンド一覧】</p>
+            <p>● a : 10年分の総計を表示</p>
+            <p>● g25/26 : グラフ比較</p>
+            <p>● copy : バックアップ出力</p>
+            <p>● y/m/a/memo : 入力例</p>
+        </div>
+    </div>
+
+    <div id="alertModal" onclick="this.style.display='none'"><div class="modal-content"><span id="alertMsg" style="font-weight:800; color:var(--color-2)"></span></div></div>
+
     <div id="customModal">
         <div class="modal-content">
             <span id="modalDate" style="font-weight: 800; font-size: 1.2rem;"></span>
             <div style="margin-top:25px; display:flex; flex-direction:column; gap:10px;">
-                <button class="save-btn" style="padding:15px;" id="confirmYes">編集</button>
-                <button style="padding:15px; border:1px solid var(--color-2); color:var(--color-2); background:none; border-radius:12px;" id="confirmReset">削除</button>
+                <button class="save-btn" style="padding:15px;" id="confirmYes">編集する</button>
+                <button style="padding:15px; border:1px solid var(--color-2); color:var(--color-2); background:none; border-radius:12px;" id="confirmReset">削除する</button>
                 <button style="padding:10px; background:none; border:none; color:var(--text-sub);" onclick="document.getElementById('customModal').style.display='none'">キャンセル</button>
             </div>
         </div>
     </div>
+
     <script>
         const monthNames = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
-        const startYear = 25, endYear = 34;
-        let salaryData = JSON.parse(localStorage.getItem('mySalaryData') || '{}');
+        const colors = ["var(--color-1)", "var(--color-2)", "var(--color-3)", "var(--color-4)"];
+        const startYear = 25; const endYear = 34;
+        let salaryData = JSON.parse(localStorage.getItem('myTenYearSalaryData')) || {};
+        let isEditMode = false;
 
         function initCalendar(openYear = null) {
             const container = document.getElementById('calendar-container');
             container.innerHTML = '';
             for (let y = startYear; y <= endYear; y++) {
-                let total = 0; for (let m = 1; m <= 12; m++) total += (salaryData[`${y}/${m}`]?.amount || 0);
+                let yearlyTotal = 0;
+                for (let m = 1; m <= 12; m++) yearlyTotal += (salaryData[`${y}/${m}`]?.amount || 0);
                 const section = document.createElement('div');
                 section.className = 'year-section' + (y === openYear ? ' active' : '');
-                section.innerHTML = `<div class="year-header" onclick="this.parentElement.classList.toggle('active')"><div style="font-weight:700">20${y}年</div><div>¥${total.toLocaleString()}</div></div><div class="month-content"></div>`;
+                section.id = `year-${y}`;
+                section.innerHTML = `<div class="year-header" onclick="toggleYear(${y})"><div class="year-title">20${y}年</div><div class="year-total">¥${yearlyTotal.toLocaleString()}</div></div><div class="month-content"></div>`;
                 const grid = section.querySelector('.month-content');
                 for (let m = 1; m <= 12; m++) {
-                    const d = salaryData[`${y}/${m}`] || { amount: 0 };
+                    const d = salaryData[`${y}/${m}`] || { amount: 0, memo: '' };
                     const card = document.createElement('div');
                     card.className = `month-card ${d.amount > 0 ? 'has-data' : ''}`;
                     let lastTap = 0;
-                    card.ontouchend = () => {
+                    card.ontouchend = (e) => {
                         let now = Date.now();
                         if (now - lastTap < 300 && d.amount > 0) openEditModal(y, m, d);
                         lastTap = now;
                     };
-                    card.innerHTML = `<div style="font-size:0.7rem; color:var(--text-sub)">${monthNames[m-1]}</div><div style="font-weight:800">¥${d.amount.toLocaleString()}</div>`;
+                    card.innerHTML = `<div style="font-size:0.7rem; color:var(--text-sub)">${monthNames[m-1]}</div><div style="font-weight:800">¥${d.amount.toLocaleString()}</div>${d.memo ? `<div style="font-size:0.55rem; color:var(--color-3); margin-top:2px;">📄 ${d.memo}</div>` : ''}`;
                     grid.appendChild(card);
                 }
                 container.appendChild(section);
             }
         }
 
+        function toggleYear(y) { document.getElementById(`year-${y}`).classList.toggle('active'); }
+
         function handleInput() {
             const el = document.getElementById('salaryInput');
             const val = el.value.trim().toLowerCase();
-            if (val === 'a') {
-                let t = 0; Object.values(salaryData).forEach(d => t += d.amount);
-                alert("総支給額合計: ¥" + t.toLocaleString());
-            } else if (val === 'copy') {
-                navigator.clipboard.writeText(JSON.stringify(salaryData));
-                alert("バックアップをコピーしました。");
-            } else {
-                const m = val.match(/^(\d+)\/(\d+)\/(\d+)/);
-                if (m) {
-                    salaryData[`${m[1]}/${m[2]}`] = { amount: parseInt(m[3]) };
-                    localStorage.setItem('mySalaryData', JSON.stringify(salaryData));
-                    initCalendar(parseInt(m[1]));
-                }
-            }
+            if (!val) return;
+            if (val === 'a') showAllTotal();
+            else if (val === 'copy') exportData();
+            else if (val.startsWith('g')) showGraph(val);
+            else saveSalary(el.value.trim());
             el.value = ''; el.blur();
+        }
+
+        function saveSalary(input) {
+            const m = input.match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/);
+            if (!m) return;
+            const y = parseInt(m[1]), mo = parseInt(m[2]), amt = parseInt(m[3]), memo = m[4] || '';
+            salaryData[`${y}/${mo}`] = { amount: amt, memo: memo };
+            localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData));
+            initCalendar(y);
+        }
+
+        function showAllTotal() {
+            let total = 0; Object.values(salaryData).forEach(d => total += d.amount);
+            const overlay = document.getElementById('allTotalOverlay');
+            overlay.innerText = `総支給合計: ¥${total.toLocaleString()}`;
+            overlay.style.display = 'block'; setTimeout(() => overlay.style.display = 'none', 5000);
+        }
+
+        function exportData() {
+            let text = "--- SALARY BACKUP ---\n";
+            Object.keys(salaryData).sort().forEach(k => {
+                const d = salaryData[k];
+                text += `20${k}: ¥${d.amount.toLocaleString()} (${d.memo || '-'})\n`;
+            });
+            text += "\n--- SYSTEM DATA ---\n" + JSON.stringify(salaryData);
+            navigator.clipboard.writeText(text);
+            alert("バックアップをコピーしました！");
+        }
+
+        function showGraph(cmd) {
+            const years = cmd.replace('g', '').split('/').map(p => parseInt(p)).filter(y => y >= startYear && y <= endYear).slice(0, 4);
+            const overlay = document.getElementById('graphOverlay');
+            const svg = document.getElementById('graphSvgContainer');
+            svg.innerHTML = ''; overlay.style.display = 'flex';
+            let gTap = 0; overlay.ontouchend = () => { let now = Date.now(); if (now - gTap < 300) overlay.style.display = 'none'; gTap = now; };
+            document.getElementById('graphTitle').innerHTML = years.map((y, i) => `<span style="color:${colors[i]}">20${y}</span>`).join(' vs ');
+            let maxV = 100000; Object.values(salaryData).forEach(d => maxV = Math.max(maxV, d.amount));
+            const pad = 40, w = 380, h = 400;
+            const getX = (m) => pad + (m - 1) * ((w - pad * 2) / 11);
+            const getY = (v) => h - pad - (v / maxV) * (h - pad * 2);
+            years.forEach((y, idx) => {
+                let pts = "";
+                for(let m=1; m<=12; m++) {
+                    const val = (salaryData[`${y}/${m}`]?.amount || 0);
+                    const px = getX(m), py = getY(val);
+                    pts += `${px},${py} `;
+                    svg.innerHTML += `<circle cx="${px}" cy="${py}" r="3" fill="${colors[idx]}" />`;
+                }
+                svg.innerHTML += `<polyline points="${pts}" fill="none" stroke="${colors[idx]}" stroke-width="2" />`;
+            });
         }
 
         function openEditModal(y, m, d) {
             document.getElementById('modalDate').innerText = `20${y}年 ${monthNames[m-1]}`;
             const mo = document.getElementById('customModal'); mo.style.display = 'flex';
             document.getElementById('confirmYes').onclick = () => {
-                document.getElementById('salaryInput').value = `${y}/${m}/${d.amount}`;
-                mo.style.display = 'none';
+                document.getElementById('salaryInput').value = `${y}/${m}/${d.amount}${d.memo ? '/' + d.memo : ''}`;
+                mo.style.display = 'none'; document.getElementById('salaryInput').focus();
             };
             document.getElementById('confirmReset').onclick = () => {
-                if(confirm('削除しますか？')){
-                    delete salaryData[`${y}/${m}`];
-                    localStorage.setItem('mySalaryData', JSON.stringify(salaryData));
-                    initCalendar(y); mo.style.display = 'none';
-                }
+                delete salaryData[`${y}/${m}`];
+                localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData));
+                initCalendar(y); mo.style.display = 'none';
             };
         }
+
+        function openHint() { document.getElementById('hintModal').style.display = 'flex'; }
         initCalendar(new Date().getFullYear() % 100);
     </script>
 </body>

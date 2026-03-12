@@ -56,7 +56,6 @@
         .input-container { display: flex; gap: 10px; max-width: 600px; margin: 0 auto; }
         input[type="text"] { flex: 1; padding: 14px; font-size: 18px; border: 1px solid #d1d1d6; border-radius: 12px; outline: none; background: #fff; }
         
-        /* プレースホルダーの文字を更新 */
         input::placeholder { color: #ccc; font-size: 14px; letter-spacing: 0.5px; }
 
         button.save-btn { padding: 0 25px; background-color: var(--color-1); color: white; border: none; border-radius: 12px; font-weight: 700; }
@@ -117,7 +116,11 @@
     <script>
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         const colors = ["var(--color-1)", "var(--color-2)", "var(--color-3)", "var(--color-4)"];
-        const startYear = 25; const endYear = 34;
+        
+        // 修正ポイント: startYearを 25 から 24 に変更しました
+        const startYear = 24; 
+        const endYear = 34;
+
         let salaryData = JSON.parse(localStorage.getItem('myTenYearSalaryData')) || {};
         let isEditMode = false;
 

@@ -11,21 +11,24 @@
             --accent-work: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
             --color-1: #007AFF; --color-red: #FF3B30;
         }
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; user-select: none; overflow: hidden; }
+        * { box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; user-select: none; overflow: hidden; width: 100vw; }
         
-        /* 横スライドコンテナ */
+        /* スライドコンテナの安定化 */
         .main-slider { 
-            display: flex; width: 200vw; height: 100vh; 
+            display: flex; width: 100vw; height: 100vh; 
             overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; 
             -webkit-overflow-scrolling: touch;
         }
-        /* スクロールバーを隠す */
         .main-slider::-webkit-scrollbar { display: none; }
         
-        .page { width: 100vw; height: 100vh; flex-shrink: 0; scroll-snap-align: start; overflow-y: auto; box-sizing: border-box; display: flex; flex-direction: column; }
+        .page { 
+            width: 100vw; height: 100vh; flex-shrink: 0; scroll-snap-align: start; 
+            overflow-y: auto; padding: 60px 15px 120px; position: relative;
+        }
 
         /* --- Page 1: Dashboard --- */
-        #page1 { background: #f8fafc; padding: 50px 15px 40px; }
+        #page1 { background: #f8fafc; }
         .work-card { 
             background: var(--accent-work); border-radius: 20px; padding: 25px; 
             color: white; box-shadow: 0 8px 25px rgba(99, 102, 241, 0.25); 
@@ -53,32 +56,38 @@
         .cal-amt-hint { font-size: 0.5rem; color: var(--color-1); font-weight: 800; margin-top: 2px; }
 
         /* --- Record Board --- */
-        .record-board { background: white; border-radius: 22px; padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 25px; border: 1px solid #eef2f6; box-sizing: border-box; }
+        .record-board { background: white; border-radius: 22px; padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 25px; border: 1px solid #eef2f6; }
         .selected-date-title { font-size: 1.25rem; font-weight: 900; color: #1e293b; margin-bottom: 20px; display: block; border-left: 5px solid var(--color-1); padding-left: 12px; }
         .time-input-group { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 20px; width: 100%; }
         .t-field { flex: 1; min-width: 0; }
         .t-label { font-size: 0.65rem; color: var(--text-sub); font-weight: 800; margin-bottom: 8px; text-transform: uppercase; display: block; }
         input[type="time"] { width: 100%; border: 1px solid #f1f5f9; background: #f8fafc; padding: 12px 8px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; color: #4f46e5; box-sizing: border-box; -webkit-appearance: none; display: block; text-align: center; }
-        .add-btn { width: 100%; background: #1e293b; color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; }
+        .add-btn { width: 100%; background: #1e293b; color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; }
 
         /* --- Report --- */
         .report-header { font-weight: 800; font-size: 0.75rem; color: var(--text-sub); margin-bottom: 12px; padding-left: 5px; }
         .history-item { background: white; padding: 14px; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border-left: 4px solid #eef2f6; }
         .history-item.has-night { border-left-color: var(--color-1); }
 
-        /* Modals */
+        /* Navigation Dots */
+        .nav-dots { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 12px; z-index: 3000; padding: 5px 10px; }
+        .dot { width: 10px; height: 10px; background: #ccc; border-radius: 50%; transition: 0.3s; cursor: pointer; }
+        .dot.active { background: #6366f1; width: 25px; border-radius: 10px; }
+
+        /* Modals & Overlays */
         #customModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 6000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .modal-content { background: #fff; width: 85%; max-width: 300px; padding: 25px; border-radius: 24px; text-align: center; }
         .modal-btn-blue { width: 100%; padding: 15px; background: var(--color-1); color: white; border: none; border-radius: 12px; font-weight: 700; margin-top: 15px; cursor: pointer; }
         #setup-overlay { position: fixed; inset: 0; background: white; z-index: 5000; display: flex; flex-direction: column; padding: 40px; overflow-y: auto; }
-        .setup-input { width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 12px; border: 2px solid #f1f5f9; }
-        
-        /* ページ切替ドット */
-        .nav-dots { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 12px; z-index: 3000; padding: 5px 10px; }
-        .dot { width: 10px; height: 10px; background: #ccc; border-radius: 50%; transition: 0.3s; cursor: pointer; }
-        .dot.active { background: #6366f1; width: 25px; border-radius: 10px; }
+        .setup-input { width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 12px; border: 2px solid #f1f5f9; outline: none; }
         
         #footer-secret { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); padding: 15px 20px 35px; z-index: 900; border-top: 1px solid #d1d1d6; transform: translateY(100%); transition: transform 0.3s;}
+
+        /* Page 2 Specific Styles */
+        .year-section { background: var(--card-bg); border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
+        .year-header { padding: 18px 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 800;}
+        .month-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 0 10px 15px; }
+        .month-cell { background: var(--bg-color); padding: 10px; border-radius: 10px; font-size: 0.8rem; }
     </style>
 </head>
 <body>
@@ -116,7 +125,6 @@
                 <div id="display-total" class="current-total">¥0</div>
                 <button class="edit-cfg-btn" onclick="showSetup(true)">EDIT SETTINGS</button>
             </div>
-
             <div class="cal-container">
                 <div class="month-nav">
                     <button class="nav-arrow" onclick="changeMonth(-1)">←</button>
@@ -126,7 +134,6 @@
                 <div class="cal-grid"><div class="cal-day-label">S</div><div class="cal-day-label">M</div><div class="cal-day-label">T</div><div class="cal-day-label">W</div><div class="cal-day-label">T</div><div class="cal-day-label">F</div><div class="cal-day-label">S</div></div>
                 <div class="cal-grid" id="cal-body"></div>
             </div>
-
             <div class="record-board">
                 <div id="selected-date-text" class="selected-date-title">SELECT DATE</div>
                 <div class="time-input-group">
@@ -135,14 +142,13 @@
                 </div>
                 <button class="add-btn" id="save-btn" onclick="handleLogShift()">Record Shift</button>
             </div>
-
             <div class="report-header">MONTHLY REPORT</div>
-            <div id="log-container" style="padding-bottom:100px;"></div>
+            <div id="log-container"></div>
         </div>
 
         <div class="page" id="page2">
-            <div style="padding: 60px 20px 20px; text-align: center; font-weight: 800; color: var(--text-sub);">SECRET RECORDS</div>
-            <div id="secret-calendar" style="padding-bottom: 120px;"></div>
+            <div style="padding: 40px 20px 20px; text-align: center; font-weight: 800; color: var(--text-sub);">SECRET RECORDS</div>
+            <div id="secret-calendar"></div>
             <div id="footer-secret">
                 <div style="display:flex; gap:10px;"><input type="text" id="secretInput" placeholder="yy/mm/amount/memo" style="flex:1; padding:12px; border-radius:12px; border:1px solid #ddd; outline:none;"><button class="add-btn" style="width:auto; padding:0 20px; margin-top:0;" onclick="saveSecret()">Save</button></div>
             </div>
@@ -150,14 +156,13 @@
     </div>
 
     <script>
-        let config = JSON.parse(localStorage.getItem('workConfigV17')) || null;
-        let logs = JSON.parse(localStorage.getItem('workLogsV17')) || [];
-        let secretData = JSON.parse(localStorage.getItem('secretDataV17')) || {};
+        let config = JSON.parse(localStorage.getItem('workConfigV19')) || null;
+        let logs = JSON.parse(localStorage.getItem('workLogsV19')) || [];
+        let secretData = JSON.parse(localStorage.getItem('secretDataV19')) || {};
 
         let viewDate = new Date();
         let selectedDateStr = "";
 
-        // --- ページ切替ロジック ---
         const slider = document.getElementById('mainSlider');
         slider.addEventListener('scroll', () => {
             const page = Math.round(slider.scrollLeft / window.innerWidth);
@@ -167,13 +172,9 @@
         });
 
         function goToPage(index) {
-            slider.scrollTo({
-                left: window.innerWidth * index,
-                behavior: 'smooth'
-            });
+            slider.scrollTo({ left: window.innerWidth * index, behavior: 'smooth' });
         }
 
-        // --- 以下、既存のロジック (V17を継承) ---
         function changeMonth(dir) { 
             viewDate.setMonth(viewDate.getMonth() + dir); 
             const y = viewDate.getFullYear(), m = viewDate.getMonth();
@@ -203,9 +204,12 @@
         }
 
         function selectDate(dateStr) {
+            if(!dateStr) return;
             selectedDateStr = dateStr;
             const log = logs.find(l => l.fullDate === dateStr);
-            const d = new Date(dateStr);
+            const d = new Date(dateStr.replace(/-/g, '/')); // Safari互換性修正
+            if(isNaN(d.getTime())) return;
+            
             document.getElementById('selected-date-text').innerText = `${d.toLocaleString('en', {month:'long'})} ${d.getDate()}`;
             if(log) {
                 document.getElementById('work-start').value = log.start;
@@ -223,14 +227,14 @@
             if(!selectedDateStr) return;
             const exists = logs.find(l => l.fullDate === selectedDateStr);
             if(exists) {
-                showModal("Update Record?", "A shift is already recorded for this date. Would you like to update it with new times?", () => { executeSave(); });
+                showModal("Update Record?", "Would you like to update the existing record with new times?", () => { executeSave(); });
             } else { executeSave(); }
         }
 
         function executeSave() {
             const s = document.getElementById('work-start').value, e = document.getElementById('work-end').value;
             const res = calculatePay(s, e);
-            const d = new Date(selectedDateStr);
+            const d = new Date(selectedDateStr.replace(/-/g, '/'));
             const key = `${d.getFullYear()%100}/${d.getMonth()+1}`;
             logs = logs.filter(l => l.fullDate !== selectedDateStr);
             logs.unshift({ 
@@ -238,7 +242,7 @@
                 start: s, end: e, amt: res.total, dur: res.duration, surcharge: res.surcharge,
                 wage: config.wage, rate: config.nightRate, monthKey: key 
             });
-            localStorage.setItem('workLogsV17', JSON.stringify(logs));
+            localStorage.setItem('workLogsV19', JSON.stringify(logs));
             updateDash();
             selectDate(selectedDateStr);
         }
@@ -283,13 +287,12 @@
             return { total: Math.floor(totalH * config.wage + surOnly), duration: totalH.toFixed(1), surcharge: Math.floor(surOnly) };
         }
         function timeToMin(t) { const [h, m] = t.split(':').map(Number); return h * 60 + m; }
-        
         function saveSetup() {
             const name = document.getElementById('setup-shop').value, wage = parseInt(document.getElementById('setup-wage').value);
             const rate = parseInt(document.getElementById('setup-night-rate').value) || 0;
             if(name && wage) {
                 config = { name, wage, nightStart: document.getElementById('setup-night-start').value, nightEnd: document.getElementById('setup-night-end').value, nightRate: rate };
-                localStorage.setItem('workConfigV17', JSON.stringify(config));
+                localStorage.setItem('workConfigV19', JSON.stringify(config));
                 document.getElementById('setup-overlay').style.display='none'; updateDash();
             }
         }
@@ -304,10 +307,7 @@
         }
         function closeModal() { document.getElementById('customModal').style.display = 'none'; }
         function confirmDelete(id) {
-            showModal("Delete?", "Remove this shift record?", () => { 
-                logs = logs.filter(l => l.id !== id); localStorage.setItem('workLogsV17', JSON.stringify(logs)); 
-                updateDash(); selectDate(selectedDateStr);
-            });
+            showModal("Delete?", "Remove this record?", () => { logs = logs.filter(l => l.id !== id); localStorage.setItem('workLogsV19', JSON.stringify(logs)); updateDash(); selectDate(selectedDateStr); });
         }
         function saveSecret() {
             const input = document.getElementById('secretInput');
@@ -323,7 +323,13 @@
                 cont.innerHTML += html + `</div></div>`;
             });
         }
-        updateDash(); selectDate(selectedDateStr); renderSecret();
+
+        // --- Init ---
+        const initToday = new Date();
+        selectedDateStr = `${initToday.getFullYear()}-${(initToday.getMonth()+1).toString().padStart(2,'0')}-${initToday.getDate().toString().padStart(2,'0')}`;
+        updateDash(); 
+        selectDate(selectedDateStr);
+        renderSecret();
     </script>
 </body>
 </html>

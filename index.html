@@ -3,282 +3,327 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Secret Salary Center</title>
+    <title>Secret Salary Center Pro</title>
     <style>
         :root {
             --bg-color: #f2f2f7; --card-bg: #ffffff;
             --text-main: #1c1c1e; --text-sub: #8e8e93;
-            --color-1: #007AFF; --color-2: #FF3B30; --color-3: #34C759; --color-4: #FF9500;
+            --accent-work: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --color-1: #007AFF; --color-red: #FF3B30;
         }
-        body {
-            font-family: -apple-system, sans-serif; background-color: var(--bg-color);
-            margin: 0; padding: 15px 10px 100px; user-select: none; -webkit-tap-highlight-color: transparent;
-        }
-
-        .hint-btn {
-            position: fixed; top: 15px; left: 15px; width: 35px; height: 35px;
-            background: rgba(0,0,0,0.03); border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; color: var(--text-sub); font-size: 14px; z-index: 1000;
-        }
-
-        #allTotalOverlay {
-            display: none; position: fixed; top: 15px; right: 15px; 
-            background: rgba(0,0,0,0.85); color: #fff; padding: 12px 22px; 
-            border-radius: 40px; z-index: 3000; font-weight: 700;
-        }
-        .pop-in { animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        .pop-out { animation: popOut 0.25s forwards; }
-
-        .year-section { background: var(--card-bg); border-radius: 14px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-        .year-header { padding: 18px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; user-select: none; overflow: hidden; }
         
-        .month-content { 
-            max-height: 0; opacity: 0; display: grid; padding: 0 10px;
-            grid-template-columns: repeat(2, 1fr); gap: 10px; background: var(--card-bg);
-            transition: max-height 0.4s ease, opacity 0.3s ease;
+        /* 横スライドコンテナ */
+        .main-slider { 
+            display: flex; width: 200vw; height: 100vh; 
+            overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; 
+            -webkit-overflow-scrolling: touch;
         }
-        .year-section.active .month-content { max-height: 1000px; opacity: 1; padding: 0 10px 15px; }
-
-        .month-card { background: var(--bg-color); padding: 12px; border-radius: 12px; min-height: 60px; display: flex; flex-direction: column; justify-content: center; position: relative; }
-        .has-data { border-left: 4px solid var(--color-1); background-color: #f0f7ff; }
-
-        #graphOverlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #fff; z-index: 2500; flex-direction: column; padding: 50px 5px; box-sizing: border-box;
-        }
-        .slide-up { animation: slideUp 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-        .slide-down { animation: slideDown 0.3s ease-in forwards; }
-        #graphSvgContainer { width: 100%; height: 400px; overflow: visible; }
-        .axis-label { font-size: 10px; fill: var(--text-sub); }
-        .data-label { font-size: 9px; font-weight: 900; }
-
-        .footer-fixed { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); padding: 15px 20px 35px; z-index: 900; border-top: 1px solid #d1d1d6; }
-        .input-container { display: flex; gap: 10px; max-width: 600px; margin: 0 auto; }
-        input[type="text"] { flex: 1; padding: 14px; font-size: 18px; border: 1px solid #d1d1d6; border-radius: 12px; outline: none; background: #fff; }
+        /* スクロールバーを隠す */
+        .main-slider::-webkit-scrollbar { display: none; }
         
-        input::placeholder { color: #ccc; font-size: 14px; letter-spacing: 0.5px; }
+        .page { width: 100vw; height: 100vh; flex-shrink: 0; scroll-snap-align: start; overflow-y: auto; box-sizing: border-box; display: flex; flex-direction: column; }
 
-        button.save-btn { padding: 0 25px; background-color: var(--color-1); color: white; border: none; border-radius: 12px; font-weight: 700; }
+        /* --- Page 1: Dashboard --- */
+        #page1 { background: #f8fafc; padding: 50px 15px 40px; }
+        .work-card { 
+            background: var(--accent-work); border-radius: 20px; padding: 25px; 
+            color: white; box-shadow: 0 8px 25px rgba(99, 102, 241, 0.25); 
+            margin-bottom: 20px; position: relative; min-height: 145px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        #display-shop { position: absolute; top: 20px; left: 22px; font-size: 1.4rem; font-weight: 800; opacity: 0.95; letter-spacing: 0.2px; max-width: 75%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .current-total { font-size: 2.6rem; font-weight: 950; margin-top: 25px; }
+        .edit-cfg-btn { position: absolute; bottom: 15px; right: 15px; background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 12px; border-radius: 10px; font-size: 0.7rem; font-weight: 700; cursor: pointer; }
 
-        #hintModal, #customModal, #alertModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
-        .modal-content { background: #fff; width: 85%; max-width: 320px; padding: 30px 20px; border-radius: 20px; text-align: center; }
-        .modal-pop-in { animation: modalIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        .modal-pop-out { animation: modalOut 0.2s ease-in forwards; }
+        /* --- Calendar & Nav --- */
+        .cal-container { background: white; border-radius: 22px; padding: 20px 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 15px; }
+        .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; padding: 0 10px; }
+        .nav-arrow { background: #f1f5f9; border: none; color: var(--color-1); width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; font-weight: 900; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .month-display { font-size: 0.95rem; font-weight: 800; color: #1e293b; text-transform: uppercase; letter-spacing: 1px; }
 
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        @keyframes slideDown { from { transform: translateY(0); } to { transform: translateY(100%); } }
-        @keyframes modalIn { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }
-        @keyframes modalOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.85); } }
-        @keyframes popIn { from { opacity: 0; transform: scale(0.8) translateY(-10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-        @keyframes popOut { from { opacity: 1; transform: scale(1) translateY(0); } to { opacity: 0; transform: scale(0.8) translateY(-10px); } }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        .cal-day-label { font-size: 0.65rem; color: var(--text-sub); font-weight: 800; text-align: center; margin-bottom: 8px; }
+        .cal-cell { height: 48px; border-radius: 10px; background: #f8fafc; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid transparent; transition: 0.2s; cursor: pointer; }
+        .cal-cell.has-data { background: #f0f7ff; }
+        .cal-cell.today { border: 2.5px solid #6366f1; background: #ebf0ff; }
+        .cal-cell.today .cal-date-num { color: #4f46e5; font-weight: 900; }
+        .cal-cell.selected { border-color: var(--color-1); background: white; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .cal-date-num { font-size: 0.8rem; font-weight: 700; color: var(--text-main); }
+        .cal-amt-hint { font-size: 0.5rem; color: var(--color-1); font-weight: 800; margin-top: 2px; }
+
+        /* --- Record Board --- */
+        .record-board { background: white; border-radius: 22px; padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 25px; border: 1px solid #eef2f6; box-sizing: border-box; }
+        .selected-date-title { font-size: 1.25rem; font-weight: 900; color: #1e293b; margin-bottom: 20px; display: block; border-left: 5px solid var(--color-1); padding-left: 12px; }
+        .time-input-group { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 20px; width: 100%; }
+        .t-field { flex: 1; min-width: 0; }
+        .t-label { font-size: 0.65rem; color: var(--text-sub); font-weight: 800; margin-bottom: 8px; text-transform: uppercase; display: block; }
+        input[type="time"] { width: 100%; border: 1px solid #f1f5f9; background: #f8fafc; padding: 12px 8px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; color: #4f46e5; box-sizing: border-box; -webkit-appearance: none; display: block; text-align: center; }
+        .add-btn { width: 100%; background: #1e293b; color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; }
+
+        /* --- Report --- */
+        .report-header { font-weight: 800; font-size: 0.75rem; color: var(--text-sub); margin-bottom: 12px; padding-left: 5px; }
+        .history-item { background: white; padding: 14px; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border-left: 4px solid #eef2f6; }
+        .history-item.has-night { border-left-color: var(--color-1); }
+
+        /* Modals */
+        #customModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 6000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .modal-content { background: #fff; width: 85%; max-width: 300px; padding: 25px; border-radius: 24px; text-align: center; }
+        .modal-btn-blue { width: 100%; padding: 15px; background: var(--color-1); color: white; border: none; border-radius: 12px; font-weight: 700; margin-top: 15px; cursor: pointer; }
+        #setup-overlay { position: fixed; inset: 0; background: white; z-index: 5000; display: flex; flex-direction: column; padding: 40px; overflow-y: auto; }
+        .setup-input { width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 12px; border: 2px solid #f1f5f9; }
+        
+        /* ページ切替ドット */
+        .nav-dots { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 12px; z-index: 3000; padding: 5px 10px; }
+        .dot { width: 10px; height: 10px; background: #ccc; border-radius: 50%; transition: 0.3s; cursor: pointer; }
+        .dot.active { background: #6366f1; width: 25px; border-radius: 10px; }
+        
+        #footer-secret { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); padding: 15px 20px 35px; z-index: 900; border-top: 1px solid #d1d1d6; transform: translateY(100%); transition: transform 0.3s;}
     </style>
 </head>
 <body>
 
-    <div class="hint-btn" onclick="openHint()">?</div>
-    <div id="allTotalOverlay" onclick="closeAllTotal()"></div>
-    
-    <div id="graphOverlay">
-        <h2 id="graphTitle" style="text-align:center; font-weight: 800; font-size:0.9rem; margin-bottom:10px;"></h2>
-        <svg id="graphSvgContainer" viewBox="0 0 380 400"></svg>
-        <p style="text-align:center; color:#ddd; font-size:0.7rem; margin-top:20px;">Double-tap to close</p>
+    <div class="nav-dots">
+        <div class="dot active" id="dot1" onclick="goToPage(0)"></div>
+        <div class="dot" id="dot2" onclick="goToPage(1)"></div>
     </div>
 
-    <div id="calendar-container"></div>
-
-    <div class="footer-fixed">
-        <div class="input-container">
-            <input type="text" id="salaryInput" placeholder="Year/Month/Amount..." inputmode="text" autocomplete="off">
-            <button class="save-btn" onclick="handleInput()">Save</button>
-        </div>
+    <div id="setup-overlay" style="display: none;">
+        <h2 style="font-weight: 800;">Settings</h2>
+        <label class="t-label">Store Name</label>
+        <input type="text" id="setup-shop" class="setup-input" placeholder="Enter store name">
+        <label class="t-label">Base Hourly Wage (¥)</label>
+        <input type="number" id="setup-wage" class="setup-input" placeholder="e.g. 1200">
+        <div style="display:flex; gap:10px; margin-bottom:10px;"><div style="flex:1;"><label class="t-label">Night Start</label><input type="time" id="setup-night-start" value="22:00" class="setup-input"></div><div style="flex:1;"><label class="t-label">Night End</label><input type="time" id="setup-night-end" value="05:00" class="setup-input"></div></div>
+        <label class="t-label">Night Surcharge Rate (%)</label>
+        <input type="number" id="setup-night-rate" class="setup-input" placeholder="e.g. 25">
+        <button class="add-btn" onclick="saveSetup()">Save & Start</button>
     </div>
-
-    <div id="hintModal" onclick="closeHint()">
-        <div class="modal-content" style="width: fit-content; min-width: 160px; font-family: monospace;">
-            <p>a</p><p>gyy/yy/yy/yy</p><p>y/m/a/c</p>
-        </div>
-    </div>
-
-    <div id="alertModal" onclick="closeAlert()"><div class="modal-content"><span id="alertMsg" style="font-weight:800; color:var(--color-2)"></span></div></div>
 
     <div id="customModal">
         <div class="modal-content">
-            <span id="modalDate" style="font-weight: 800; font-size: 1.2rem; display:block;"></span>
-            <div style="margin-top:15px; color:var(--text-sub); font-size: 0.95rem;">What would you like to do?</div>
-            <div style="display:flex; flex-direction:column; gap:10px; margin-top:25px;">
-                <button class="save-btn" style="padding:15px;" id="confirmYes">Edit</button>
-                <button style="padding:15px; border:1px solid var(--color-2); color:var(--color-2); background:none; border-radius:12px; font-weight:700;" id="confirmReset">Reset</button>
-                <button style="padding:10px; background:none; border:none; color:var(--text-sub);" onclick="closeModal()">Cancel</button>
+            <h3 id="modalTitle"></h3>
+            <p id="modalMsg" style="margin:10px 0; color:var(--text-sub); font-size:0.9rem;"></p>
+            <button id="modalConfirmBtn" class="modal-btn-blue">Confirm</button>
+            <button class="add-btn" style="background:none; color:var(--text-sub); margin-top:5px;" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+
+    <div class="main-slider" id="mainSlider">
+        <div class="page" id="page1">
+            <div class="work-card">
+                <div id="display-shop">---</div>
+                <div id="display-total" class="current-total">¥0</div>
+                <button class="edit-cfg-btn" onclick="showSetup(true)">EDIT SETTINGS</button>
+            </div>
+
+            <div class="cal-container">
+                <div class="month-nav">
+                    <button class="nav-arrow" onclick="changeMonth(-1)">←</button>
+                    <div id="display-month" class="month-display">---</div>
+                    <button class="nav-arrow" onclick="changeMonth(1)">→</button>
+                </div>
+                <div class="cal-grid"><div class="cal-day-label">S</div><div class="cal-day-label">M</div><div class="cal-day-label">T</div><div class="cal-day-label">W</div><div class="cal-day-label">T</div><div class="cal-day-label">F</div><div class="cal-day-label">S</div></div>
+                <div class="cal-grid" id="cal-body"></div>
+            </div>
+
+            <div class="record-board">
+                <div id="selected-date-text" class="selected-date-title">SELECT DATE</div>
+                <div class="time-input-group">
+                    <div class="t-field"><div class="t-label">Start Time</div><input type="time" id="work-start" value="09:00"></div>
+                    <div class="t-field"><div class="t-label">End Time</div><input type="time" id="work-end" value="18:00"></div>
+                </div>
+                <button class="add-btn" id="save-btn" onclick="handleLogShift()">Record Shift</button>
+            </div>
+
+            <div class="report-header">MONTHLY REPORT</div>
+            <div id="log-container" style="padding-bottom:100px;"></div>
+        </div>
+
+        <div class="page" id="page2">
+            <div style="padding: 60px 20px 20px; text-align: center; font-weight: 800; color: var(--text-sub);">SECRET RECORDS</div>
+            <div id="secret-calendar" style="padding-bottom: 120px;"></div>
+            <div id="footer-secret">
+                <div style="display:flex; gap:10px;"><input type="text" id="secretInput" placeholder="yy/mm/amount/memo" style="flex:1; padding:12px; border-radius:12px; border:1px solid #ddd; outline:none;"><button class="add-btn" style="width:auto; padding:0 20px; margin-top:0;" onclick="saveSecret()">Save</button></div>
             </div>
         </div>
     </div>
 
     <script>
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        const colors = ["var(--color-1)", "var(--color-2)", "var(--color-3)", "var(--color-4)"];
-        
-        // 修正ポイント: startYearを 25 から 24 に変更しました
-        const startYear = 24; 
-        const endYear = 34;
+        let config = JSON.parse(localStorage.getItem('workConfigV17')) || null;
+        let logs = JSON.parse(localStorage.getItem('workLogsV17')) || [];
+        let secretData = JSON.parse(localStorage.getItem('secretDataV17')) || {};
 
-        let salaryData = JSON.parse(localStorage.getItem('myTenYearSalaryData')) || {};
-        let isEditMode = false;
+        let viewDate = new Date();
+        let selectedDateStr = "";
 
-        function initCalendar(openYear = null) {
-            const container = document.getElementById('calendar-container');
-            container.innerHTML = '';
-            for (let y = startYear; y <= endYear; y++) {
-                let yearlyTotal = 0;
-                for (let m = 1; m <= 12; m++) yearlyTotal += (salaryData[`${y}/${m}`]?.amount || 0);
-                const section = document.createElement('div');
-                section.className = 'year-section' + (y === openYear ? ' active' : '');
-                section.id = `year-${y}`;
-                section.innerHTML = `<div class="year-header" onclick="toggleYear(${y})"><div class="year-title">20${y}</div><div class="year-total">¥${yearlyTotal.toLocaleString()}</div></div><div class="month-content"></div>`;
-                const grid = section.querySelector('.month-content');
-                for (let m = 1; m <= 12; m++) {
-                    const d = salaryData[`${y}/${m}`] || { amount: 0, memo: '' };
-                    const card = document.createElement('div');
-                    card.className = `month-card ${d.amount > 0 ? 'has-data' : ''}`;
-                    let lastTap = 0;
-                    card.addEventListener('touchend', (e) => {
-                        let now = Date.now();
-                        if (now - lastTap < 300 && now - lastTap > 0) { if (d.amount > 0) openEditModal(y, m, d); e.preventDefault(); }
-                        lastTap = now;
-                    });
-                    card.innerHTML = `<div class="month-name">${monthNames[m-1]}</div><div class="salary-display">¥${d.amount.toLocaleString()}</div>${d.memo ? `<div style="font-size:0.6rem; color:var(--color-3); margin-top:3px;">📄 ${d.memo}</div>` : ''}`;
-                    grid.appendChild(card);
-                }
-                container.appendChild(section);
+        // --- ページ切替ロジック ---
+        const slider = document.getElementById('mainSlider');
+        slider.addEventListener('scroll', () => {
+            const page = Math.round(slider.scrollLeft / window.innerWidth);
+            document.getElementById('dot1').classList.toggle('active', page === 0);
+            document.getElementById('dot2').classList.toggle('active', page === 1);
+            document.getElementById('footer-secret').style.transform = page === 1 ? 'translateY(0)' : 'translateY(100%)';
+        });
+
+        function goToPage(index) {
+            slider.scrollTo({
+                left: window.innerWidth * index,
+                behavior: 'smooth'
+            });
+        }
+
+        // --- 以下、既存のロジック (V17を継承) ---
+        function changeMonth(dir) { 
+            viewDate.setMonth(viewDate.getMonth() + dir); 
+            const y = viewDate.getFullYear(), m = viewDate.getMonth();
+            selectDate(`${y}-${(m+1).toString().padStart(2,'0')}-01`);
+            updateDash(); 
+        }
+
+        function renderCalendar() {
+            const body = document.getElementById('cal-body');
+            body.innerHTML = '';
+            const now = new Date();
+            const todayStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')}`;
+            const y = viewDate.getFullYear(), m = viewDate.getMonth();
+            const firstDay = new Date(y, m, 1).getDay();
+            const lastDate = new Date(y, m + 1, 0).getDate();
+            for(let i=0; i<firstDay; i++) body.appendChild(document.createElement('div'));
+            for(let d=1; d<=lastDate; d++) {
+                const fullStr = `${y}-${(m+1).toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
+                const log = logs.find(l => l.fullDate === fullStr);
+                const cell = document.createElement('div');
+                cell.className = `cal-cell ${log ? 'has-data' : ''} ${selectedDateStr === fullStr ? 'selected' : ''}`;
+                if (fullStr === todayStr) cell.classList.add('today');
+                cell.innerHTML = `<div class="cal-date-num">${d}</div>${log ? `<div class="cal-amt-hint">¥${(log.amt/1000).toFixed(1)}k</div>` : ''}`;
+                cell.onclick = () => selectDate(fullStr);
+                body.appendChild(cell);
             }
         }
 
-        function toggleYear(y) { document.getElementById(`year-${y}`).classList.toggle('active'); }
-
-        function handleInput() {
-            const el = document.getElementById('salaryInput');
-            const val = el.value.trim().toLowerCase();
-            if (!val) return;
-            if (val === 'a') showAllTotal();
-            else if (val.startsWith('g')) { if(!showGraph(val)) showAlert("Not Supported"); }
-            else { if(!saveSalary(el.value.trim())) showAlert("Not Supported"); }
-            el.value = ''; el.blur();
+        function selectDate(dateStr) {
+            selectedDateStr = dateStr;
+            const log = logs.find(l => l.fullDate === dateStr);
+            const d = new Date(dateStr);
+            document.getElementById('selected-date-text').innerText = `${d.toLocaleString('en', {month:'long'})} ${d.getDate()}`;
+            if(log) {
+                document.getElementById('work-start').value = log.start;
+                document.getElementById('work-end').value = log.end;
+                document.getElementById('save-btn').innerText = "Update Shift";
+            } else {
+                document.getElementById('work-start').value = "09:00";
+                document.getElementById('work-end').value = "18:00";
+                document.getElementById('save-btn').innerText = "Record Shift";
+            }
+            renderCalendar();
         }
 
-        function showAlert(msg) {
-            document.getElementById('alertMsg').innerText = msg;
-            const m = document.getElementById('alertModal');
-            m.style.display = 'flex'; m.querySelector('.modal-content').className = 'modal-content modal-pop-in';
-        }
-        function closeAlert() {
-            const m = document.getElementById('alertModal');
-            m.querySelector('.modal-content').className = 'modal-content modal-pop-out';
-            setTimeout(() => { m.style.display = 'none'; }, 200);
+        function handleLogShift() {
+            if(!selectedDateStr) return;
+            const exists = logs.find(l => l.fullDate === selectedDateStr);
+            if(exists) {
+                showModal("Update Record?", "A shift is already recorded for this date. Would you like to update it with new times?", () => { executeSave(); });
+            } else { executeSave(); }
         }
 
-        function showAllTotal() {
-            let total = 0; Object.values(salaryData).forEach(d => total += d.amount);
-            const overlay = document.getElementById('allTotalOverlay');
-            overlay.innerText = `GRAND TOTAL: ¥${total.toLocaleString()}`;
-            overlay.style.display = 'block'; overlay.className = 'pop-in';
-            setTimeout(closeAllTotal, 5000);
-        }
-        function closeAllTotal() {
-            const o = document.getElementById('allTotalOverlay');
-            if (o.style.display === 'block') { o.className = 'pop-out'; setTimeout(() => { o.style.display = 'none'; }, 250); }
-        }
-
-        function showGraph(cmd) {
-            const parts = cmd.replace('g', '').split('/');
-            const years = parts.map(p => parseInt(p)).filter(y => !isNaN(y) && y >= startYear && y <= endYear).slice(0, 4);
-            if (years.length === 0) return false;
-
-            const overlay = document.getElementById('graphOverlay');
-            const svg = document.getElementById('graphSvgContainer');
-            svg.innerHTML = ''; overlay.style.display = 'flex';
-            overlay.className = 'slide-up';
-            
-            let gTap = 0;
-            overlay.ontouchend = (e) => {
-                let now = Date.now();
-                if (now - gTap < 300 && now - gTap > 0) { closeGraph(); e.preventDefault(); }
-                gTap = now;
-            };
-
-            document.getElementById('graphTitle').innerHTML = years.map((y, i) => `<span style="color:${colors[i]}">20${y}</span>`).join(' vs ');
-
-            let maxV = 1;
-            years.forEach(y => { for(let m=1; m<=12; m++) maxV = Math.max(maxV, salaryData[`${y}/${m}`]?.amount || 0); });
-
-            const padX = 50, padY = 50, w = 380, h = 400;
-            const getX = (m) => padX + (m - 1) * ((w - padX * 2) / 11);
-            const getY = (v) => h - padY - (v / maxV) * (h - padY * 2);
-
-            [0, 0.5, 1].forEach(r => {
-                const yPos = getY(maxV * r);
-                svg.innerHTML += `<line x1="${padX}" y1="${yPos}" x2="${w-10}" y2="${yPos}" stroke="#eee" />`;
-                svg.innerHTML += `<text x="5" y="${yPos+3}" class="axis-label">¥${Math.floor(maxV*r/1000)}k</text>`;
+        function executeSave() {
+            const s = document.getElementById('work-start').value, e = document.getElementById('work-end').value;
+            const res = calculatePay(s, e);
+            const d = new Date(selectedDateStr);
+            const key = `${d.getFullYear()%100}/${d.getMonth()+1}`;
+            logs = logs.filter(l => l.fullDate !== selectedDateStr);
+            logs.unshift({ 
+                id: Date.now(), fullDate: selectedDateStr, date: `${d.getMonth()+1}/${d.getDate()}`, 
+                start: s, end: e, amt: res.total, dur: res.duration, surcharge: res.surcharge,
+                wage: config.wage, rate: config.nightRate, monthKey: key 
             });
+            localStorage.setItem('workLogsV17', JSON.stringify(logs));
+            updateDash();
+            selectDate(selectedDateStr);
+        }
 
-            years.forEach((y, idx) => {
-                let pts = "";
-                for(let m=1; m<=12; m++) {
-                    const val = salaryData[`${y}/${m}`]?.amount || 0;
-                    const px = getX(m), py = getY(val);
-                    pts += `${px},${py} `;
-                    if(val > 0) {
-                        const offY = (idx * 10) - 15;
-                        svg.innerHTML += `<text x="${px}" y="${py + offY}" class="data-label" text-anchor="middle" fill="${colors[idx]}">${(val/1000).toFixed(0)}k</text>`;
-                    }
-                    svg.innerHTML += `<circle cx="${px}" cy="${py}" r="4" fill="${colors[idx]}" stroke="#fff" stroke-width="1"/>`;
-                }
-                svg.innerHTML += `<polyline points="${pts}" fill="none" stroke="${colors[idx]}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />`;
+        function updateDash() {
+            if(!config) { document.getElementById('setup-overlay').style.display='block'; return; }
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const monthKey = `${viewDate.getFullYear()%100}/${viewDate.getMonth()+1}`;
+            document.getElementById('display-month').innerText = `${months[viewDate.getMonth()]} (${viewDate.getMonth()+1})`;
+            document.getElementById('display-shop').innerText = config.name.toUpperCase();
+            const monthLogs = logs.filter(l => l.monthKey === monthKey).sort((a,b) => a.fullDate.localeCompare(b.fullDate));
+            document.getElementById('display-total').innerText = `¥${monthLogs.reduce((s,l)=>s+l.amt,0).toLocaleString()}`;
+            renderCalendar();
+            document.getElementById('log-container').innerHTML = monthLogs.map(l => `
+                <div class="history-item ${l.surcharge > 0 ? 'has-night' : ''}">
+                    <div style="flex:1;">
+                        <div style="font-weight:700; font-size:0.9rem;">${l.date} <span style="font-size:0.6rem; color:var(--text-sub);">(${l.start}-${l.end})</span></div>
+                        <div style="font-size:0.65rem; color:var(--text-sub); margin-top:2px;">${l.dur}h / ¥${(l.wage||0).toLocaleString()}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-weight:800; color:#4f46e5; font-size:1rem;">+¥${l.amt.toLocaleString()}</div>
+                        ${l.surcharge > 0 ? `<div style="font-size:0.6rem; color:var(--color-1); font-weight:700;">Night: +¥${l.surcharge.toLocaleString()}</div>` : ''}
+                    </div>
+                    <div onclick="confirmDelete(${l.id})" style="color:var(--color-red); font-size:0.7rem; font-weight:800; padding-left:15px; cursor: pointer;">✕</div>
+                </div>
+            `).join(monthLogs.length ? '' : '<div style="text-align:center; color:var(--text-sub); font-size:0.8rem; padding:20px;">No records for this month.</div>');
+        }
+
+        function calculatePay(startStr, endStr) {
+            let s = timeToMin(startStr), e = timeToMin(endStr);
+            if (e <= s) e += 1440;
+            const ns = timeToMin(config.nightStart), neRaw = timeToMin(config.nightEnd);
+            let ne = neRaw <= ns ? neRaw + 1440 : neRaw;
+            let lateMins = 0;
+            for (let m = s; m < e; m++) {
+                let curr = m % 1440;
+                if (ne > 1440) { if (curr >= ns || curr < (ne % 1440)) lateMins++; }
+                else { if (curr >= ns && curr < ne) lateMins++; }
+            }
+            const totalH = (e - s) / 60, lateH = lateMins / 60;
+            const surOnly = lateH * (config.wage * (config.nightRate / 100));
+            return { total: Math.floor(totalH * config.wage + surOnly), duration: totalH.toFixed(1), surcharge: Math.floor(surOnly) };
+        }
+        function timeToMin(t) { const [h, m] = t.split(':').map(Number); return h * 60 + m; }
+        
+        function saveSetup() {
+            const name = document.getElementById('setup-shop').value, wage = parseInt(document.getElementById('setup-wage').value);
+            const rate = parseInt(document.getElementById('setup-night-rate').value) || 0;
+            if(name && wage) {
+                config = { name, wage, nightStart: document.getElementById('setup-night-start').value, nightEnd: document.getElementById('setup-night-end').value, nightRate: rate };
+                localStorage.setItem('workConfigV17', JSON.stringify(config));
+                document.getElementById('setup-overlay').style.display='none'; updateDash();
+            }
+        }
+        function showSetup(edit) {
+            document.getElementById('setup-overlay').style.display = 'block';
+            if(edit && config) { document.getElementById('setup-shop').value = config.name; document.getElementById('setup-wage').value = config.wage; document.getElementById('setup-night-start').value = config.nightStart; document.getElementById('setup-night-end').value = config.nightEnd; document.getElementById('setup-night-rate').value = config.nightRate; }
+        }
+        function showModal(title, msg, onConfirm) {
+            document.getElementById('modalTitle').innerText = title; document.getElementById('modalMsg').innerText = msg;
+            const btn = document.getElementById('modalConfirmBtn'); btn.onclick = () => { onConfirm(); closeModal(); };
+            document.getElementById('customModal').style.display = 'flex';
+        }
+        function closeModal() { document.getElementById('customModal').style.display = 'none'; }
+        function confirmDelete(id) {
+            showModal("Delete?", "Remove this shift record?", () => { 
+                logs = logs.filter(l => l.id !== id); localStorage.setItem('workLogsV17', JSON.stringify(logs)); 
+                updateDash(); selectDate(selectedDateStr);
             });
-            return true;
         }
-
-        function closeGraph() {
-            const o = document.getElementById('graphOverlay');
-            o.className = 'slide-down'; setTimeout(() => { o.style.display = 'none'; }, 300);
+        function saveSecret() {
+            const input = document.getElementById('secretInput');
+            const m = input.value.match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/);
+            if(m) { secretData[`${m[1]}/${m[2]}`] = { amt: parseInt(m[3]), memo: m[4]||'' }; localStorage.setItem('secretDataV17', JSON.stringify(secretData)); renderSecret(); input.value = ''; }
         }
-
-        function saveSalary(input) {
-            const m = input.match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/);
-            if (!m) return false;
-            const y = parseInt(m[1]), mo = parseInt(m[2]), amt = parseInt(m[3]), memo = m[4] || '';
-            if (mo < 1 || mo > 12 || y < startYear || y > endYear) return false;
-            if (salaryData[`${y}/${mo}`] && !isEditMode) { showAlert("Already recorded."); return true; }
-            salaryData[`${y}/${mo}`] = { amount: amt, memo: memo };
-            localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData));
-            initCalendar(y); isEditMode = false;
-            return true;
+        function renderSecret() {
+            const cont = document.getElementById('secret-calendar'); cont.innerHTML = '';
+            const currY = new Date().getFullYear() % 100;
+            [currY, currY+1].forEach(y => {
+                let html = `<div class="year-section"><div class="year-header">20${y}</div><div class="month-grid">`;
+                for(let m=1; m<=12; m++) { const d = secretData[`${y}/${m}`] || {amt:0}; html += `<div class="month-cell"><div style="color:var(--text-sub); font-size:0.6rem;">M${m}</div><b>¥${d.amt.toLocaleString()}</b></div>`; }
+                cont.innerHTML += html + `</div></div>`;
+            });
         }
-
-        function openEditModal(y, m, d) {
-            document.getElementById('modalDate').innerText = `${monthNames[m-1]} 20${y}`;
-            const mo = document.getElementById('customModal');
-            mo.style.display = 'flex'; mo.querySelector('.modal-content').className = 'modal-content modal-pop-in';
-            document.getElementById('confirmYes').onclick = () => {
-                const i = document.getElementById('salaryInput');
-                i.value = `${y}/${m}/${d.amount}${d.memo ? '/' + d.memo : ''}`;
-                isEditMode = true; closeModal();
-                setTimeout(() => { i.focus(); i.setSelectionRange(i.value.length, i.value.length); }, 150);
-            };
-            document.getElementById('confirmReset').onclick = () => {
-                delete salaryData[`${y}/${m}`];
-                localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData));
-                initCalendar(y); closeModal();
-            };
-        }
-
-        function openHint() { const m = document.getElementById('hintModal'); m.style.display = 'flex'; m.querySelector('.modal-content').className = 'modal-content modal-pop-in'; }
-        function closeHint() { closeModalById('hintModal'); }
-        function closeModal() { closeModalById('customModal'); }
-        function closeModalById(id) {
-            const m = document.getElementById(id); const c = m.querySelector('.modal-content');
-            c.className = 'modal-content modal-pop-out'; setTimeout(() => { m.style.display = 'none'; }, 200);
-        }
-
-        initCalendar(new Date().getFullYear() % 100);
+        updateDash(); selectDate(selectedDateStr); renderSecret();
     </script>
 </body>
 </html>

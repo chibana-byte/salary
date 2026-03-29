@@ -24,13 +24,13 @@
         .main-slider::-webkit-scrollbar { display: none; }
         .page { width: 100%; height: 100%; flex: 0 0 100%; scroll-snap-align: start; overflow-y: auto; padding: 85px 15px 120px; position: relative; }
 
-        /* ページ切替ドット（クリック阻害を解消） */
+        /* ページ切替ドット */
         .nav-dots { 
             position: fixed; top: 25px; left: 50%; transform: translateX(-50%); 
             display: flex; gap: 12px; z-index: 10000; 
             padding: 10px 20px; background: rgba(255,255,255,0.7);
             backdrop-filter: blur(10px); border-radius: 20px;
-            pointer-events: auto; /* ドットエリアは反応させる */
+            pointer-events: auto;
         }
         .dot { width: 10px; height: 10px; background: #ccc; border-radius: 50%; transition: 0.3s; cursor: pointer; }
         .dot.active { background: #6366f1; width: 25px; border-radius: 10px; }
@@ -43,15 +43,28 @@
             position: relative; min-height: 145px; display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
         #display-shop { position: absolute; top: 20px; left: 22px; font-size: 1.4rem; font-weight: 800; opacity: 0.95; letter-spacing: 0.2px; max-width: 75%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .current-total { font-size: 2.6rem; font-weight: 950; margin-top: 25px; }
-        .edit-cfg-btn { position: absolute; bottom: 15px; right: 15px; background: rgba(255,255,255,0.25); border: none; color: white; padding: 10px 16px; border-radius: 10px; font-size: 0.75rem; font-weight: 700; cursor: pointer; z-index: 500; }
+        
+        /* --- 修正ポイント --- */
+        .current-total { 
+            font-size: 2.6rem; 
+            font-weight: 950; 
+            /* フレックスボックス中央から上へずらす。画像に合わせて多めに設定 */
+            margin-top: -20px; 
+            margin-bottom: 10px;
+        }
+        
+        .edit-cfg-btn { 
+            position: absolute; bottom: 15px; right: 15px; 
+            background: rgba(255,255,255,0.25); border: none; color: white; 
+            padding: 10px 16px; border-radius: 10px; font-size: 0.75rem; font-weight: 700; 
+            cursor: pointer; z-index: 500;
+        }
 
         .cal-container { background: white; border-radius: 22px; padding: 20px 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 15px; }
         .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; padding: 0 10px; }
         .nav-arrow { background: #f1f5f9; border: none; color: var(--color-1); width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; font-weight: 900; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .month-display { font-size: 0.95rem; font-weight: 800; color: #1e293b; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* --- カレンダーセルの修正 --- */
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
         .cal-day-label { font-size: 0.65rem; color: var(--text-sub); font-weight: 800; text-align: center; margin-bottom: 8px; }
         .cal-cell { 
@@ -63,10 +76,9 @@
         .cal-cell.today { background: #ebf0ff; }
         .cal-cell.today .cal-date-num { color: #4f46e5; font-weight: 900; }
         
-        /* 選択枠を強制的に一番上に！ */
         .cal-cell.selected { 
             background: white !important;
-            outline: 3px solid var(--color-1); /* borderの代わりにoutlineで前面へ */
+            outline: 3px solid var(--color-1); 
             outline-offset: -3px;
             z-index: 10;
             box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
@@ -98,7 +110,7 @@
         #setup-overlay { display: none; position: fixed; inset: 0; background: white; z-index: 999999; width: 100vw; height: 100vh; flex-direction: column; align-items: center; justify-content: center; padding: 40px; }
         #customModal, #hintModal, #alertModal, #secretEditModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 888888; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .modal-content { background: #fff; width: 85%; max-width: 320px; padding: 30px 20px; border-radius: 24px; text-align: center; }
-        #graphOverlay { display: none; position: fixed; inset: 0; background: #fff; z-index: 1000000; flex-direction: column; padding: 50px 5px; }
+        .setup-input { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 12px; border: 2px solid #f1f5f9; outline: none; font-size: 1rem; }
     </style>
 </head>
 <body>
@@ -168,9 +180,9 @@
     <div id="customModal"><div class="modal-content"><h3 id="modalTitle"></h3><p id="modalMsg" style="color:#888; margin-bottom:20px;"></p><button id="modalConfirmBtn" class="add-btn" style="background:var(--color-1);">Confirm</button><button class="add-btn" style="background:none; color:#888; margin-top:5px;" onclick="closeModal()">Cancel</button></div></div>
     <div id="hintModal" onclick="this.style.display='none'"><div class="modal-content" style="text-align:left;"><h3>Commands</h3><p>a : Grand Total</p><p>g25/26 : Graph</p><p>y/m/a/c : Record</p></div></div>
     <div id="secretEditModal"><div class="modal-content"><span id="secretModalDate" style="font-weight: 800; font-size: 1.2rem; display:block;"></span><div style="display:flex; flex-direction:column; gap:10px; margin-top:25px;"><button class="add-btn" id="secretConfirmEdit">Edit</button><button style="padding:15px; border:1px solid var(--color-red); color:var(--color-red); background:none; border-radius:12px; font-weight:700;" id="secretConfirmReset">Reset</button><button class="add-btn" style="background:none; color:#888;" onclick="document.getElementById('secretEditModal').style.display='none'">Cancel</button></div></div></div>
-    <div id="graphOverlay"><svg id="graphSvgContainer" viewBox="0 0 380 400"></svg></div>
 
     <script>
+        // --- データ管理 (V25互換) ---
         let config = JSON.parse(localStorage.getItem('workConfigV25')) || null;
         let logs = JSON.parse(localStorage.getItem('workLogsV25')) || [];
         let secretData = JSON.parse(localStorage.getItem('myTenYearSalaryData')) || {};
@@ -178,6 +190,7 @@
         let viewDate = new Date();
         let selectedDateStr = "";
 
+        // --- ページ切替 (V25互換) ---
         const slider = document.getElementById('mainSlider');
         slider.addEventListener('scroll', () => {
             const pageIndex = Math.round(slider.scrollLeft / slider.offsetWidth);
@@ -235,7 +248,7 @@
             const d = new Date(selectedDateStr.replace(/-/g, '/'));
             logs = logs.filter(l => l.fullDate !== selectedDateStr);
             logs.unshift({ id: Date.now(), fullDate: selectedDateStr, date: `${d.getMonth()+1}/${d.getDate()}`, start: s, end: e, amt: res.total, dur: res.duration, surcharge: res.surcharge, wage: config.wage, rate: config.nightRate, monthKey: `${d.getFullYear()%100}/${d.getMonth()+1}` });
-            localStorage.setItem('workLogsV25', JSON.stringify(logs));
+            localStorage.setItem('workLogsCoverV25', JSON.stringify(logs));
             updateDash(); selectDate(selectedDateStr);
         }
         function updateDash() {
@@ -274,7 +287,7 @@
             if(n && w) { config = { name:n, wage:w, nightRate:r }; localStorage.setItem('workConfigV25', JSON.stringify(config)); hideSetup(); updateDash(); }
         }
 
-        // --- Page 2 Logic ---
+        // --- Page 2 Logic (V25互換) ---
         function initSalaryCalendar(openYear = null) {
             const cont = document.getElementById('salary-calendar-container'); cont.innerHTML = '';
             for (let y = 25; y <= 34; y++) {
@@ -307,7 +320,7 @@
         function closeModal() { document.getElementById('customModal').style.display = 'none'; }
         function openHint() { document.getElementById('hintModal').style.display='flex'; }
         function showModal(title, msg, onConfirm) { document.getElementById('modalTitle').innerText = title; document.getElementById('modalMsg').innerText = msg; document.getElementById('modalConfirmBtn').onclick = () => { onConfirm(); closeModal(); }; document.getElementById('customModal').style.display = 'flex'; }
-        function confirmDelete(id) { showModal("Delete?", "Remove shift?", () => { logs = logs.filter(l => l.id !== id); localStorage.setItem('workLogsV25', JSON.stringify(logs)); updateDash(); selectDate(selectedDateStr); }); }
+        function confirmDelete(id) { showModal("Delete?", "Remove shift?", () => { logs = logs.filter(l => l.id !== id); localStorage.setItem('workLogsCoverV25', JSON.stringify(logs)); updateDash(); selectDate(selectedDateStr); }); }
 
         const initD = new Date();
         selectedDateStr = `${initD.getFullYear()}-${(initD.getMonth()+1).toString().padStart(2,'0')}-${initD.getDate().toString().padStart(2,'0')}`;

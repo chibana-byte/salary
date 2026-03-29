@@ -9,7 +9,7 @@
             --bg-color: #f2f2f7; --card-bg: #ffffff;
             --text-main: #1c1c1e; --text-sub: #8e8e93;
             --accent-work: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-            --color-1: #007AFF; --color-red: #FF3B30;
+            --color-1: #007AFF; --color-2: #FF3B30; --color-3: #34C759; --color-4: #FF9500;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
@@ -19,26 +19,19 @@
             font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
-        /* --- 究極のスライド構造 --- */
+        /* --- スライド構造 --- */
         .main-slider { 
-            display: flex; 
-            width: 100%; height: 100%; 
-            overflow-x: auto; 
-            overflow-y: hidden;
-            scroll-snap-type: x mandatory; 
-            scroll-behavior: smooth;
+            display: flex; width: 100%; height: 100%; 
+            overflow-x: auto; overflow-y: hidden;
+            scroll-snap-type: x mandatory; scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
         }
-        /* スクロールバーを完全に消す */
         .main-slider::-webkit-scrollbar { display: none; }
 
         .page { 
-            width: 100%; height: 100%; 
-            flex-shrink: 0; /* これが重要：ページが縮まないようにする */
-            scroll-snap-align: start; 
-            overflow-y: auto; /* 縦スクロールは各ページ内で */
-            padding: 70px 15px 120px; 
-            position: relative;
+            width: 100%; height: 100%; flex-shrink: 0; 
+            scroll-snap-align: start; overflow-y: auto; 
+            padding: 70px 15px 120px; position: relative;
         }
 
         /* ページ切替ドット */
@@ -51,61 +44,68 @@
         .dot { width: 10px; height: 10px; background: #ccc; border-radius: 50%; transition: 0.3s; cursor: pointer; }
         .dot.active { background: #6366f1; width: 25px; border-radius: 10px; }
 
-        /* --- Page 1 デザイン --- */
+        /* --- Page 1: 自動計算 (v20そのまま) --- */
         #page1 { background: #f8fafc; }
         .work-card { 
-            background: var(--accent-work); border-radius: 20px; padding: 25px; 
-            color: white; box-shadow: 0 8px 25px rgba(99, 102, 241, 0.25); 
-            margin-bottom: 20px; position: relative; min-height: 145px;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            background: var(--accent-work); border-radius: 20px; padding: 25px; color: white; 
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.25); margin-bottom: 20px; 
+            position: relative; min-height: 145px; display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
         #display-shop { position: absolute; top: 20px; left: 22px; font-size: 1.4rem; font-weight: 800; opacity: 0.95; letter-spacing: 0.2px; max-width: 75%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .current-total { font-size: 2.6rem; font-weight: 950; margin-top: 25px; }
-        .edit-cfg-btn { position: absolute; bottom: 15px; right: 15px; background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 12px; border-radius: 10px; font-size: 0.7rem; font-weight: 700; }
-
+        .edit-cfg-btn { position: absolute; bottom: 15px; right: 15px; background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 12px; border-radius: 10px; font-size: 0.7rem; font-weight: 700; cursor: pointer; }
         .cal-container { background: white; border-radius: 22px; padding: 20px 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 15px; }
         .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; padding: 0 10px; }
         .nav-arrow { background: #f1f5f9; border: none; color: var(--color-1); width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; font-weight: 900; display: flex; align-items: center; justify-content: center; }
         .month-display { font-size: 0.95rem; font-weight: 800; color: #1e293b; text-transform: uppercase; letter-spacing: 1px; }
-
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
         .cal-day-label { font-size: 0.65rem; color: var(--text-sub); font-weight: 800; text-align: center; margin-bottom: 8px; }
-        .cal-cell { height: 48px; border-radius: 10px; background: #f8fafc; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid transparent; transition: 0.2s; }
+        .cal-cell { height: 48px; border-radius: 10px; background: #f8fafc; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid transparent; transition: 0.2s; cursor: pointer; }
         .cal-cell.has-data { background: #f0f7ff; }
         .cal-cell.today { border: 2.5px solid #6366f1; background: #ebf0ff; }
-        .cal-cell.today .cal-date-num { color: #4f46e5; font-weight: 900; }
-        .cal-cell.selected { border-color: var(--color-1); background: white; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .cal-cell.selected { border-color: var(--color-1); background: white; }
         .cal-date-num { font-size: 0.8rem; font-weight: 700; color: var(--text-main); }
         .cal-amt-hint { font-size: 0.5rem; color: var(--color-1); font-weight: 800; margin-top: 2px; }
-
         .record-board { background: white; border-radius: 22px; padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 25px; border: 1px solid #eef2f6; }
         .selected-date-title { font-size: 1.25rem; font-weight: 900; color: #1e293b; margin-bottom: 20px; display: block; border-left: 5px solid var(--color-1); padding-left: 12px; }
         .time-input-group { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
         input[type="time"] { flex:1; min-width: 0; width: 100%; border: 1px solid #f1f5f9; background: #f8fafc; padding: 12px 5px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; color: #4f46e5; text-align: center; }
         .add-btn { width: 100%; background: #1e293b; color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; font-size: 1rem; }
-
         .history-item { background: white; padding: 14px; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border-left: 4px solid #eef2f6; }
         .history-item.has-night { border-left-color: var(--color-1); }
 
-        /* --- Page 2 デザイン --- */
+        /* --- Page 2: 給料記帳 (最初の形に戻す) --- */
         #page2 { background: var(--bg-color); }
-        .year-section { background: var(--card-bg); border-radius: 14px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-        .year-header { padding: 18px 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; }
-        .month-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 0 10px 15px; }
-        .month-cell { background: var(--bg-color); padding: 12px; border-radius: 10px; font-size: 0.85rem; display: flex; justify-content: space-between; }
+        .hint-btn { position: absolute; top: 15px; left: 15px; width: 35px; height: 35px; background: rgba(0,0,0,0.03); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-sub); font-size: 14px; z-index: 1000; }
+        
+        #allTotalOverlay { display: none; position: fixed; top: 15px; right: 15px; background: rgba(0,0,0,0.85); color: #fff; padding: 12px 22px; border-radius: 40px; z-index: 3000; font-weight: 700; }
+        .pop-in { animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .pop-out { animation: popOut 0.25s forwards; }
 
-        #footer-secret { 
-            position: fixed; bottom: 0; left: 0; right: 0; 
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); 
-            padding: 15px 20px 40px; z-index: 900; border-top: 1px solid #d1d1d6; 
-            transform: translateY(100%); transition: transform 0.3s;
-        }
+        .year-section { background: var(--card-bg); border-radius: 14px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        .year-header { padding: 18px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .month-content { max-height: 0; opacity: 0; display: grid; padding: 0 10px; grid-template-columns: repeat(2, 1fr); gap: 10px; background: var(--card-bg); transition: max-height 0.4s ease, opacity 0.3s ease; }
+        .year-section.active .month-content { max-height: 1000px; opacity: 1; padding: 0 10px 15px; }
+        .month-card { background: var(--bg-color); padding: 12px; border-radius: 12px; min-height: 60px; display: flex; flex-direction: column; justify-content: center; position: relative; }
+        .has-data { border-left: 4px solid var(--color-1); background-color: #f0f7ff; }
+
+        /* フッター(Page 2) */
+        #footer-secret { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); padding: 15px 20px 40px; z-index: 900; border-top: 1px solid #d1d1d6; transform: translateY(100%); transition: transform 0.3s; }
+        
+        /* グラフ */
+        #graphOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 8000; flex-direction: column; padding: 50px 5px; }
+        #graphSvgContainer { width: 100%; height: 400px; overflow: visible; }
+        .axis-label { font-size: 10px; fill: var(--text-sub); }
+        .data-label { font-size: 9px; font-weight: 900; }
 
         /* モーダル系 */
-        #customModal, #setup-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
-        .modal-content { background: #fff; width: 85%; max-width: 300px; padding: 25px; border-radius: 24px; text-align: center; }
-        #setup-overlay { background: white; padding: 40px; flex-direction: column; overflow-y: auto; display: none; }
-        .setup-input { width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 12px; border: 2px solid #f1f5f9; outline: none; }
+        #customModal, #setup-overlay, #hintModal, #alertModal, #secretEditModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .modal-content { background: #fff; width: 85%; max-width: 320px; padding: 30px 20px; border-radius: 24px; text-align: center; }
+
+        @keyframes popIn { from { opacity: 0; transform: scale(0.8) translateY(-10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes popOut { from { opacity: 1; transform: scale(1) translateY(0); } to { opacity: 0; transform: scale(0.8) translateY(-10px); } }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @keyframes slideDown { from { transform: translateY(0); } to { transform: translateY(100%); } }
     </style>
 </head>
 <body>
@@ -138,193 +138,247 @@
                     <div style="align-self:center; font-weight:800; color:#ccc;">to</div>
                     <input type="time" id="work-end" value="18:00">
                 </div>
-                <button class="add-btn" id="save-btn" onclick="handleLogShift()">Record Shift</button>
+                <button class="add-btn" onclick="handleLogShift()">Record Shift</button>
             </div>
             <div class="report-header">MONTHLY REPORT</div>
             <div id="log-container"></div>
         </div>
 
         <div class="page" id="page2">
-            <div style="padding: 20px; text-align: center; font-weight: 800; color: var(--text-sub); letter-spacing: 2px;">SECRET DIARY</div>
-            <div id="secret-calendar"></div>
+            <div class="hint-btn" onclick="openHint()">?</div>
+            <div id="allTotalOverlay" onclick="closeAllTotal()"></div>
+            
+            <div style="padding: 20px 0; text-align: center; font-weight: 800; color: var(--text-sub); letter-spacing: 2px;">SECRET SALARY CENTER</div>
+            
+            <div id="salary-calendar-container"></div>
+
             <div id="footer-secret">
-                <div style="display:flex; gap:10px;"><input type="text" id="secretInput" placeholder="yy/mm/amount/memo" style="flex:1; padding:12px; border-radius:12px; border:1px solid #ddd; outline:none;"><button class="add-btn" style="width:auto; padding:0 20px;" onclick="saveSecret()">Save</button></div>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="salaryInput" placeholder="Year/Month/Amount..." style="flex:1; padding:14px; border-radius:12px; border:1px solid #ddd; outline:none;">
+                    <button class="add-btn" style="width:auto; padding:0 20px;" onclick="handleSecretInput()">Save</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="setup-overlay">
-        <h2 style="font-weight: 900;">Store Setup</h2>
-        <input type="text" id="setup-shop" class="setup-input" placeholder="Store Name">
-        <input type="number" id="setup-wage" class="setup-input" placeholder="Hourly Wage (¥)">
-        <div style="display:flex; gap:10px; margin-top:10px;"><div style="flex:1;"><label style="font-size:10px; font-weight:800; color:#888;">NIGHT START</label><input type="time" id="setup-night-start" value="22:00" class="setup-input"></div><div style="flex:1;"><label style="font-size:10px; font-weight:800; color:#888;">NIGHT END</label><input type="time" id="setup-night-end" value="05:00" class="setup-input"></div></div>
-        <input type="number" id="setup-night-rate" class="setup-input" placeholder="Night Rate % (e.g. 25)">
-        <button class="add-btn" onclick="saveSetup()" style="margin-top:20px;">Save & Start</button>
+    <div id="graphOverlay">
+        <h2 id="graphTitle" style="text-align:center; font-weight: 800; font-size:0.9rem; margin-bottom:10px;"></h2>
+        <svg id="graphSvgContainer" viewBox="0 0 380 400"></svg>
+        <p style="text-align:center; color:#ddd; font-size:0.7rem; margin-top:20px;">Double-tap to close</p>
     </div>
 
+    <div id="hintModal" onclick="this.style.display='none'"><div class="modal-content" style="font-family:monospace;"><h3>Commands</h3><p>a : Grand Total</p><p>g25/26 : Graph</p><p>y/m/a/c : Record</p></div></div>
+    <div id="alertModal" onclick="this.style.display='none'"><div class="modal-content"><span id="alertMsg" style="font-weight:800; color:var(--color-2)"></span></div></div>
+    <div id="setup-overlay">
+        <div class="modal-content" style="text-align:left;">
+            <h2 style="font-weight: 900; text-align:center;">Setup</h2>
+            <input type="text" id="setup-shop" class="setup-input" style="width:100%;" placeholder="Store Name">
+            <input type="number" id="setup-wage" class="setup-input" style="width:100%;" placeholder="Wage (¥)">
+            <input type="number" id="setup-night-rate" class="setup-input" style="width:100%;" placeholder="Night Rate %">
+            <button class="add-btn" onclick="saveSetup()" style="margin-top:10px; width:100%;">Save</button>
+        </div>
+    </div>
     <div id="customModal">
-        <div class="modal-content"><h3 id="modalTitle"></h3><p id="modalMsg" style="color:#888; font-size:14px; margin-bottom:20px;"></p><button id="modalConfirmBtn" class="add-btn" style="background:var(--color-1);">Confirm</button><button class="add-btn" style="background:none; color:#888; margin-top:5px;" onclick="closeModal()">Cancel</button></div>
+        <div class="modal-content"><h3 id="modalTitle"></h3><p id="modalMsg"></p><button id="modalConfirmBtn" class="add-btn" style="background:var(--color-1);">Confirm</button><button class="add-btn" style="background:none; color:#888;" onclick="closeModal()">Cancel</button></div>
+    </div>
+    <div id="secretEditModal">
+        <div class="modal-content">
+            <span id="secretModalDate" style="font-weight: 800; font-size: 1.2rem; display:block;"></span>
+            <div style="display:flex; flex-direction:column; gap:10px; margin-top:25px;">
+                <button class="add-btn" id="secretConfirmEdit">Edit</button>
+                <button style="padding:15px; border:1px solid var(--color-red); color:var(--color-red); background:none; border-radius:12px; font-weight:700;" id="secretConfirmReset">Reset</button>
+                <button class="add-btn" style="background:none; color:var(--text-sub);" onclick="document.getElementById('secretEditModal').style.display='none'">Cancel</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        let config = JSON.parse(localStorage.getItem('workConfigV20')) || null;
-        let logs = JSON.parse(localStorage.getItem('workLogsV20')) || [];
-        let secretData = JSON.parse(localStorage.getItem('secretDataV20')) || {};
+        // --- データ管理 ---
+        let config = JSON.parse(localStorage.getItem('workConfigV21')) || null;
+        let logs = JSON.parse(localStorage.getItem('workLogsV21')) || [];
+        let secretData = JSON.parse(localStorage.getItem('myTenYearSalaryData')) || {}; // 最初のキーを使用
 
         let viewDate = new Date();
         let selectedDateStr = "";
+        const startYear = 25, endYear = 34;
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const colors = ["var(--color-1)", "var(--color-2)", "var(--color-3)", "var(--color-4)"];
 
-        // --- 究極のスライド制御 ---
+        // --- ページ切替 ---
         const slider = document.getElementById('mainSlider');
         slider.addEventListener('scroll', () => {
             const width = slider.offsetWidth;
             const pageIndex = Math.round(slider.scrollLeft / width);
             document.getElementById('dot1').classList.toggle('active', pageIndex === 0);
             document.getElementById('dot2').classList.toggle('active', pageIndex === 1);
-            
-            // ページ2の時だけフッターを出す
             document.getElementById('footer-secret').style.transform = (pageIndex === 1) ? 'translateY(0)' : 'translateY(100%)';
         });
+        function goToPage(idx) { slider.scrollTo({ left: slider.offsetWidth * idx, behavior: 'smooth' }); }
 
-        function goToPage(idx) {
-            slider.scrollTo({ left: slider.offsetWidth * idx, behavior: 'smooth' });
-        }
-
-        // --- 既存ロジックの安定化版 ---
+        // --- Page 1 Logic (安定版) ---
         function changeMonth(dir) { viewDate.setMonth(viewDate.getMonth() + dir); updateDash(); }
-
-        function renderCalendar() {
-            const body = document.getElementById('cal-body'); body.innerHTML = '';
-            const now = new Date();
-            const todayStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')}`;
-            const y = viewDate.getFullYear(), m = viewDate.getMonth();
-            const first = new Date(y, m, 1).getDay();
-            const last = new Date(y, m + 1, 0).getDate();
-            for(let i=0; i<first; i++) body.appendChild(document.createElement('div'));
-            for(let d=1; d<=last; d++) {
-                const fullStr = `${y}-${(m+1).toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
-                const log = logs.find(l => l.fullDate === fullStr);
-                const cell = document.createElement('div');
-                cell.className = `cal-cell ${log ? 'has-data' : ''} ${selectedDateStr === fullStr ? 'selected' : ''}`;
-                if(fullStr === todayStr) cell.classList.add('today');
-                cell.innerHTML = `<div class="cal-date-num">${d}</div>${log ? `<div class="cal-amt-hint">¥${(log.amt/1000).toFixed(1)}k</div>` : ''}`;
-                cell.onclick = () => selectDate(fullStr);
-                body.appendChild(cell);
-            }
-        }
-
         function selectDate(dateStr) {
-            if(!dateStr) return;
             selectedDateStr = dateStr;
             const log = logs.find(l => l.fullDate === dateStr);
             const d = new Date(dateStr.replace(/-/g, '/'));
             document.getElementById('selected-date-text').innerText = `${d.toLocaleString('en', {month:'long'})} ${d.getDate()}`;
             if(log) {
-                document.getElementById('work-start').value = log.start;
-                document.getElementById('work-end').value = log.end;
+                document.getElementById('work-start').value = log.start; document.getElementById('work-end').value = log.end;
                 document.getElementById('save-btn').innerText = "Update Shift";
             } else {
-                document.getElementById('work-start').value = "09:00";
-                document.getElementById('work-end').value = "18:00";
+                document.getElementById('work-start').value = "09:00"; document.getElementById('work-end').value = "18:00";
                 document.getElementById('save-btn').innerText = "Record Shift";
             }
             renderCalendar();
         }
-
         function handleLogShift() {
             if(!selectedDateStr) return;
-            const exists = logs.find(l => l.fullDate === selectedDateStr);
-            if(exists) {
-                showModal("Update Record?", "Would you like to overwrite this shift?", () => executeSave());
-            } else { executeSave(); }
+            if(logs.find(l => l.fullDate === selectedDateStr)) {
+                showModal("Update Record?", "Overwrite existing shift?", () => executeSave());
+            } else executeSave();
         }
-
         function executeSave() {
             const s = document.getElementById('work-start').value, e = document.getElementById('work-end').value;
             const res = calculatePay(s, e);
             const d = new Date(selectedDateStr.replace(/-/g, '/'));
             logs = logs.filter(l => l.fullDate !== selectedDateStr);
-            logs.unshift({ 
-                id: Date.now(), fullDate: selectedDateStr, date: `${d.getMonth()+1}/${d.getDate()}`, 
-                start: s, end: e, amt: res.total, dur: res.duration, surcharge: res.surcharge,
-                wage: config.wage, rate: config.nightRate, monthKey: `${d.getFullYear()%100}/${d.getMonth()+1}` 
-            });
-            localStorage.setItem('workLogsV20', JSON.stringify(logs));
+            logs.unshift({ id: Date.now(), fullDate: selectedDateStr, date: `${d.getMonth()+1}/${d.getDate()}`, start: s, end: e, amt: res.total, dur: res.duration, surcharge: res.surcharge, wage: config.wage, rate: config.nightRate, monthKey: `${d.getFullYear()%100}/${d.getMonth()+1}` });
+            localStorage.setItem('workLogsV21', JSON.stringify(logs));
             updateDash(); selectDate(selectedDateStr);
         }
-
         function updateDash() {
             if(!config) { document.getElementById('setup-overlay').style.display='flex'; return; }
-            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             const monthKey = `${viewDate.getFullYear()%100}/${viewDate.getMonth()+1}`;
-            document.getElementById('display-month').innerText = `${months[viewDate.getMonth()]} (${viewDate.getMonth()+1})`;
+            document.getElementById('display-month').innerText = viewDate.toLocaleString('en', {month:'long'}).toUpperCase() + ` (${viewDate.getMonth()+1})`;
             document.getElementById('display-shop').innerText = config.name.toUpperCase();
             const monthLogs = logs.filter(l => l.monthKey === monthKey).sort((a,b) => a.fullDate.localeCompare(b.fullDate));
             document.getElementById('display-total').innerText = `¥${monthLogs.reduce((sum,l)=>sum+l.amt, 0).toLocaleString()}`;
             renderCalendar();
             document.getElementById('log-container').innerHTML = monthLogs.map(l => `
                 <div class="history-item ${l.surcharge > 0 ? 'has-night' : ''}">
-                    <div style="flex:1;">
-                        <div style="font-weight:700;">${l.date} <span style="font-size:10px; color:#888;">(${l.start}-${l.end})</span></div>
-                        <div style="font-size:10px; color:#888;">${l.dur}h / ¥${l.wage.toLocaleString()}</div>
-                    </div>
-                    <div style="text-align:right;">
-                        <div style="font-weight:900; color:#4f46e5;">+¥${l.amt.toLocaleString()}</div>
-                        ${l.surcharge > 0 ? `<div style="font-size:9px; color:var(--color-1); font-weight:700;">Night: +¥${l.surcharge.toLocaleString()}</div>` : ''}
-                    </div>
+                    <div style="flex:1;"><div style="font-weight:700;">${l.date} <span style="font-size:10px; color:#888;">(${l.start}-${l.end})</span></div><div style="font-size:10px; color:#888;">${l.dur}h / ¥${l.wage.toLocaleString()}</div></div>
+                    <div style="text-align:right;"><div style="font-weight:900; color:#4f46e5;">+¥${l.amt.toLocaleString()}</div>${l.surcharge > 0 ? `<div style="font-size:9px; color:var(--color-1); font-weight:700;">Night: +¥${l.surcharge.toLocaleString()}</div>` : ''}</div>
                     <div onclick="confirmDelete(${l.id})" style="color:var(--color-red); font-size:14px; font-weight:800; padding-left:15px; cursor:pointer;">✕</div>
                 </div>
             `).join('');
         }
-
-        function calculatePay(startStr, endStr) {
-            let s = timeToMin(startStr), e = timeToMin(endStr);
-            if (e <= s) e += 1440;
+        function calculatePay(s, e) {
+            let sM = timeToMin(s), eM = timeToMin(e); if (eM <= sM) eM += 1440;
             const ns = timeToMin(config.nightStart), neRaw = timeToMin(config.nightEnd);
             let ne = neRaw <= ns ? neRaw + 1440 : neRaw;
-            let lateMins = 0;
-            for (let m = s; m < e; m++) {
-                let curr = m % 1440;
-                if (ne > 1440) { if (curr >= ns || curr < (ne % 1440)) lateMins++; }
-                else { if (curr >= ns && curr < ne) lateMins++; }
-            }
-            const totalH = (e - s) / 60, lateH = lateMins / 60;
-            const surOnly = lateH * (config.wage * (config.nightRate / 100));
+            let late = 0; for (let m = sM; m < eM; m++) { let curr = m % 1440; if (ne > 1440) { if (curr >= ns || curr < (ne % 1440)) late++; } else { if (curr >= ns && curr < ne) late++; } }
+            const totalH = (eM - sM) / 60, surOnly = (late / 60) * (config.wage * (config.nightRate / 100));
             return { total: Math.floor(totalH * config.wage + surOnly), duration: totalH.toFixed(1), surcharge: Math.floor(surOnly) };
         }
         function timeToMin(t) { const [h, m] = t.split(':').map(Number); return h * 60 + m; }
         function saveSetup() {
-            const name = document.getElementById('setup-shop').value, wage = parseInt(document.getElementById('setup-wage').value);
-            const rate = parseInt(document.getElementById('setup-night-rate').value) || 0;
-            if(name && wage) {
-                config = { name, wage, nightStart: document.getElementById('setup-night-start').value, nightEnd: document.getElementById('setup-night-end').value, nightRate: rate };
-                localStorage.setItem('workConfigV20', JSON.stringify(config));
-                document.getElementById('setup-overlay').style.display='none'; updateDash();
-            }
-        }
-        function showSetup(edit) { document.getElementById('setup-overlay').style.display = 'flex'; if(edit && config) { document.getElementById('setup-shop').value = config.name; document.getElementById('setup-wage').value = config.wage; document.getElementById('setup-night-start').value = config.nightStart; document.getElementById('setup-night-end').value = config.nightEnd; document.getElementById('setup-night-rate').value = config.nightRate; } }
-        function showModal(title, msg, onConfirm) { document.getElementById('modalTitle').innerText = title; document.getElementById('modalMsg').innerText = msg; document.getElementById('modalConfirmBtn').onclick = () => { onConfirm(); closeModal(); }; document.getElementById('customModal').style.display = 'flex'; }
-        function closeModal() { document.getElementById('customModal').style.display = 'none'; }
-        function confirmDelete(id) { showModal("Delete?", "Remove this record?", () => { logs = logs.filter(l => l.id !== id); localStorage.setItem('workLogsV20', JSON.stringify(logs)); updateDash(); selectDate(selectedDateStr); }); }
-        
-        function saveSecret() {
-            const input = document.getElementById('secretInput');
-            const m = input.value.match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/);
-            if(m) { secretData[`${m[1]}/${m[2]}`] = { amt: parseInt(m[3]), memo: m[4]||'' }; localStorage.setItem('secretDataV20', JSON.stringify(secretData)); renderSecret(); input.value = ''; }
-        }
-        function renderSecret() {
-            const cont = document.getElementById('secret-calendar'); cont.innerHTML = '';
-            const currY = new Date().getFullYear() % 100;
-            [currY, currY+1].forEach(y => {
-                let html = `<div class="year-section"><div class="year-header">20${y}</div><div class="month-grid">`;
-                for(let m=1; m<=12; m++) { const d = secretData[`${y}/${m}`] || {amt:0}; html += `<div class="month-cell"><div>M${m}</div><b>¥${d.amt.toLocaleString()}</b></div>`; }
-                cont.innerHTML += html + `</div></div>`;
-            });
+            const name = document.getElementById('setup-shop').value, wage = parseInt(document.getElementById('setup-wage').value), rate = parseInt(document.getElementById('setup-night-rate').value) || 0;
+            if(name && wage) { config = { name, wage, nightStart: "22:00", nightEnd: "05:00", nightRate: rate }; localStorage.setItem('workConfigV21', JSON.stringify(config)); document.getElementById('setup-overlay').style.display='none'; updateDash(); }
         }
 
+        // --- Page 2 Logic (最初期の完全復旧) ---
+        function initSalaryCalendar(openYear = null) {
+            const container = document.getElementById('salary-calendar-container'); container.innerHTML = '';
+            for (let y = startYear; y <= endYear; y++) {
+                let yearlyTotal = 0;
+                for (let m = 1; m <= 12; m++) yearlyTotal += (secretData[`${y}/${m}`]?.amount || 0);
+                const section = document.createElement('div');
+                section.className = 'year-section' + (y === openYear ? ' active' : '');
+                section.innerHTML = `<div class="year-header" onclick="this.parentElement.classList.toggle('active')"><div>20${y}</div><div>¥${yearlyTotal.toLocaleString()}</div></div><div class="month-content"></div>`;
+                const grid = section.querySelector('.month-content');
+                for (let m = 1; m <= 12; m++) {
+                    const d = secretData[`${y}/${m}`] || { amount: 0, memo: '' };
+                    const card = document.createElement('div');
+                    card.className = `month-card ${d.amount > 0 ? 'has-data' : ''}`;
+                    let lastTap = 0;
+                    card.addEventListener('touchend', (e) => {
+                        let now = Date.now(); if (now - lastTap < 300 && now - lastTap > 0) { if (d.amount > 0) openSecretEdit(y, m, d); e.preventDefault(); } lastTap = now;
+                    });
+                    card.innerHTML = `<div>${monthNames[m-1]}</div><b>¥${d.amount.toLocaleString()}</b>${d.memo ? `<div style="font-size:0.5rem; color:var(--color-3);">📄 ${d.memo}</div>` : ''}`;
+                    grid.appendChild(card);
+                }
+                container.appendChild(section);
+            }
+        }
+        function handleSecretInput() {
+            const el = document.getElementById('salaryInput'); const val = el.value.trim().toLowerCase();
+            if (!val) return;
+            if (val === 'a') showAllTotal();
+            else if (val.startsWith('g')) showGraph(val);
+            else {
+                const m = val.match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/);
+                if (m) {
+                    const y = parseInt(m[1]), mo = parseInt(m[2]), amt = parseInt(m[3]), memo = m[4] || '';
+                    secretData[`${y}/${mo}`] = { amount: amt, memo: memo };
+                    localStorage.setItem('myTenYearSalaryData', JSON.stringify(secretData));
+                    initSalaryCalendar(y);
+                }
+            }
+            el.value = ''; el.blur();
+        }
+        function openSecretEdit(y, m, d) {
+            document.getElementById('secretModalDate').innerText = `${monthNames[m-1]} 20${y}`;
+            document.getElementById('secretEditModal').style.display = 'flex';
+            document.getElementById('secretConfirmEdit').onclick = () => {
+                const i = document.getElementById('salaryInput'); i.value = `${y}/${m}/${d.amount}${d.memo ? '/' + d.memo : ''}`;
+                document.getElementById('secretEditModal').style.display = 'none'; i.focus();
+            };
+            document.getElementById('secretConfirmReset').onclick = () => {
+                delete secretData[`${y}/${m}`]; localStorage.setItem('myTenYearSalaryData', JSON.stringify(secretData));
+                initSalaryCalendar(y); document.getElementById('secretEditModal').style.display = 'none';
+            };
+        }
+        function showAllTotal() {
+            let total = 0; Object.values(secretData).forEach(d => total += d.amount);
+            const overlay = document.getElementById('allTotalOverlay'); overlay.innerText = `GRAND TOTAL: ¥${total.toLocaleString()}`;
+            overlay.style.display = 'block'; overlay.className = 'pop-in'; setTimeout(() => { overlay.className = 'pop-out'; setTimeout(() => overlay.style.display='none', 250); }, 5000);
+        }
+        function showGraph(cmd) {
+            const parts = cmd.replace('g', '').split('/');
+            const years = parts.map(p => parseInt(p)).filter(y => !isNaN(y) && y >= startYear && y <= endYear).slice(0, 4);
+            if (years.length === 0) return;
+            const overlay = document.getElementById('graphOverlay'); const svg = document.getElementById('graphSvgContainer');
+            svg.innerHTML = ''; overlay.style.display = 'flex'; overlay.className = 'slide-up';
+            let gTap = 0; overlay.ontouchend = (e) => { let now = Date.now(); if (now - gTap < 300 && now - gTap > 0) { overlay.className = 'slide-down'; setTimeout(()=>overlay.style.display='none', 300); } gTap = now; };
+            document.getElementById('graphTitle').innerHTML = years.map((y, i) => `<span style="color:${colors[i]}">20${y}</span>`).join(' vs ');
+            let maxV = 1; years.forEach(y => { for(let m=1; m<=12; m++) maxV = Math.max(maxV, secretData[`${y}/${m}`]?.amount || 0); });
+            const padX = 50, padY = 50, w = 380, h = 400;
+            const getX = (m) => padX + (m - 1) * ((w - padX * 2) / 11);
+            const getY = (v) => h - padY - (v / maxV) * (h - padY * 2);
+            [0, 0.5, 1].forEach(r => { const yPos = getY(maxV * r); svg.innerHTML += `<line x1="${padX}" y1="${yPos}" x2="${w-10}" y2="${yPos}" stroke="#eee" /><text x="5" y="${yPos+3}" class="axis-label">¥${Math.floor(maxV*r/1000)}k</text>`; });
+            years.forEach((y, idx) => {
+                let pts = ""; for(let m=1; m<=12; m++) {
+                    const val = secretData[`${y}/${m}`]?.amount || 0; const px = getX(m), py = getY(val); pts += `${px},${py} `;
+                    if(val > 0) svg.innerHTML += `<text x="${px}" y="${py - 15}" class="data-label" text-anchor="middle" fill="${colors[idx]}">${(val/1000).toFixed(0)}k</text>`;
+                    svg.innerHTML += `<circle cx="${px}" cy="${py}" r="4" fill="${colors[idx]}" stroke="#fff" />`;
+                }
+                svg.innerHTML += `<polyline points="${pts}" fill="none" stroke="${colors[idx]}" stroke-width="3" stroke-linecap="round" />`;
+            });
+        }
+        function openHint() { document.getElementById('hintModal').style.display='flex'; }
+        function closeModal() { document.getElementById('customModal').style.display = 'none'; }
+        function showModal(title, msg, onConfirm) { document.getElementById('modalTitle').innerText = title; document.getElementById('modalMsg').innerText = msg; document.getElementById('modalConfirmBtn').onclick = () => { onConfirm(); closeModal(); }; document.getElementById('customModal').style.display = 'flex'; }
+        function confirmDelete(id) { showModal("Delete?", "Remove shift?", () => { logs = logs.filter(l => l.id !== id); localStorage.setItem('workLogsV21', JSON.stringify(logs)); updateDash(); }); }
+        function renderCalendar() {
+            const body = document.getElementById('cal-body'); body.innerHTML = '';
+            const now = new Date(); const todayStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')}`;
+            const y = viewDate.getFullYear(), m = viewDate.getMonth(); const first = new Date(y, m, 1).getDay(), last = new Date(y, m + 1, 0).getDate();
+            for(let i=0; i<first; i++) body.appendChild(document.createElement('div'));
+            for(let d=1; d<=last; d++) {
+                const f = `${y}-${(m+1).toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
+                const log = logs.find(l => l.fullDate === f); const cell = document.createElement('div');
+                cell.className = `cal-cell ${log ? 'has-data' : ''} ${selectedDateStr === f ? 'selected' : ''}`;
+                if(f === todayStr) cell.classList.add('today');
+                cell.innerHTML = `<div class="cal-date-num">${d}</div>${log ? `<div class="cal-amt-hint">¥${(log.amt/1000).toFixed(1)}k</div>` : ''}`;
+                cell.onclick = () => selectDate(f); body.appendChild(cell);
+            }
+        }
+
+        // --- 初期化 ---
         const today = new Date();
         selectedDateStr = `${today.getFullYear()}-${(today.getMonth()+1).toString().padStart(2,'0')}-${today.getDate().toString().padStart(2,'0')}`;
-        updateDash(); selectDate(selectedDateStr); renderSecret();
+        updateDash(); selectDate(selectedDateStr); 
+        initSalaryCalendar(today.getFullYear() % 100);
     </script>
 </body>
 </html>

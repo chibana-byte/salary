@@ -11,23 +11,47 @@
             --accent-work: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
             --color-1: #007AFF; --color-red: #FF3B30;
         }
-        * { box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; user-select: none; overflow: hidden; width: 100vw; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
-        /* スライドコンテナの安定化 */
-        .main-slider { 
-            display: flex; width: 100vw; height: 100vh; 
-            overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; 
-            -webkit-overflow-scrolling: touch;
-        }
-        .main-slider::-webkit-scrollbar { display: none; }
-        
-        .page { 
-            width: 100vw; height: 100vh; flex-shrink: 0; scroll-snap-align: start; 
-            overflow-y: auto; padding: 60px 15px 120px; position: relative;
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            overflow: hidden; background-color: var(--bg-color);
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
-        /* --- Page 1: Dashboard --- */
+        /* --- 究極のスライド構造 --- */
+        .main-slider { 
+            display: flex; 
+            width: 100%; height: 100%; 
+            overflow-x: auto; 
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory; 
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        /* スクロールバーを完全に消す */
+        .main-slider::-webkit-scrollbar { display: none; }
+
+        .page { 
+            width: 100%; height: 100%; 
+            flex-shrink: 0; /* これが重要：ページが縮まないようにする */
+            scroll-snap-align: start; 
+            overflow-y: auto; /* 縦スクロールは各ページ内で */
+            padding: 70px 15px 120px; 
+            position: relative;
+        }
+
+        /* ページ切替ドット */
+        .nav-dots { 
+            position: fixed; top: 25px; left: 50%; transform: translateX(-50%); 
+            display: flex; gap: 12px; z-index: 9999; 
+            padding: 8px 15px; background: rgba(255,255,255,0.5);
+            backdrop-filter: blur(10px); border-radius: 20px;
+        }
+        .dot { width: 10px; height: 10px; background: #ccc; border-radius: 50%; transition: 0.3s; cursor: pointer; }
+        .dot.active { background: #6366f1; width: 25px; border-radius: 10px; }
+
+        /* --- Page 1 デザイン --- */
         #page1 { background: #f8fafc; }
         .work-card { 
             background: var(--accent-work); border-radius: 20px; padding: 25px; 
@@ -37,17 +61,16 @@
         }
         #display-shop { position: absolute; top: 20px; left: 22px; font-size: 1.4rem; font-weight: 800; opacity: 0.95; letter-spacing: 0.2px; max-width: 75%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .current-total { font-size: 2.6rem; font-weight: 950; margin-top: 25px; }
-        .edit-cfg-btn { position: absolute; bottom: 15px; right: 15px; background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 12px; border-radius: 10px; font-size: 0.7rem; font-weight: 700; cursor: pointer; }
+        .edit-cfg-btn { position: absolute; bottom: 15px; right: 15px; background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 12px; border-radius: 10px; font-size: 0.7rem; font-weight: 700; }
 
-        /* --- Calendar & Nav --- */
         .cal-container { background: white; border-radius: 22px; padding: 20px 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 15px; }
         .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; padding: 0 10px; }
-        .nav-arrow { background: #f1f5f9; border: none; color: var(--color-1); width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; font-weight: 900; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .nav-arrow { background: #f1f5f9; border: none; color: var(--color-1); width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; font-weight: 900; display: flex; align-items: center; justify-content: center; }
         .month-display { font-size: 0.95rem; font-weight: 800; color: #1e293b; text-transform: uppercase; letter-spacing: 1px; }
 
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
         .cal-day-label { font-size: 0.65rem; color: var(--text-sub); font-weight: 800; text-align: center; margin-bottom: 8px; }
-        .cal-cell { height: 48px; border-radius: 10px; background: #f8fafc; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid transparent; transition: 0.2s; cursor: pointer; }
+        .cal-cell { height: 48px; border-radius: 10px; background: #f8fafc; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid transparent; transition: 0.2s; }
         .cal-cell.has-data { background: #f0f7ff; }
         .cal-cell.today { border: 2.5px solid #6366f1; background: #ebf0ff; }
         .cal-cell.today .cal-date-num { color: #4f46e5; font-weight: 900; }
@@ -55,39 +78,34 @@
         .cal-date-num { font-size: 0.8rem; font-weight: 700; color: var(--text-main); }
         .cal-amt-hint { font-size: 0.5rem; color: var(--color-1); font-weight: 800; margin-top: 2px; }
 
-        /* --- Record Board --- */
         .record-board { background: white; border-radius: 22px; padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 25px; border: 1px solid #eef2f6; }
         .selected-date-title { font-size: 1.25rem; font-weight: 900; color: #1e293b; margin-bottom: 20px; display: block; border-left: 5px solid var(--color-1); padding-left: 12px; }
-        .time-input-group { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 20px; width: 100%; }
-        .t-field { flex: 1; min-width: 0; }
-        .t-label { font-size: 0.65rem; color: var(--text-sub); font-weight: 800; margin-bottom: 8px; text-transform: uppercase; display: block; }
-        input[type="time"] { width: 100%; border: 1px solid #f1f5f9; background: #f8fafc; padding: 12px 8px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; color: #4f46e5; box-sizing: border-box; -webkit-appearance: none; display: block; text-align: center; }
-        .add-btn { width: 100%; background: #1e293b; color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; }
+        .time-input-group { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+        input[type="time"] { flex:1; min-width: 0; width: 100%; border: 1px solid #f1f5f9; background: #f8fafc; padding: 12px 5px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; color: #4f46e5; text-align: center; }
+        .add-btn { width: 100%; background: #1e293b; color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; font-size: 1rem; }
 
-        /* --- Report --- */
-        .report-header { font-weight: 800; font-size: 0.75rem; color: var(--text-sub); margin-bottom: 12px; padding-left: 5px; }
         .history-item { background: white; padding: 14px; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border-left: 4px solid #eef2f6; }
         .history-item.has-night { border-left-color: var(--color-1); }
 
-        /* Navigation Dots */
-        .nav-dots { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 12px; z-index: 3000; padding: 5px 10px; }
-        .dot { width: 10px; height: 10px; background: #ccc; border-radius: 50%; transition: 0.3s; cursor: pointer; }
-        .dot.active { background: #6366f1; width: 25px; border-radius: 10px; }
+        /* --- Page 2 デザイン --- */
+        #page2 { background: var(--bg-color); }
+        .year-section { background: var(--card-bg); border-radius: 14px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        .year-header { padding: 18px 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; }
+        .month-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 0 10px 15px; }
+        .month-cell { background: var(--bg-color); padding: 12px; border-radius: 10px; font-size: 0.85rem; display: flex; justify-content: space-between; }
 
-        /* Modals & Overlays */
-        #customModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 6000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        #footer-secret { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); 
+            padding: 15px 20px 40px; z-index: 900; border-top: 1px solid #d1d1d6; 
+            transform: translateY(100%); transition: transform 0.3s;
+        }
+
+        /* モーダル系 */
+        #customModal, #setup-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .modal-content { background: #fff; width: 85%; max-width: 300px; padding: 25px; border-radius: 24px; text-align: center; }
-        .modal-btn-blue { width: 100%; padding: 15px; background: var(--color-1); color: white; border: none; border-radius: 12px; font-weight: 700; margin-top: 15px; cursor: pointer; }
-        #setup-overlay { position: fixed; inset: 0; background: white; z-index: 5000; display: flex; flex-direction: column; padding: 40px; overflow-y: auto; }
+        #setup-overlay { background: white; padding: 40px; flex-direction: column; overflow-y: auto; display: none; }
         .setup-input { width: 100%; padding: 14px; margin-bottom: 10px; border-radius: 12px; border: 2px solid #f1f5f9; outline: none; }
-        
-        #footer-secret { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); padding: 15px 20px 35px; z-index: 900; border-top: 1px solid #d1d1d6; transform: translateY(100%); transition: transform 0.3s;}
-
-        /* Page 2 Specific Styles */
-        .year-section { background: var(--card-bg); border-radius: 14px; margin-bottom: 12px; overflow: hidden; }
-        .year-header { padding: 18px 15px; display: flex; justify-content: space-between; align-items: center; font-weight: 800;}
-        .month-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 0 10px 15px; }
-        .month-cell { background: var(--bg-color); padding: 10px; border-radius: 10px; font-size: 0.8rem; }
     </style>
 </head>
 <body>
@@ -95,27 +113,6 @@
     <div class="nav-dots">
         <div class="dot active" id="dot1" onclick="goToPage(0)"></div>
         <div class="dot" id="dot2" onclick="goToPage(1)"></div>
-    </div>
-
-    <div id="setup-overlay" style="display: none;">
-        <h2 style="font-weight: 800;">Settings</h2>
-        <label class="t-label">Store Name</label>
-        <input type="text" id="setup-shop" class="setup-input" placeholder="Enter store name">
-        <label class="t-label">Base Hourly Wage (¥)</label>
-        <input type="number" id="setup-wage" class="setup-input" placeholder="e.g. 1200">
-        <div style="display:flex; gap:10px; margin-bottom:10px;"><div style="flex:1;"><label class="t-label">Night Start</label><input type="time" id="setup-night-start" value="22:00" class="setup-input"></div><div style="flex:1;"><label class="t-label">Night End</label><input type="time" id="setup-night-end" value="05:00" class="setup-input"></div></div>
-        <label class="t-label">Night Surcharge Rate (%)</label>
-        <input type="number" id="setup-night-rate" class="setup-input" placeholder="e.g. 25">
-        <button class="add-btn" onclick="saveSetup()">Save & Start</button>
-    </div>
-
-    <div id="customModal">
-        <div class="modal-content">
-            <h3 id="modalTitle"></h3>
-            <p id="modalMsg" style="margin:10px 0; color:var(--text-sub); font-size:0.9rem;"></p>
-            <button id="modalConfirmBtn" class="modal-btn-blue">Confirm</button>
-            <button class="add-btn" style="background:none; color:var(--text-sub); margin-top:5px;" onclick="closeModal()">Cancel</button>
-        </div>
     </div>
 
     <div class="main-slider" id="mainSlider">
@@ -132,13 +129,14 @@
                     <button class="nav-arrow" onclick="changeMonth(1)">→</button>
                 </div>
                 <div class="cal-grid"><div class="cal-day-label">S</div><div class="cal-day-label">M</div><div class="cal-day-label">T</div><div class="cal-day-label">W</div><div class="cal-day-label">T</div><div class="cal-day-label">F</div><div class="cal-day-label">S</div></div>
-                <div class="cal-grid" id="cal-body"></div>
+                <div id="cal-body" class="cal-grid"></div>
             </div>
             <div class="record-board">
                 <div id="selected-date-text" class="selected-date-title">SELECT DATE</div>
                 <div class="time-input-group">
-                    <div class="t-field"><div class="t-label">Start Time</div><input type="time" id="work-start" value="09:00"></div>
-                    <div class="t-field"><div class="t-label">End Time</div><input type="time" id="work-end" value="18:00"></div>
+                    <input type="time" id="work-start" value="09:00">
+                    <div style="align-self:center; font-weight:800; color:#ccc;">to</div>
+                    <input type="time" id="work-end" value="18:00">
                 </div>
                 <button class="add-btn" id="save-btn" onclick="handleLogShift()">Record Shift</button>
             </div>
@@ -147,56 +145,68 @@
         </div>
 
         <div class="page" id="page2">
-            <div style="padding: 40px 20px 20px; text-align: center; font-weight: 800; color: var(--text-sub);">SECRET RECORDS</div>
+            <div style="padding: 20px; text-align: center; font-weight: 800; color: var(--text-sub); letter-spacing: 2px;">SECRET DIARY</div>
             <div id="secret-calendar"></div>
             <div id="footer-secret">
-                <div style="display:flex; gap:10px;"><input type="text" id="secretInput" placeholder="yy/mm/amount/memo" style="flex:1; padding:12px; border-radius:12px; border:1px solid #ddd; outline:none;"><button class="add-btn" style="width:auto; padding:0 20px; margin-top:0;" onclick="saveSecret()">Save</button></div>
+                <div style="display:flex; gap:10px;"><input type="text" id="secretInput" placeholder="yy/mm/amount/memo" style="flex:1; padding:12px; border-radius:12px; border:1px solid #ddd; outline:none;"><button class="add-btn" style="width:auto; padding:0 20px;" onclick="saveSecret()">Save</button></div>
             </div>
         </div>
     </div>
 
+    <div id="setup-overlay">
+        <h2 style="font-weight: 900;">Store Setup</h2>
+        <input type="text" id="setup-shop" class="setup-input" placeholder="Store Name">
+        <input type="number" id="setup-wage" class="setup-input" placeholder="Hourly Wage (¥)">
+        <div style="display:flex; gap:10px; margin-top:10px;"><div style="flex:1;"><label style="font-size:10px; font-weight:800; color:#888;">NIGHT START</label><input type="time" id="setup-night-start" value="22:00" class="setup-input"></div><div style="flex:1;"><label style="font-size:10px; font-weight:800; color:#888;">NIGHT END</label><input type="time" id="setup-night-end" value="05:00" class="setup-input"></div></div>
+        <input type="number" id="setup-night-rate" class="setup-input" placeholder="Night Rate % (e.g. 25)">
+        <button class="add-btn" onclick="saveSetup()" style="margin-top:20px;">Save & Start</button>
+    </div>
+
+    <div id="customModal">
+        <div class="modal-content"><h3 id="modalTitle"></h3><p id="modalMsg" style="color:#888; font-size:14px; margin-bottom:20px;"></p><button id="modalConfirmBtn" class="add-btn" style="background:var(--color-1);">Confirm</button><button class="add-btn" style="background:none; color:#888; margin-top:5px;" onclick="closeModal()">Cancel</button></div>
+    </div>
+
     <script>
-        let config = JSON.parse(localStorage.getItem('workConfigV19')) || null;
-        let logs = JSON.parse(localStorage.getItem('workLogsV19')) || [];
-        let secretData = JSON.parse(localStorage.getItem('secretDataV19')) || {};
+        let config = JSON.parse(localStorage.getItem('workConfigV20')) || null;
+        let logs = JSON.parse(localStorage.getItem('workLogsV20')) || [];
+        let secretData = JSON.parse(localStorage.getItem('secretDataV20')) || {};
 
         let viewDate = new Date();
         let selectedDateStr = "";
 
+        // --- 究極のスライド制御 ---
         const slider = document.getElementById('mainSlider');
         slider.addEventListener('scroll', () => {
-            const page = Math.round(slider.scrollLeft / window.innerWidth);
-            document.getElementById('dot1').classList.toggle('active', page === 0);
-            document.getElementById('dot2').classList.toggle('active', page === 1);
-            document.getElementById('footer-secret').style.transform = page === 1 ? 'translateY(0)' : 'translateY(100%)';
+            const width = slider.offsetWidth;
+            const pageIndex = Math.round(slider.scrollLeft / width);
+            document.getElementById('dot1').classList.toggle('active', pageIndex === 0);
+            document.getElementById('dot2').classList.toggle('active', pageIndex === 1);
+            
+            // ページ2の時だけフッターを出す
+            document.getElementById('footer-secret').style.transform = (pageIndex === 1) ? 'translateY(0)' : 'translateY(100%)';
         });
 
-        function goToPage(index) {
-            slider.scrollTo({ left: window.innerWidth * index, behavior: 'smooth' });
+        function goToPage(idx) {
+            slider.scrollTo({ left: slider.offsetWidth * idx, behavior: 'smooth' });
         }
 
-        function changeMonth(dir) { 
-            viewDate.setMonth(viewDate.getMonth() + dir); 
-            const y = viewDate.getFullYear(), m = viewDate.getMonth();
-            selectDate(`${y}-${(m+1).toString().padStart(2,'0')}-01`);
-            updateDash(); 
-        }
+        // --- 既存ロジックの安定化版 ---
+        function changeMonth(dir) { viewDate.setMonth(viewDate.getMonth() + dir); updateDash(); }
 
         function renderCalendar() {
-            const body = document.getElementById('cal-body');
-            body.innerHTML = '';
+            const body = document.getElementById('cal-body'); body.innerHTML = '';
             const now = new Date();
             const todayStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')}`;
             const y = viewDate.getFullYear(), m = viewDate.getMonth();
-            const firstDay = new Date(y, m, 1).getDay();
-            const lastDate = new Date(y, m + 1, 0).getDate();
-            for(let i=0; i<firstDay; i++) body.appendChild(document.createElement('div'));
-            for(let d=1; d<=lastDate; d++) {
+            const first = new Date(y, m, 1).getDay();
+            const last = new Date(y, m + 1, 0).getDate();
+            for(let i=0; i<first; i++) body.appendChild(document.createElement('div'));
+            for(let d=1; d<=last; d++) {
                 const fullStr = `${y}-${(m+1).toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
                 const log = logs.find(l => l.fullDate === fullStr);
                 const cell = document.createElement('div');
                 cell.className = `cal-cell ${log ? 'has-data' : ''} ${selectedDateStr === fullStr ? 'selected' : ''}`;
-                if (fullStr === todayStr) cell.classList.add('today');
+                if(fullStr === todayStr) cell.classList.add('today');
                 cell.innerHTML = `<div class="cal-date-num">${d}</div>${log ? `<div class="cal-amt-hint">¥${(log.amt/1000).toFixed(1)}k</div>` : ''}`;
                 cell.onclick = () => selectDate(fullStr);
                 body.appendChild(cell);
@@ -207,9 +217,7 @@
             if(!dateStr) return;
             selectedDateStr = dateStr;
             const log = logs.find(l => l.fullDate === dateStr);
-            const d = new Date(dateStr.replace(/-/g, '/')); // Safari互換性修正
-            if(isNaN(d.getTime())) return;
-            
+            const d = new Date(dateStr.replace(/-/g, '/'));
             document.getElementById('selected-date-text').innerText = `${d.toLocaleString('en', {month:'long'})} ${d.getDate()}`;
             if(log) {
                 document.getElementById('work-start').value = log.start;
@@ -227,7 +235,7 @@
             if(!selectedDateStr) return;
             const exists = logs.find(l => l.fullDate === selectedDateStr);
             if(exists) {
-                showModal("Update Record?", "Would you like to update the existing record with new times?", () => { executeSave(); });
+                showModal("Update Record?", "Would you like to overwrite this shift?", () => executeSave());
             } else { executeSave(); }
         }
 
@@ -235,40 +243,38 @@
             const s = document.getElementById('work-start').value, e = document.getElementById('work-end').value;
             const res = calculatePay(s, e);
             const d = new Date(selectedDateStr.replace(/-/g, '/'));
-            const key = `${d.getFullYear()%100}/${d.getMonth()+1}`;
             logs = logs.filter(l => l.fullDate !== selectedDateStr);
             logs.unshift({ 
                 id: Date.now(), fullDate: selectedDateStr, date: `${d.getMonth()+1}/${d.getDate()}`, 
                 start: s, end: e, amt: res.total, dur: res.duration, surcharge: res.surcharge,
-                wage: config.wage, rate: config.nightRate, monthKey: key 
+                wage: config.wage, rate: config.nightRate, monthKey: `${d.getFullYear()%100}/${d.getMonth()+1}` 
             });
-            localStorage.setItem('workLogsV19', JSON.stringify(logs));
-            updateDash();
-            selectDate(selectedDateStr);
+            localStorage.setItem('workLogsV20', JSON.stringify(logs));
+            updateDash(); selectDate(selectedDateStr);
         }
 
         function updateDash() {
-            if(!config) { document.getElementById('setup-overlay').style.display='block'; return; }
+            if(!config) { document.getElementById('setup-overlay').style.display='flex'; return; }
             const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             const monthKey = `${viewDate.getFullYear()%100}/${viewDate.getMonth()+1}`;
             document.getElementById('display-month').innerText = `${months[viewDate.getMonth()]} (${viewDate.getMonth()+1})`;
             document.getElementById('display-shop').innerText = config.name.toUpperCase();
             const monthLogs = logs.filter(l => l.monthKey === monthKey).sort((a,b) => a.fullDate.localeCompare(b.fullDate));
-            document.getElementById('display-total').innerText = `¥${monthLogs.reduce((s,l)=>s+l.amt,0).toLocaleString()}`;
+            document.getElementById('display-total').innerText = `¥${monthLogs.reduce((sum,l)=>sum+l.amt, 0).toLocaleString()}`;
             renderCalendar();
             document.getElementById('log-container').innerHTML = monthLogs.map(l => `
                 <div class="history-item ${l.surcharge > 0 ? 'has-night' : ''}">
                     <div style="flex:1;">
-                        <div style="font-weight:700; font-size:0.9rem;">${l.date} <span style="font-size:0.6rem; color:var(--text-sub);">(${l.start}-${l.end})</span></div>
-                        <div style="font-size:0.65rem; color:var(--text-sub); margin-top:2px;">${l.dur}h / ¥${(l.wage||0).toLocaleString()}</div>
+                        <div style="font-weight:700;">${l.date} <span style="font-size:10px; color:#888;">(${l.start}-${l.end})</span></div>
+                        <div style="font-size:10px; color:#888;">${l.dur}h / ¥${l.wage.toLocaleString()}</div>
                     </div>
                     <div style="text-align:right;">
-                        <div style="font-weight:800; color:#4f46e5; font-size:1rem;">+¥${l.amt.toLocaleString()}</div>
-                        ${l.surcharge > 0 ? `<div style="font-size:0.6rem; color:var(--color-1); font-weight:700;">Night: +¥${l.surcharge.toLocaleString()}</div>` : ''}
+                        <div style="font-weight:900; color:#4f46e5;">+¥${l.amt.toLocaleString()}</div>
+                        ${l.surcharge > 0 ? `<div style="font-size:9px; color:var(--color-1); font-weight:700;">Night: +¥${l.surcharge.toLocaleString()}</div>` : ''}
                     </div>
-                    <div onclick="confirmDelete(${l.id})" style="color:var(--color-red); font-size:0.7rem; font-weight:800; padding-left:15px; cursor: pointer;">✕</div>
+                    <div onclick="confirmDelete(${l.id})" style="color:var(--color-red); font-size:14px; font-weight:800; padding-left:15px; cursor:pointer;">✕</div>
                 </div>
-            `).join(monthLogs.length ? '' : '<div style="text-align:center; color:var(--text-sub); font-size:0.8rem; padding:20px;">No records for this month.</div>');
+            `).join('');
         }
 
         function calculatePay(startStr, endStr) {
@@ -292,44 +298,33 @@
             const rate = parseInt(document.getElementById('setup-night-rate').value) || 0;
             if(name && wage) {
                 config = { name, wage, nightStart: document.getElementById('setup-night-start').value, nightEnd: document.getElementById('setup-night-end').value, nightRate: rate };
-                localStorage.setItem('workConfigV19', JSON.stringify(config));
+                localStorage.setItem('workConfigV20', JSON.stringify(config));
                 document.getElementById('setup-overlay').style.display='none'; updateDash();
             }
         }
-        function showSetup(edit) {
-            document.getElementById('setup-overlay').style.display = 'block';
-            if(edit && config) { document.getElementById('setup-shop').value = config.name; document.getElementById('setup-wage').value = config.wage; document.getElementById('setup-night-start').value = config.nightStart; document.getElementById('setup-night-end').value = config.nightEnd; document.getElementById('setup-night-rate').value = config.nightRate; }
-        }
-        function showModal(title, msg, onConfirm) {
-            document.getElementById('modalTitle').innerText = title; document.getElementById('modalMsg').innerText = msg;
-            const btn = document.getElementById('modalConfirmBtn'); btn.onclick = () => { onConfirm(); closeModal(); };
-            document.getElementById('customModal').style.display = 'flex';
-        }
+        function showSetup(edit) { document.getElementById('setup-overlay').style.display = 'flex'; if(edit && config) { document.getElementById('setup-shop').value = config.name; document.getElementById('setup-wage').value = config.wage; document.getElementById('setup-night-start').value = config.nightStart; document.getElementById('setup-night-end').value = config.nightEnd; document.getElementById('setup-night-rate').value = config.nightRate; } }
+        function showModal(title, msg, onConfirm) { document.getElementById('modalTitle').innerText = title; document.getElementById('modalMsg').innerText = msg; document.getElementById('modalConfirmBtn').onclick = () => { onConfirm(); closeModal(); }; document.getElementById('customModal').style.display = 'flex'; }
         function closeModal() { document.getElementById('customModal').style.display = 'none'; }
-        function confirmDelete(id) {
-            showModal("Delete?", "Remove this record?", () => { logs = logs.filter(l => l.id !== id); localStorage.setItem('workLogsV19', JSON.stringify(logs)); updateDash(); selectDate(selectedDateStr); });
-        }
+        function confirmDelete(id) { showModal("Delete?", "Remove this record?", () => { logs = logs.filter(l => l.id !== id); localStorage.setItem('workLogsV20', JSON.stringify(logs)); updateDash(); selectDate(selectedDateStr); }); }
+        
         function saveSecret() {
             const input = document.getElementById('secretInput');
             const m = input.value.match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/);
-            if(m) { secretData[`${m[1]}/${m[2]}`] = { amt: parseInt(m[3]), memo: m[4]||'' }; localStorage.setItem('secretDataV17', JSON.stringify(secretData)); renderSecret(); input.value = ''; }
+            if(m) { secretData[`${m[1]}/${m[2]}`] = { amt: parseInt(m[3]), memo: m[4]||'' }; localStorage.setItem('secretDataV20', JSON.stringify(secretData)); renderSecret(); input.value = ''; }
         }
         function renderSecret() {
             const cont = document.getElementById('secret-calendar'); cont.innerHTML = '';
             const currY = new Date().getFullYear() % 100;
             [currY, currY+1].forEach(y => {
                 let html = `<div class="year-section"><div class="year-header">20${y}</div><div class="month-grid">`;
-                for(let m=1; m<=12; m++) { const d = secretData[`${y}/${m}`] || {amt:0}; html += `<div class="month-cell"><div style="color:var(--text-sub); font-size:0.6rem;">M${m}</div><b>¥${d.amt.toLocaleString()}</b></div>`; }
+                for(let m=1; m<=12; m++) { const d = secretData[`${y}/${m}`] || {amt:0}; html += `<div class="month-cell"><div>M${m}</div><b>¥${d.amt.toLocaleString()}</b></div>`; }
                 cont.innerHTML += html + `</div></div>`;
             });
         }
 
-        // --- Init ---
-        const initToday = new Date();
-        selectedDateStr = `${initToday.getFullYear()}-${(initToday.getMonth()+1).toString().padStart(2,'0')}-${initToday.getDate().toString().padStart(2,'0')}`;
-        updateDash(); 
-        selectDate(selectedDateStr);
-        renderSecret();
+        const today = new Date();
+        selectedDateStr = `${today.getFullYear()}-${(today.getMonth()+1).toString().padStart(2,'0')}-${today.getDate().toString().padStart(2,'0')}`;
+        updateDash(); selectDate(selectedDateStr); renderSecret();
     </script>
 </body>
 </html>

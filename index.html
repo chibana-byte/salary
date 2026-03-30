@@ -41,31 +41,34 @@
             background: var(--accent-work); border-radius: 20px; padding: 25px; color: white; 
             box-shadow: 0 8px 25px rgba(99, 102, 241, 0.25); margin-bottom: 20px; 
             position: relative; 
-            min-height: 160px; /* 少し高さを出して余裕を持たせる */
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            min-height: 180px; /* 高さをもっと確保して等間隔を強調 */
+            display: flex; flex-direction: column; 
+            justify-content: center; /* 合計金額を中央に */
+            align-items: center;
         }
         
-        /* 店名：左上ギリギリに配置して重なりを回避 */
+        /* 店名：左上固定 (微調整) */
         #display-shop { 
-            position: absolute; top: 15px; left: 20px; 
+            position: absolute; top: 20px; left: 22px; 
             font-size: 1.4rem; font-weight: 800; opacity: 0.95; 
             letter-spacing: 0.2px; max-width: 75%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; 
         }
         
-        /* 合計金額：垂直中央配置にリセット */
+        /* 合計金額：フレックス中央配置で完璧な余白を確保 */
         .current-total { 
             font-size: 2.6rem; 
             font-weight: 950; 
-            margin: 0; /* マージンをリセットしてFlexboxの中央配置に任せる */
-            padding-top: 10px; /* 店名との微調整 */
+            margin: 0; 
+            padding: 0;
+            z-index: 5;
         }
         
-        /* ボタン：右下固定 */
+        /* ボタン：右下固定 (微調整) */
         .edit-cfg-btn { 
-            position: absolute; bottom: 15px; right: 15px; 
+            position: absolute; bottom: 20px; right: 20px; 
             background: rgba(255,255,255,0.25); border: none; color: white; 
-            padding: 8px 14px; border-radius: 10px; font-size: 0.75rem; font-weight: 700; 
-            cursor: pointer; z-index: 500; 
+            padding: 8px 16px; border-radius: 10px; font-size: 0.75rem; font-weight: 700; 
+            cursor: pointer; z-index: 10; 
         }
 
         .cal-container { background: white; border-radius: 22px; padding: 20px 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 15px; }
@@ -75,23 +78,11 @@
 
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
         .cal-day-label { font-size: 0.65rem; color: var(--text-sub); font-weight: 800; text-align: center; margin-bottom: 8px; }
-        .cal-cell { 
-            height: 48px; border-radius: 10px; background: #f8fafc; position: relative; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            border: 2px solid transparent; transition: 0.15s; cursor: pointer; z-index: 1;
-        }
+        .cal-cell { height: 48px; border-radius: 10px; background: #f8fafc; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid transparent; transition: 0.15s; cursor: pointer; z-index: 1; }
         .cal-cell.has-data { background: #f0f7ff; }
         .cal-cell.today { background: #ebf0ff; }
         .cal-cell.today .cal-date-num { color: #4f46e5; font-weight: 900; }
-        
-        .cal-cell.selected { 
-            background: white !important;
-            outline: 3px solid var(--color-1); 
-            outline-offset: -3px;
-            z-index: 10;
-            box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
-        }
-        
+        .cal-cell.selected { background: white !important; outline: 3px solid var(--color-1); outline-offset: -3px; z-index: 10; box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3); }
         .cal-date-num { font-size: 0.85rem; font-weight: 700; color: var(--text-main); }
         .cal-amt-hint { font-size: 0.5rem; color: var(--color-1); font-weight: 800; margin-top: 2px; }
 
@@ -190,8 +181,8 @@
     <div id="secretEditModal"><div class="modal-content"><span id="secretModalDate" style="font-weight: 800; font-size: 1.2rem; display:block;"></span><div style="display:flex; flex-direction:column; gap:10px; margin-top:25px;"><button class="add-btn" id="secretConfirmEdit">Edit</button><button style="padding:15px; border:1px solid var(--color-red); color:var(--color-red); background:none; border-radius:12px; font-weight:700;" id="secretConfirmReset">Reset</button><button class="add-btn" style="background:none; color:#888;" onclick="document.getElementById('secretEditModal').style.display='none'">Cancel</button></div></div></div>
 
     <script>
-        let config = JSON.parse(localStorage.getItem('workConfigV26')) || null;
-        let logs = JSON.parse(localStorage.getItem('workLogsV26')) || [];
+        let config = JSON.parse(localStorage.getItem('workConfigV28')) || null;
+        let logs = JSON.parse(localStorage.getItem('workLogsV28')) || [];
         let secretData = JSON.parse(localStorage.getItem('myTenYearSalaryData')) || {};
 
         let viewDate = new Date();
@@ -253,7 +244,7 @@
             const d = new Date(selectedDateStr.replace(/-/g, '/'));
             logs = logs.filter(l => l.fullDate !== selectedDateStr);
             logs.unshift({ id: Date.now(), fullDate: selectedDateStr, date: `${d.getMonth()+1}/${d.getDate()}`, start: s, end: e, amt: res.total, dur: res.duration, surcharge: res.surcharge, wage: config.wage, rate: config.nightRate, monthKey: `${d.getFullYear()%100}/${d.getMonth()+1}` });
-            localStorage.setItem('workLogsCoverV26', JSON.stringify(logs));
+            localStorage.setItem('workLogsCoverV28', JSON.stringify(logs));
             updateDash(); selectDate(selectedDateStr);
         }
         function updateDash() {
@@ -289,7 +280,7 @@
         function hideSetup() { document.getElementById('setup-overlay').style.display='none'; }
         function saveSetup() {
             const n = document.getElementById('setup-shop').value, w = parseInt(document.getElementById('setup-wage').value), r = parseInt(document.getElementById('setup-night-rate').value) || 0;
-            if(n && w) { config = { name:n, wage:w, nightRate:r }; localStorage.setItem('workConfigV26', JSON.stringify(config)); hideSetup(); updateDash(); }
+            if(n && w) { config = { name:n, wage:w, nightRate:r }; localStorage.setItem('workConfigV28', JSON.stringify(config)); hideSetup(); updateDash(); }
         }
         function initSalaryCalendar(openYear = null) {
             const cont = document.getElementById('salary-calendar-container'); cont.innerHTML = '';
@@ -319,10 +310,11 @@
             document.getElementById('secretConfirmEdit').onclick = () => { document.getElementById('salaryInput').value = `${y}/${m}/${d.amount}${d.memo ? '/' + d.memo : ''}`; document.getElementById('secretEditModal').style.display = 'none'; };
             document.getElementById('secretConfirmReset').onclick = () => { delete secretData[`${y}/${m}`]; localStorage.setItem('myTenYearSalaryData', JSON.stringify(secretData)); initSalaryCalendar(y); document.getElementById('secretEditModal').style.display = 'none'; };
         }
+
         function closeModal() { document.getElementById('customModal').style.display = 'none'; }
         function openHint() { document.getElementById('hintModal').style.display='flex'; }
         function showModal(title, msg, onConfirm) { document.getElementById('modalTitle').innerText = title; document.getElementById('modalMsg').innerText = msg; document.getElementById('modalConfirmBtn').onclick = () => { onConfirm(); closeModal(); }; document.getElementById('customModal').style.display = 'flex'; }
-        function confirmDelete(id) { showModal("Delete?", "Remove shift?", () => { logs = logs.filter(l => l.id !== id); localStorage.setItem('workLogsCoverV26', JSON.stringify(logs)); updateDash(); selectDate(selectedDateStr); }); }
+        function confirmDelete(id) { showModal("Delete?", "Remove shift?", () => { logs = logs.filter(l => l.id !== id); localStorage.setItem('workLogsCoverV28', JSON.stringify(logs)); updateDash(); selectDate(selectedDateStr); }); }
 
         const initD = new Date();
         selectedDateStr = `${initD.getFullYear()}-${(initD.getMonth()+1).toString().padStart(2,'0')}-${initD.getDate().toString().padStart(2,'0')}`;

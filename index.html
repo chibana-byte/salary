@@ -24,13 +24,14 @@
         .dot { width: 10px; height: 10px; background: #ccc; border-radius: 50%; transition: 0.3s; cursor: pointer; }
         .dot.active { background: #6366f1; width: 25px; border-radius: 10px; }
 
-        /* --- Page 1: Dashboard --- */
+        /* Page 1: Dashboard */
         #page1 { background: #f8fafc; }
         .work-card { background: var(--accent-work); border-radius: 24px; padding: 25px; color: white; box-shadow: 0 8px 25px rgba(99, 102, 241, 0.25); margin-bottom: 20px; min-height: 190px; position: relative; display: flex; flex-direction: column; justify-content: space-between; align-items: center; }
         #display-shop { align-self: flex-start; font-size: 1.4rem; font-weight: 800; opacity: 0.95; letter-spacing: 0.2px; max-width: 80%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .current-total { font-size: 2.7rem; font-weight: 950; margin: 0; line-height: 1; }
         .edit-cfg-btn { align-self: flex-end; background: rgba(255,255,255,0.25); border: none; color: white; padding: 10px 18px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
 
+        /* カレンダーデザイン */
         .cal-container { background: white; border-radius: 22px; padding: 20px 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 15px; }
         .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; padding: 0 10px; }
         .nav-arrow { background: #f1f5f9; border: none; color: var(--color-1); width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; font-weight: 900; display: flex; align-items: center; justify-content: center; }
@@ -38,18 +39,17 @@
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
         .cal-day-label { font-size: 0.65rem; color: var(--text-sub); font-weight: 800; text-align: center; margin-bottom: 8px; }
         
-        /* カレンダーセル */
         .cal-cell { height: 48px; border-radius: 10px; background: #f8fafc; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid transparent; transition: 0.15s; cursor: pointer; z-index: 1; }
         .cal-cell.has-data { background: #f0f7ff; }
 
-        /* --- 修正：今日の日付（濃いネイビー） --- */
+        /* 今日：ネイビー */
         .cal-cell.today { background: #1e293b !important; }
         .cal-cell.today .cal-date-num { color: white !important; font-weight: 900; }
         .cal-cell.today .cal-amt-hint { color: #7dd3fc !important; }
 
-        /* --- 修正：選択時のデザイン（背景塗りつぶしを廃止） --- */
+        /* 選択時：透明背景＋青枠のみ (v41継承) */
         .cal-cell.selected { 
-            /* 背景の白塗りつぶしを削除 */
+            background: inherit; 
             outline: 3px solid var(--color-1); 
             outline-offset: -3px; 
             z-index: 10; 
@@ -65,7 +65,7 @@
         input[type="time"] { flex:1; min-width: 0; border: 1px solid #f1f5f9; background: #f8fafc; padding: 12px 5px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; color: #4f46e5; text-align: center; -webkit-appearance: none; }
         .add-btn { width: 100%; background: #1e293b; color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; }
 
-        /* レポートヘッダー：グレーを維持 */
+        /* レポートスタイル */
         .report-header { font-weight: 800; font-size: 0.75rem; color: var(--text-sub) !important; margin-bottom: 12px; padding-left: 5px; letter-spacing: 2px; text-transform: uppercase; }
         .history-item { background: white; padding: 14px; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border-left: 4px solid #eef2f6; }
         .history-item.has-night { border-left-color: var(--color-1); }
@@ -152,11 +152,17 @@
         </div>
     </div>
 
+    <div id="customModal"><div class="modal-content"><h3 id="modalTitle"></h3><p id="modalMsg" style="color:#888; margin-bottom:20px;"></p><button id="modalConfirmBtn" class="add-btn" style="background:var(--color-1);">Confirm</button><button class="add-btn" style="background:none; color:#888; margin-top:5px;" onclick="closeModal()">Cancel</button></div></div>
+    <div id="alertModal" onclick="this.style.display='none'"><div class="modal-content"><h3>Notice</h3><p id="alertMsg" style="font-weight:800; color:var(--color-2)"></p><button class="add-btn" style="margin-top:15px;">OK</button></div></div>
+    <div id="secretEditModal"><div class="modal-content"><span id="secretModalDate" style="font-weight:800; font-size:1.2rem;"></span><div style="display:flex; flex-direction:column; gap:10px; margin-top:25px;"><button class="add-btn" id="secretConfirmEdit">Edit</button><button style="padding:15px; border:1px solid var(--color-2); color:var(--color-2); background:none; border-radius:12px; font-weight:700;" id="secretConfirmReset">Reset</button><button class="add-btn" style="background:none; color:#888;" onclick="document.getElementById('secretEditModal').style.display='none'">Cancel</button></div></div></div>
+
     <script>
+        // --- データ管理キー ---
         let config = JSON.parse(localStorage.getItem('workConfigV34')) || null;
         let logs = JSON.parse(localStorage.getItem('workLogsV34')) || [];
         let salaryData = JSON.parse(localStorage.getItem('myTenYearSalaryData')) || {};
         let viewDate = new Date(); let selectedDateStr = "";
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
         const slider = document.getElementById('mainSlider');
         slider.addEventListener('scroll', () => {
@@ -218,6 +224,7 @@
             localStorage.setItem('workLogsV34', JSON.stringify(logs)); updateDash(); selectDate(selectedDateStr);
         }
         
+        // --- 修正：削除ボタンの確実な埋め込み ---
         function updateDash() {
             if(!config) { showSetup(false); return; }
             const monthKey = `${viewDate.getFullYear()%100}/${viewDate.getMonth()+1}`;
@@ -226,7 +233,19 @@
             const monthLogs = logs.filter(l => l.monthKey === monthKey).sort((a,b) => a.fullDate.localeCompare(b.fullDate));
             document.getElementById('display-total').innerText = `¥${monthLogs.reduce((sum,l)=>sum+l.amt, 0).toLocaleString()}`;
             renderCalendar();
-            document.getElementById('log-container').innerHTML = monthLogs.map(l => `<div class="history-item ${l.surcharge > 0 ? 'has-night' : ''}"><div style="flex:1;"><div style="font-weight:700;">${l.date} <span style="font-size:10px; color:#888;">(${l.start}-${l.end})</span></div><div style="font-size:10px; color:#888;">${l.dur}h / ¥${(l.wage||0).toLocaleString()} / N.R-${l.rate||0}%</div></div><div style="text-align:right;"><div style="font-weight:900; color:#4f46e5;">+¥${l.amt.toLocaleString()}</div>${l.surcharge > 0 ? `<div style="font-size:9px; color:var(--color-1); font-weight:700;">Night: +¥${l.surcharge.toLocaleString()}</div>` : ''}</div><div onclick="confirmDelete(${l.id})" style="color:var(--color-2); font-size:22px; font-weight:900; padding: 0 10px 0 20px; cursor:pointer;">✕</div></div>`).join('');
+            document.getElementById('log-container').innerHTML = monthLogs.map(l => `
+                <div class="history-item ${l.surcharge > 0 ? 'has-night' : ''}">
+                    <div style="flex:1;">
+                        <div style="font-weight:700;">${l.date} <span style="font-size:10px; color:#888;">(${l.start}-${l.end})</span></div>
+                        <div style="font-size:10px; color:#888;">${l.dur}h / ¥${(l.wage||0).toLocaleString()} / N.R-${l.rate||0}%</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-weight:900; color:#4f46e5;">+¥${l.amt.toLocaleString()}</div>
+                        ${l.surcharge > 0 ? `<div style="font-size:9px; color:var(--color-1); font-weight:700;">Night: +¥${l.surcharge.toLocaleString()}</div>` : ''}
+                    </div>
+                    <div onclick="confirmDelete(${l.id})" style="color:var(--color-2); font-size:24px; font-weight:900; padding: 0 5px 0 15px; cursor:pointer; min-width: 44px; text-align: right;">✕</div>
+                </div>
+            `).join('');
         }
 
         function calculatePay(s, e) {
@@ -248,7 +267,7 @@
                     const d = salaryData[`${y}/${m}`] || { amount: 0, memo: '' };
                     const card = document.createElement('div'); card.className = `month-card ${d.amount > 0 ? 'has-data' : ''}`;
                     let lastTap = 0; card.addEventListener('touchend', (e) => { let now = Date.now(); if (now - lastTap < 300 && now - lastTap > 0) { if (d.amount > 0) openSecretEdit(y, m, d); e.preventDefault(); } lastTap = now; });
-                    card.innerHTML = `<div>${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][m-1]}</div><b>¥${d.amount.toLocaleString()}</b>${d.memo ? `<div style="font-size:0.5rem; color:var(--color-3);">📄 ${d.memo}</div>` : ''}`;
+                    card.innerHTML = `<div>${monthNames[m-1]}</div><b>¥${d.amount.toLocaleString()}</b>${d.memo ? `<div style="font-size:0.5rem; color:var(--color-3);">📄 ${d.memo}</div>` : ''}`;
                     grid.appendChild(card);
                 }
                 container.appendChild(section);
@@ -262,14 +281,17 @@
             el.value = ''; el.blur();
         }
         function openSecretEdit(y, m, d) {
-            document.getElementById('secretModalDate').innerText = `20${y}/${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][m-1]}`; document.getElementById('secretEditModal').style.display = 'flex';
+            document.getElementById('secretModalDate').innerText = `20${y}/${monthNames[m-1]}`; document.getElementById('secretEditModal').style.display = 'flex';
             document.getElementById('secretConfirmEdit').onclick = () => { document.getElementById('salaryInput').value = `${y}/${m}/${d.amount}${d.memo ? '/' + d.memo : ''}`; document.getElementById('secretEditModal').style.display = 'none'; document.getElementById('salaryInput').focus(); };
             document.getElementById('secretConfirmReset').onclick = () => { delete salaryData[`${y}/${m}`]; localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData)); initSalaryCalendar(y); document.getElementById('secretEditModal').style.display = 'none'; };
         }
 
+        // --- ダイアログ関数 ---
         function showAlert(msg) { document.getElementById('alertMsg').innerText = msg; document.getElementById('alertModal').style.display = 'flex'; }
         function closeModal() { document.getElementById('customModal').style.display = 'none'; }
         function showModal(title, msg, onConfirm) { document.getElementById('modalTitle').innerText = title; document.getElementById('modalMsg').innerText = msg; document.getElementById('modalConfirmBtn').onclick = () => { onConfirm(); closeModal(); }; document.getElementById('customModal').style.display = 'flex'; }
+        
+        // --- 削除機能 ---
         function confirmDelete(id) { 
             showModal("Delete Record?", "Are you sure you want to remove this shift record?", () => { 
                 logs = logs.filter(l => l.id !== id); 

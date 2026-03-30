@@ -10,12 +10,6 @@
             --text-main: #1c1c1e; --text-sub: #8e8e93;
             --accent-work: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
             --color-1: #007AFF; --color-2: #FF3B30; --color-3: #34C759; --color-4: #FF9500;
-            
-            /* --- 修正ポイント：グラデーションを劇的に強化（3色構成・光沢感） --- */
-            /* 鮮やかで深みのある青のグラデーション（水色 -> 青 -> 濃い青） */
-            --grad-blue-vivid: linear-gradient(180deg, #5AC8FA 0%, #007AFF 40%, #0051D5 100%) !important;
-            /* 燃えるような赤のグラデーション（薄い赤 -> 赤 -> 深い赤） */
-            --grad-red-vivid: linear-gradient(180deg, #FF6B6B 0%, #FF3B30 40%, #BF241A 100%) !important;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: var(--bg-color); font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
@@ -55,22 +49,18 @@
         /* メインボタン（動的切り替え） */
         .add-btn { width: 100%; background: #1e293b; color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
-        /* --- 修正ポイント：ダイアログ用グラデーションボタンの強化（立体感・影） --- */
-        /* Rewriteボタン：鮮やかな青のグラデーション＋青い影 */
-        .grad-blue-btn-vivid { 
-            background: var(--grad-blue-vivid) !important; 
+        /* --- 修正ポイント：ダイアログ用グラデーションボタン（シンプル） --- */
+        /* Rewriteボタン：シンプルで綺麗な青のグラデーション（上：明るい青 -> 下：普通の青） */
+        .grad-blue-btn-simple { 
+            background: linear-gradient(180deg, #3598FF 0%, #007AFF 100%) !important; 
             color: white !important; 
             border: none !important; 
-            box-shadow: 0 6px 20px rgba(0, 122, 255, 0.5) !important; /* 立体的な青い影 */
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 文字の影 */
         }
-        /* Deleteボタン：燃えるような赤のグラデーション＋赤い影 */
-        .grad-red-btn-vivid { 
-            background: var(--grad-red-vivid) !important; 
+        /* Deleteボタン：シンプルで綺麗な赤のグラデーション（上：鮮やかな赤 -> 下：少し濃い赤） */
+        .grad-red-btn-simple { 
+            background: linear-gradient(180deg, #FF5E5E 0%, #FF3B30 100%) !important; 
             color: white !important; 
             border: none !important; 
-            box-shadow: 0 6px 20px rgba(255, 59, 48, 0.5) !important; /* 立体的な赤い影 */
-            text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 文字の影 */
         }
 
         .report-header { font-weight: 800; font-size: 0.75rem; color: var(--text-sub) !important; margin-bottom: 12px; padding-left: 5px; letter-spacing: 2px; }
@@ -212,8 +202,8 @@
         function handleLogShift() {
             if(!selectedDateStr) return;
             if(logs.find(l => l.fullDate === selectedDateStr)) {
-                // ② 強化された青グラデーションクラスを適用
-                showModal("Update Record?", "Overwrite existing shift?", "Rewrite", "grad-blue-btn-vivid", () => executeSave());
+                // ② シンプルな青グラデーションクラスを適用
+                showModal("Update Record?", "Overwrite existing shift?", "Rewrite", "grad-blue-btn-simple", () => executeSave());
             } else executeSave();
         }
 
@@ -240,7 +230,7 @@
                         <div style="font-size:10px; color:#888;">${l.dur}h / ¥${(l.wage||0).toLocaleString()} / N.R-${l.rate||0}%</div>
                     </div>
                     <div style="text-align:right; font-weight:900; color:#4f46e5; margin-right:15px;">+¥${l.amt.toLocaleString()}</div>
-                    <div onclick="confirmDelete(${l.id})" style="color:var(--color-2); font-size:22px; font-weight:900; cursor:pointer; padding:5px;">✕</div>
+                    <div onclick="confirmDelete(${l.id})" style="color:var(--color-2); font-size:22px; font-weight:900; padding: 0 10px; cursor:pointer; min-width:44px; text-align:right;">✕</div>
                 </div>
             `).join('');
         }
@@ -282,14 +272,14 @@
             document.getElementById('modalMsg').textContent = msg;
             const btn = document.getElementById('modalConfirmBtn');
             btn.textContent = btnText;
-            btn.className = "add-btn " + btnClass; // ここでグラデーションを強制適用
+            btn.className = "add-btn " + btnClass; // ここでシンプルなグラデーションクラスを適用
             btn.onclick = () => { onConfirm(); closeModal(); };
             document.getElementById('customModal').style.display='flex';
         }
 
         function confirmDelete(id) {
-            // ③ 強化された赤グラデーションクラスを適用
-            showModal("Delete Record?", "Remove this shift record?", "Delete", "grad-red-btn-vivid", () => {
+            // ③ シンプルな赤グラデーションクラスを適用
+            showModal("Delete Record?", "Remove this shift record?", "Delete", "grad-red-btn-simple", () => {
                 logs = logs.filter(l => l.id !== id);
                 localStorage.setItem('workLogsV34', JSON.stringify(logs));
                 updateDash();

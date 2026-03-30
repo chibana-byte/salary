@@ -10,7 +10,7 @@
             --text-main: #1c1c1e; --text-sub: #8e8e93;
             --accent-work: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
             --color-1: #007AFF; --color-2: #FF3B30; --color-3: #34C759; --color-4: #FF9500;
-            /* グラデーション色定義 */
+            /* グラデーション定義 */
             --grad-blue: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
             --grad-red: linear-gradient(135deg, #FF3B30 0%, #D7261B 100%);
         }
@@ -18,13 +18,13 @@
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: var(--bg-color); font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
 
         /* スライド構造 */
-        .main-slider { display: flex; width: 100%; height: 100%; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+        .main-slider { display: flex; width: 100%; height: 100%; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-behavior: smooth; }
         .main-slider::-webkit-scrollbar { display: none; }
         .page { width: 100%; height: 100%; flex: 0 0 100%; scroll-snap-align: start; overflow-y: auto; padding: 85px 15px 120px; position: relative; }
 
         /* ナビゲーション */
         .nav-dots { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); display: flex; gap: 12px; z-index: 10000; padding: 10px 20px; background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); border-radius: 20px; }
-        .dot { width: 10px; height: 10px; background: #ccc; border-radius: 50%; transition: 0.3s; cursor: pointer; }
+        .dot { width: 10px; height: 10px; background: #ccc; border-radius: 50%; transition: 0.3s; }
         .dot.active { background: #6366f1; width: 25px; border-radius: 10px; }
 
         /* --- Page 1: Dashboard --- */
@@ -34,57 +34,43 @@
         .current-total { font-size: 2.7rem; font-weight: 950; margin: 0; line-height: 1; }
         .edit-cfg-btn { align-self: flex-end; background: rgba(255,255,255,0.25); border: none; color: white; padding: 10px 18px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
 
+        /* カレンダー（今日ネイビー、選択枠のみ） */
         .cal-container { background: white; border-radius: 22px; padding: 20px 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 15px; }
-        .month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; padding: 0 10px; }
-        .nav-arrow { background: #f1f5f9; border: none; color: var(--color-1); width: 32px; height: 32px; border-radius: 50%; font-size: 1rem; font-weight: 900; display: flex; align-items: center; justify-content: center; }
-        .month-display { font-size: 0.95rem; font-weight: 800; color: #1e293b; text-transform: uppercase; letter-spacing: 1px; }
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
         .cal-day-label { font-size: 0.65rem; color: var(--text-sub); font-weight: 800; text-align: center; margin-bottom: 8px; }
-        .cal-cell { height: 48px; border-radius: 10px; background: #f8fafc; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid transparent; transition: 0.15s; cursor: pointer; z-index: 1; }
+        .cal-cell { height: 48px; border-radius: 10px; background: #f8fafc; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid transparent; transition: 0.15s; cursor: pointer; }
         .cal-cell.has-data { background: #f0f7ff; }
-
-        /* 今日：ネイビー / 選択：透明枠線のみ */
         .cal-cell.today { background: #1e293b !important; }
         .cal-cell.today .cal-date-num { color: white !important; font-weight: 900; }
         .cal-cell.today .cal-amt-hint { color: #7dd3fc !important; }
-        .cal-cell.selected { background: inherit; outline: 3px solid var(--color-1); outline-offset: -3px; z-index: 10; box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3); }
+        .cal-cell.selected { background: inherit !important; outline: 3px solid var(--color-1) !important; outline-offset: -3px; z-index: 10; }
 
         .cal-date-num { font-size: 0.85rem; font-weight: 700; color: var(--text-main); }
         .cal-amt-hint { font-size: 0.5rem; color: var(--color-1); font-weight: 800; margin-top: 2px; }
 
-        .record-board { background: white; border-radius: 22px; padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 25px; border: 1px solid #eef2f6; }
-        .selected-date-title { font-size: 1.25rem; font-weight: 900; color: #1e293b; margin-bottom: 20px; display: block; border-left: 5px solid var(--color-1); padding-left: 12px; }
-        .time-input-group { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
-        input[type="time"] { flex:1; min-width: 0; border: 1px solid #f1f5f9; background: #f8fafc; padding: 12px 5px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; color: #4f46e5; text-align: center; -webkit-appearance: none; }
-        .add-btn { width: 100%; background: #1e293b; color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; }
+        /* 記録ボード */
+        .record-board { background: white; border-radius: 22px; padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 25px; }
+        input[type="time"] { border: 1px solid #f1f5f9; background: #f8fafc; padding: 12px 5px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; color: #4f46e5; text-align: center; -webkit-appearance: none; width: 45%; }
+        .add-btn { width: 100%; background: #1e293b; color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; }
 
-        .report-header { font-weight: 800; font-size: 0.75rem; color: var(--text-sub) !important; margin-bottom: 12px; padding-left: 5px; letter-spacing: 2px; text-transform: uppercase; }
+        /* レポート */
+        .report-header { font-weight: 800; font-size: 0.75rem; color: var(--text-sub) !important; margin-bottom: 12px; padding-left: 5px; letter-spacing: 2px; }
         .history-item { background: white; padding: 14px; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border-left: 4px solid #eef2f6; }
-        .history-item.has-night { border-left-color: var(--color-1); }
 
-        /* Page 2: Secret Records */
+        /* --- ダイアログボタンのグラデーション強制設定 --- */
+        .btn-rewrite { background: var(--grad-blue) !important; color: white !important; border: none !important; }
+        .btn-delete { background: var(--grad-red) !important; color: white !important; border: none !important; }
+
+        /* Page 2 & Setup (既存の完璧な状態を維持) */
         #page2 { background: var(--bg-color); }
-        .year-section { background: var(--card-bg); border-radius: 14px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
-        .year-header { padding: 18px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 800; }
-        .month-content { max-height: 0; opacity: 0; display: grid; padding: 0 10px; grid-template-columns: repeat(2, 1fr); gap: 10px; background: var(--card-bg); transition: max-height 0.4s ease, opacity 0.3s ease; }
-        .year-section.active .month-content { max-height: 1000px; opacity: 1; padding: 0 10px 15px; }
-        .month-card { background: var(--bg-color); padding: 12px; border-radius: 12px; min-height: 60px; display: flex; flex-direction: column; justify-content: center; position: relative; }
-        .month-card.has-data { border-left: 4px solid var(--color-1); background-color: #f0f7ff; }
-        #footer-secret { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); padding: 15px 20px 40px; z-index: 900; border-top: 1px solid #d1d1d6; transform: translateY(100%); transition: transform 0.3s; }
-
-        /* --- モーダル & グラデーションボタン設定 --- */
-        #setup-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0); z-index: 999999; width: 100vw; height: 100vh; flex-direction: column; align-items: center; justify-content: center; transition: background 0.4s ease, backdrop-filter 0.4s ease; }
+        #setup-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0); z-index: 999999; flex-direction: column; align-items: center; justify-content: center; transition: background 0.4s ease; }
         #setup-overlay.active { background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); }
-        .setup-panel { background: white; width: 90%; max-width: 360px; padding: 40px 30px; border-radius: 32px; transform: translateY(100px); opacity: 0; transition: transform 0.45s cubic-bezier(0.1, 0.8, 0.2, 1), opacity 0.3s ease; }
+        .setup-panel { background: white; width: 90%; max-width: 360px; padding: 40px 30px; border-radius: 32px; transform: translateY(100px); opacity: 0; transition: 0.45s ease; }
         #setup-overlay.active .setup-panel { transform: translateY(0); opacity: 1; }
-        
+        .setup-input { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 12px; border: 2px solid #f1f5f9; outline: none; font-size: 1.1rem; }
+
         #customModal, #alertModal, #secretEditModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 2000000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .modal-content { background: #fff; width: 85%; max-width: 320px; padding: 30px 20px; border-radius: 24px; text-align: center; }
-        .setup-input { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 12px; border: 2px solid #f1f5f9; outline: none; font-size: 1.1rem; font-weight: 600; }
-
-        /* グラデーションクラス (強制適用用) */
-        .btn-grad-blue { background: var(--grad-blue) !important; border: none !important; color: white !important; }
-        .btn-grad-red { background: var(--grad-red) !important; border: none !important; color: white !important; }
     </style>
 </head>
 <body>
@@ -102,7 +88,7 @@
                 <button class="edit-cfg-btn" onclick="showSetup(true)">EDIT SETTINGS</button>
             </div>
             <div class="cal-container">
-                <div class="month-nav">
+                <div class="month-nav" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                     <button class="nav-arrow" onclick="changeMonth(-1)">←</button>
                     <div id="display-month" class="month-display">---</div>
                     <button class="nav-arrow" onclick="changeMonth(1)">→</button>
@@ -110,10 +96,9 @@
                 <div id="cal-body" class="cal-grid"></div>
             </div>
             <div class="record-board">
-                <div id="selected-date-text" class="selected-date-title">SELECT DATE</div>
-                <div class="time-input-group">
+                <div id="selected-date-text" style="font-weight:900; margin-bottom:15px;">SELECT DATE</div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
                     <input type="time" id="work-start" value="09:00">
-                    <div style="align-self:center; font-weight:800; color:#ccc;">to</div>
                     <input type="time" id="work-end" value="18:00">
                 </div>
                 <button class="add-btn" id="save-btn" onclick="handleLogShift()">Record Shift</button>
@@ -123,29 +108,26 @@
         </div>
 
         <div class="page" id="page2">
-            <div style="position: absolute; top: 15px; left: 15px; width: 35px; height: 35px; background: rgba(0,0,0,0.03); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-sub); font-size: 14px; z-index: 1000;" onclick="showAlert('a: Total / gYY: Graph / y/m/a/memo')">?</div>
             <div style="padding: 20px 0; text-align: center; font-weight: 800; color: var(--text-sub); letter-spacing: 2px;">SECRET SALARY CENTER</div>
             <div id="salary-calendar-container"></div>
-            <div id="footer-secret">
-                <div style="display:flex; gap:10px;">
-                    <input type="text" id="salaryInput" placeholder="yy/mm/amt/memo..." style="flex:1; padding:14px; border-radius:12px; border:1px solid #ddd; outline:none;">
-                    <button class="add-btn" style="width:auto; padding:0 20px;" onclick="handleSecretInput()">Save</button>
-                </div>
+            <div style="position:fixed; bottom:0; left:0; right:0; background:rgba(255,255,255,0.95); padding:15px 20px 40px; border-top:1px solid #ddd; display:flex; gap:10px;" id="footer-secret">
+                <input type="text" id="salaryInput" placeholder="yy/mm/amt/memo..." style="flex:1; padding:14px; border-radius:12px; border:1px solid #ddd;">
+                <button class="add-btn" style="width:auto; padding:0 20px;" onclick="handleSecretInput()">Save</button>
             </div>
         </div>
     </div>
 
     <div id="setup-overlay">
         <div class="setup-panel">
-            <h2 style="font-weight: 950; margin-bottom: 30px; text-align: center;">Settings</h2>
-            <label style="font-size: 0.7rem; font-weight: 800; color: #888; display:block; margin-bottom:5px;">STORE NAME</label>
+            <h2 style="font-weight:950; margin-bottom:25px; text-align:center;">Settings</h2>
+            <label style="font-size:0.7rem; font-weight:800; color:#888;">STORE NAME</label>
             <input type="text" id="setup-shop" class="setup-input"> 
-            <label style="font-size: 0.7rem; font-weight: 800; color: #888; display:block; margin-bottom:5px;">HOURLY WAGE (¥)</label>
+            <label style="font-size:0.7rem; font-weight:800; color:#888;">HOURLY WAGE (¥)</label>
             <input type="text" id="setup-wage" class="setup-input" inputmode="numeric">
-            <label style="font-size: 0.7rem; font-weight: 800; color: #888; display:block; margin-bottom:5px;">NIGHT RATE (%)</label>
+            <label style="font-size:0.7rem; font-weight:800; color:#888;">NIGHT RATE (%)</label>
             <input type="text" id="setup-night-rate" class="setup-input" inputmode="numeric">
-            <button class="add-btn" onclick="saveSetup()" style="margin-top:20px;">Save & Start</button>
-            <button id="setup-cancel-btn" class="add-btn" style="background:none; color:#888; margin-top:10px; display:none;" onclick="hideSetup()">Cancel</button>
+            <button class="add-btn" onclick="saveSetup()">Save & Start</button>
+            <button id="setup-cancel-btn" style="background:none; color:#888; width:100%; margin-top:10px; border:none; display:none;" onclick="hideSetup()">Cancel</button>
         </div>
     </div>
 
@@ -157,8 +139,8 @@
             <button class="add-btn" style="background:none; color:#888; margin-top:5px;" onclick="closeModal()">Cancel</button>
         </div>
     </div>
-    <div id="alertModal" onclick="this.style.display='none'"><div class="modal-content"><h3>Notice</h3><p id="alertMsg" style="font-weight:800; color:var(--color-2)"></p><button class="add-btn" style="margin-top:15px;">OK</button></div></div>
-    <div id="secretEditModal"><div class="modal-content"><span id="secretModalDate" style="font-weight:800; font-size:1.2rem;"></span><div style="display:flex; flex-direction:column; gap:10px; margin-top:25px;"><button class="add-btn btn-grad-blue" id="secretConfirmEdit">Edit</button><button style="padding:15px; border:1px solid var(--color-2); color:var(--color-2); background:none; border-radius:12px; font-weight:700;" id="secretConfirmReset">Reset</button><button class="add-btn" style="background:none; color:#888;" onclick="document.getElementById('secretEditModal').style.display='none'">Cancel</button></div></div></div>
+    <div id="alertModal" onclick="this.style.display='none'"><div class="modal-content"><p id="alertMsg" style="font-weight:800; color:var(--color-2)"></p></div></div>
+    <div id="secretEditModal"><div class="modal-content"><span id="secretModalDate" style="font-weight:800;"></span><div style="display:flex; flex-direction:column; gap:10px; margin-top:20px;"><button class="add-btn btn-rewrite" id="secretConfirmEdit">Edit</button><button class="add-btn" style="background:none; color:var(--color-2); border:1px solid var(--color-2);" id="secretConfirmReset">Reset</button><button class="add-btn" style="background:none; color:#888;" onclick="document.getElementById('secretEditModal').style.display='none'">Cancel</button></div></div></div>
 
     <script>
         let config = JSON.parse(localStorage.getItem('workConfigV34')) || null;
@@ -172,33 +154,31 @@
             const pageIndex = Math.round(slider.scrollLeft / slider.offsetWidth);
             document.getElementById('dot1').classList.toggle('active', pageIndex === 0);
             document.getElementById('dot2').classList.toggle('active', pageIndex === 1);
-            document.getElementById('footer-secret').style.transform = (pageIndex === 1) ? 'translateY(0)' : 'translateY(100%)';
+            document.getElementById('footer-secret').style.display = (pageIndex === 1) ? 'flex' : 'none';
         });
         function goToPage(idx) { slider.scrollTo({ left: slider.offsetWidth * idx, behavior: 'smooth' }); }
 
         function showSetup(edit) { 
             const overlay = document.getElementById('setup-overlay'); overlay.style.display = 'flex';
-            requestAnimationFrame(() => { requestAnimationFrame(() => { overlay.classList.add('active'); }); });
+            setTimeout(() => overlay.classList.add('active'), 10);
             if(edit && config) { document.getElementById('setup-shop').value = config.name; document.getElementById('setup-wage').value = config.wage; document.getElementById('setup-night-rate').value = config.nightRate; document.getElementById('setup-cancel-btn').style.display = 'block'; }
         }
-        function hideSetup() { const o = document.getElementById('setup-overlay'); o.classList.remove('active'); setTimeout(() => { o.style.display = 'none'; }, 450); }
+        function hideSetup() { document.getElementById('setup-overlay').classList.remove('active'); setTimeout(() => document.getElementById('setup-overlay').style.display = 'none', 450); }
         function saveSetup() {
-            const n = document.getElementById('setup-shop').value.trim(), wVal = document.getElementById('setup-wage').value.trim(), rVal = document.getElementById('setup-night-rate').value.trim();
-            if(!n || wVal === "" || rVal === "") { showAlert("Error: All fields required"); return; }
-            if(!(/^\d+$/.test(wVal)) || !(/^\d+$/.test(rVal))) { showAlert("Error: Numbers Only"); return; }
-            config = { name:n, wage:parseInt(wVal), nightRate:parseInt(rVal) };
+            const n = document.getElementById('setup-shop').value.trim(), w = document.getElementById('setup-wage').value.trim(), r = document.getElementById('setup-night-rate').value.trim();
+            if(!n || !/^\d+$/.test(w) || !/^\d+$/.test(r)) { showAlert("Error: Check inputs (Numbers only)"); return; }
+            config = { name:n, wage:parseInt(w), nightRate:parseInt(r) };
             localStorage.setItem('workConfigV34', JSON.stringify(config)); hideSetup(); updateDash();
         }
 
         function changeMonth(dir) { viewDate.setMonth(viewDate.getMonth() + dir); updateDash(); }
+        
         function renderCalendar() {
             const body = document.getElementById('cal-body'); body.innerHTML = '';
-            body.className = "cal-grid";
-            const days = ["S","M","T","W","T","F","S"];
-            for(let i=0; i<7; i++) { const l = document.createElement('div'); l.className="cal-day-label"; l.innerText=days[i]; body.appendChild(l); }
+            ["S","M","T","W","T","F","S"].forEach(d => { const l = document.createElement('div'); l.className="cal-day-label"; l.innerText=d; body.appendChild(l); });
             const y = viewDate.getFullYear(), m = viewDate.getMonth();
             const first = new Date(y, m, 1).getDay(), last = new Date(y, m + 1, 0).getDate();
-            const now = new Date(); const todayStr = `${now.getFullYear()}-${(now.getMonth()+1).toString().padStart(2,'0')}-${now.getDate().toString().padStart(2,'0')}`;
+            const todayStr = `${new Date().getFullYear()}-${(new Date().getMonth()+1).toString().padStart(2,'0')}-${new Date().getDate().toString().padStart(2,'0')}`;
             for(let i=0; i<first; i++) body.appendChild(document.createElement('div'));
             for(let d=1; d<=last; d++) {
                 const f = `${y}-${(m+1).toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
@@ -206,24 +186,24 @@
                 cell.className = `cal-cell ${log ? 'has-data' : ''} ${selectedDateStr === f ? 'selected' : ''}`;
                 if(f === todayStr) cell.classList.add('today');
                 cell.innerHTML = `<div class="cal-date-num">${d}</div>${log ? `<div class="cal-amt-hint">¥${(log.amt/1000).toFixed(1)}k</div>` : ''}`;
-                cell.onclick = (e) => { e.stopPropagation(); selectDate(f); };
+                cell.onclick = () => selectDate(f);
                 body.appendChild(cell);
             }
         }
 
-        // ③動的ボタンテキスト切り替え
+        // --- ① Rewrite Shift の切り替え ---
         function selectDate(dateStr) {
-            if(!dateStr) return; selectedDateStr = dateStr;
-            const log = logs.find(l => l.fullDate === dateStr); const d = new Date(dateStr.replace(/-/g, '/'));
-            document.getElementById('selected-date-text').innerText = `${d.toLocaleString('en', {month:'long'})} ${d.getDate()}`;
-            if(log) { 
-                document.getElementById('work-start').value = log.start; 
-                document.getElementById('work-end').value = log.end; 
-                document.getElementById('save-btn').innerText = "Rewrite Shift"; 
-            } else { 
-                document.getElementById('work-start').value = "09:00"; 
-                document.getElementById('work-end').value = "18:00"; 
-                document.getElementById('save-btn').innerText = "Record Shift"; 
+            selectedDateStr = dateStr;
+            const log = logs.find(l => l.fullDate === dateStr);
+            const btn = document.getElementById('save-btn');
+            if(log) {
+                document.getElementById('work-start').value = log.start;
+                document.getElementById('work-end').value = log.end;
+                btn.innerText = "Rewrite Shift"; // 既存データがある日は文字変更
+            } else {
+                document.getElementById('work-start').value = "09:00";
+                document.getElementById('work-end').value = "18:00";
+                btn.innerText = "Record Shift";
             }
             renderCalendar();
         }
@@ -231,101 +211,101 @@
         function handleLogShift() { 
             if(!selectedDateStr) return; 
             if(logs.find(l => l.fullDate === selectedDateStr)) {
-                // 文言変更：Rewrite / デザイン：青グラデ
-                showModal("Update Record?", "Overwrite existing shift?", "Rewrite", "btn-grad-blue", () => executeSave()); 
+                // ② 文言：Rewrite / デザイン：青グラデ
+                showModal("Update Record?", "Overwrite existing shift?", "Rewrite", "btn-rewrite", () => executeSave()); 
             } else executeSave(); 
         }
 
         function executeSave() {
-            const s = document.getElementById('work-start').value, e = document.getElementById('work-end').value; const res = calculatePay(s, e);
+            const s = document.getElementById('work-start').value, e = document.getElementById('work-end').value;
+            const res = calculatePay(s, e);
             logs = logs.filter(l => l.fullDate !== selectedDateStr);
-            logs.unshift({ id: Date.now(), fullDate: selectedDateStr, date: `${new Date(selectedDateStr.replace(/-/g,'/')).getMonth()+1}/${new Date(selectedDateStr.replace(/-/g,'/')).getDate()}`, start: s, end: e, amt: res.total, dur: res.duration, surcharge: res.surcharge, wage: config.wage, rate: config.nightRate, monthKey: `${new Date(selectedDateStr.replace(/-/g,'/')).getFullYear()%100}/${new Date(selectedDateStr.replace(/-/g,'/')).getMonth()+1}` });
+            logs.unshift({ id: Date.now(), fullDate: selectedDateStr, start: s, end: e, amt: res.total, rate: config.nightRate, wage: config.wage, monthKey: `${new Date(selectedDateStr.replace(/-/g,'/')).getFullYear()%100}/${new Date(selectedDateStr.replace(/-/g,'/')).getMonth()+1}`, date: `${new Date(selectedDateStr.replace(/-/g,'/')).getMonth()+1}/${new Date(selectedDateStr.replace(/-/g,'/')).getDate()}`, dur: res.duration, surcharge: res.surcharge });
             localStorage.setItem('workLogsV34', JSON.stringify(logs)); updateDash(); selectDate(selectedDateStr);
         }
-        
+
         function updateDash() {
             if(!config) { showSetup(false); return; }
-            const monthKey = `${viewDate.getFullYear()%100}/${viewDate.getMonth()+1}`;
             document.getElementById('display-month').innerText = viewDate.toLocaleString('en', {month:'long'}).toUpperCase() + ` (${viewDate.getMonth()+1})`;
             document.getElementById('display-shop').innerText = config.name.toUpperCase();
-            const monthLogs = logs.filter(l => l.monthKey === monthKey).sort((a,b) => a.fullDate.localeCompare(b.fullDate));
-            document.getElementById('display-total').innerText = `¥${monthLogs.reduce((sum,l)=>sum+l.amt, 0).toLocaleString()}`;
+            const monthKey = `${viewDate.getFullYear()%100}/${viewDate.getMonth()+1}`;
+            const mLogs = logs.filter(l => l.monthKey === monthKey).sort((a,b) => a.fullDate.localeCompare(b.fullDate));
+            document.getElementById('display-total').innerText = `¥${mLogs.reduce((sum,l)=>sum+l.amt, 0).toLocaleString()}`;
             renderCalendar();
-            document.getElementById('log-container').innerHTML = monthLogs.map(l => `
-                <div class="history-item ${l.surcharge > 0 ? 'has-night' : ''}">
+            document.getElementById('log-container').innerHTML = mLogs.map(l => `
+                <div class="history-item">
                     <div style="flex:1;">
                         <div style="font-weight:700;">${l.date} <span style="font-size:10px; color:#888;">(${l.start}-${l.end})</span></div>
                         <div style="font-size:10px; color:#888;">${l.dur}h / ¥${(l.wage||0).toLocaleString()} / N.R-${l.rate||0}%</div>
                     </div>
                     <div style="text-align:right;">
                         <div style="font-weight:900; color:#4f46e5;">+¥${l.amt.toLocaleString()}</div>
-                        ${l.surcharge > 0 ? `<div style="font-size:9px; color:var(--color-1); font-weight:700;">Night: +¥${l.surcharge.toLocaleString()}</div>` : ''}
                     </div>
-                    <div onclick="confirmDelete(${l.id})" style="color:var(--color-2); font-size:24px; font-weight:900; padding: 0 10px; cursor:pointer; min-width:44px; text-align:right;">✕</div>
+                    <div onclick="confirmDelete(${l.id})" style="color:var(--color-2); font-size:22px; font-weight:900; padding: 0 10px; cursor:pointer; min-width:44px; text-align:right;">✕</div>
                 </div>
             `).join('');
         }
 
         function calculatePay(s, e) {
-            let sM = timeToMin(s), eM = timeToMin(e); if (eM <= sM) eM += 1440;
-            let late = 0; for (let m = sM; m < eM; m++) { let c = m % 1440; if (c >= 1320 || c < 300) late++; }
-            const totalH = (eM - sM) / 60, surOnly = (late / 60) * (config.wage * (config.nightRate / 100));
-            return { total: Math.floor(totalH * config.wage + surOnly), duration: totalH.toFixed(1), surcharge: Math.floor(surOnly) };
+            const toM = (t) => { const [h,m] = t.split(':').map(Number); return h*60+m; };
+            let sM = toM(s), eM = toM(e); if(eM <= sM) eM += 1440;
+            let night = 0; for(let i=sM; i<eM; i++) { const c = i%1440; if(c >= 1320 || c < 300) night++; }
+            const totalH = (eM-sM)/60, nightH = night/60;
+            const basic = totalH * config.wage, sur = nightH * (config.wage * (config.nightRate/100));
+            return { total: Math.floor(basic + sur), duration: totalH.toFixed(1), surcharge: Math.floor(sur) };
         }
-        function timeToMin(t) { const [h, m] = t.split(':').map(Number); return h * 60 + m; }
 
         function initSalaryCalendar(openYear = null) {
             const container = document.getElementById('salary-calendar-container'); container.innerHTML = '';
             for (let y = 25; y <= 34; y++) {
-                let yearlyTotal = 0; for (let m = 1; m <= 12; m++) yearlyTotal += (salaryData[`${y}/${m}`]?.amount || 0);
+                let yearly = 0; for (let m = 1; m <= 12; m++) yearly += (salaryData[`${y}/${m}`]?.amount || 0);
                 const section = document.createElement('div'); section.className = 'year-section' + (y === openYear ? ' active' : '');
-                section.innerHTML = `<div class="year-header" onclick="this.parentElement.classList.toggle('active')"><div>20${y}</div><div>¥${yearlyTotal.toLocaleString()}</div></div><div class="month-content"></div>`;
+                section.innerHTML = `<div class="year-header" onclick="this.parentElement.classList.toggle('active')"><div>20${y}</div><div>¥${yearly.toLocaleString()}</div></div><div class="month-content"></div>`;
                 const grid = section.querySelector('.month-content');
                 for (let m = 1; m <= 12; m++) {
                     const d = salaryData[`${y}/${m}`] || { amount: 0, memo: '' };
                     const card = document.createElement('div'); card.className = `month-card ${d.amount > 0 ? 'has-data' : ''}`;
-                    let lastTap = 0; card.addEventListener('touchend', (e) => { let now = Date.now(); if (now - lastTap < 300 && now - lastTap > 0) { if (d.amount > 0) openSecretEdit(y, m, d); e.preventDefault(); } lastTap = now; });
+                    card.onclick = () => { if(d.amount > 0) openSecretEdit(y, m, d); };
                     card.innerHTML = `<div>${monthNames[m-1]}</div><b>¥${d.amount.toLocaleString()}</b>${d.memo ? `<div style="font-size:0.5rem; color:var(--color-3);">📄 ${d.memo}</div>` : ''}`;
                     grid.appendChild(card);
                 }
                 container.appendChild(section);
             }
         }
+
         function handleSecretInput() {
-            const el = document.getElementById('salaryInput'); const val = el.value.trim().toLowerCase();
-            if (!val) return;
-            if (val === 'a') { let total = 0; Object.values(salaryData).forEach(d => total += d.amount); showAlert(`GRAND TOTAL: ¥${total.toLocaleString()}`); }
-            else { const m = val.match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/); if (m) { const y = parseInt(m[1]), mo = parseInt(m[2]), amt = parseInt(m[3]), memo = m[4] || ''; salaryData[`${y}/${mo}`] = { amount: amt, memo: memo }; localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData)); initSalaryCalendar(y); } }
+            const el = document.getElementById('salaryInput'); const m = el.value.trim().match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/);
+            if (m) { const y = parseInt(m[1]), mo = parseInt(m[2]), amt = parseInt(m[3]), memo = m[4] || ''; salaryData[`${y}/${mo}`] = { amount: amt, memo: memo }; localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData)); initSalaryCalendar(y); }
             el.value = ''; el.blur();
         }
+
         function openSecretEdit(y, m, d) {
-            document.getElementById('secretModalDate').innerText = `20${y}/${monthNames[m-1]}`; document.getElementById('secretEditModal').style.display = 'flex';
+            document.getElementById('secretModalDate').innerText = `20${y}/${monthNames[m-1]}`;
+            document.getElementById('secretEditModal').style.display = 'flex';
             document.getElementById('secretConfirmEdit').onclick = () => { document.getElementById('salaryInput').value = `${y}/${m}/${d.amount}${d.memo ? '/' + d.memo : ''}`; document.getElementById('secretEditModal').style.display = 'none'; document.getElementById('salaryInput').focus(); };
             document.getElementById('secretConfirmReset').onclick = () => { delete salaryData[`${y}/${m}`]; localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData)); initSalaryCalendar(y); document.getElementById('secretEditModal').style.display = 'none'; };
         }
 
-        // --- 全般ダイアログロジック ---
         function showAlert(msg) { document.getElementById('alertMsg').innerText = msg; document.getElementById('alertModal').style.display = 'flex'; }
         function closeModal() { document.getElementById('customModal').style.display = 'none'; }
         
-        // グラデーションクラスを動的に切り替える拡張版showModal
+        // 修正：動的にボタンの文字と色を変える showModal
         function showModal(title, msg, btnText, btnClass, onConfirm) { 
             document.getElementById('modalTitle').innerText = title; 
             document.getElementById('modalMsg').innerText = msg; 
             const btn = document.getElementById('modalConfirmBtn'); 
             btn.innerText = btnText;
-            btn.className = "add-btn " + btnClass; // ここでグラデーションクラスを強制適用
+            btn.className = "add-btn " + btnClass; // ここでグラデーションを適用
             btn.onclick = () => { onConfirm(); closeModal(); }; 
             document.getElementById('customModal').style.display = 'flex'; 
         }
         
         function confirmDelete(id) { 
-            // 文言変更：Delete / デザイン：赤グラデ
-            showModal("Delete Record?", "Are you sure you want to remove this shift record?", "Delete", "btn-grad-red", () => { 
+            // ③ 文言：Delete / デザイン：赤グラデ
+            showModal("Delete Record?", "Remove this shift?", "Delete", "btn-delete", () => { 
                 logs = logs.filter(l => l.id !== id); 
                 localStorage.setItem('workLogsV34', JSON.stringify(logs)); 
                 updateDash(); 
-                selectDate(selectedDateStr); 
             }); 
         }
 

@@ -10,9 +10,12 @@
             --text-main: #1c1c1e; --text-sub: #8e8e93;
             --accent-work: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
             --color-1: #007AFF; --color-2: #FF3B30; --color-3: #34C759; --color-4: #FF9500;
-            /* グラデーション定義 */
-            --grad-blue: linear-gradient(135deg, #007AFF 0%, #0051D5 100%) !important;
-            --grad-red: linear-gradient(135deg, #FF3B30 0%, #D7261B 100%) !important;
+            
+            /* --- 修正ポイント：グラデーションを劇的に強化（3色構成・光沢感） --- */
+            /* 鮮やかで深みのある青のグラデーション（水色 -> 青 -> 濃い青） */
+            --grad-blue-vivid: linear-gradient(180deg, #5AC8FA 0%, #007AFF 40%, #0051D5 100%) !important;
+            /* 燃えるような赤のグラデーション（薄い赤 -> 赤 -> 深い赤） */
+            --grad-red-vivid: linear-gradient(180deg, #FF6B6B 0%, #FF3B30 40%, #BF241A 100%) !important;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: var(--bg-color); font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
@@ -26,7 +29,7 @@
         .dot.active { background: #6366f1; width: 25px; border-radius: 10px; }
 
         /* Page 1: Dashboard */
-        .work-card { background: var(--accent-work); border-radius: 24px; padding: 25px; color: white; box-shadow: 0 8px 25px rgba(99, 102, 241, 0.25); margin-bottom: 20px; min-height: 190px; position: relative; display: flex; flex-direction: column; justify-content: space-between; align-items: center; }
+        .work-card { background: var(--accent-work); border-radius: 24px; padding: 25px; color: white; box-shadow: 0 8px 25px rgba(99, 102, 241, 0.25); min-height: 190px; position: relative; display: flex; flex-direction: column; justify-content: space-between; align-items: center; }
         #display-shop { align-self: flex-start; font-size: 1.4rem; font-weight: 800; opacity: 0.95; max-width: 80%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .current-total { font-size: 2.7rem; font-weight: 950; }
         .edit-cfg-btn { align-self: flex-end; background: rgba(255,255,255,0.25); border: none; color: white; padding: 10px 18px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
@@ -35,6 +38,7 @@
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
         .cal-day-label { font-size: 0.65rem; color: var(--text-sub); font-weight: 800; text-align: center; margin-bottom: 8px; }
         
+        /* 今日のネイビー、選択の透明枠線は維持 */
         .cal-cell { height: 48px; border-radius: 10px; background: #f8fafc; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid transparent; transition: 0.1s; cursor: pointer; }
         .cal-cell.has-data { background: #f0f7ff; }
         .cal-cell.today { background: #1e293b !important; }
@@ -48,17 +52,32 @@
         .record-board { background: white; border-radius: 22px; padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 25px; border: 1px solid #eef2f6; }
         input[type="time"] { border: 1px solid #f1f5f9; background: #f8fafc; padding: 12px 5px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; color: #4f46e5; text-align: center; width: 45%; }
         
-        /* メインボタン */
-        .add-btn { width: 100%; background: #1e293b; color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; }
+        /* メインボタン（動的切り替え） */
+        .add-btn { width: 100%; background: #1e293b; color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
 
-        /* ダイアログボタンのグラデーション */
-        .grad-blue-btn { background: var(--grad-blue) !important; color: white !important; }
-        .grad-red-btn { background: var(--grad-red) !important; color: white !important; }
+        /* --- 修正ポイント：ダイアログ用グラデーションボタンの強化（立体感・影） --- */
+        /* Rewriteボタン：鮮やかな青のグラデーション＋青い影 */
+        .grad-blue-btn-vivid { 
+            background: var(--grad-blue-vivid) !important; 
+            color: white !important; 
+            border: none !important; 
+            box-shadow: 0 6px 20px rgba(0, 122, 255, 0.5) !important; /* 立体的な青い影 */
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 文字の影 */
+        }
+        /* Deleteボタン：燃えるような赤のグラデーション＋赤い影 */
+        .grad-red-btn-vivid { 
+            background: var(--grad-red-vivid) !important; 
+            color: white !important; 
+            border: none !important; 
+            box-shadow: 0 6px 20px rgba(255, 59, 48, 0.5) !important; /* 立体的な赤い影 */
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2); /* 文字の影 */
+        }
 
         .report-header { font-weight: 800; font-size: 0.75rem; color: var(--text-sub) !important; margin-bottom: 12px; padding-left: 5px; letter-spacing: 2px; }
         .history-item { background: white; padding: 14px; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border-left: 4px solid #eef2f6; }
 
-        /* Setup & Modals */
+        /* Page 2 & Setup & Modals (既存の完璧な状態) */
+        #page2 { background: var(--bg-color); }
         #setup-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0); z-index: 999999; flex-direction: column; align-items: center; justify-content: center; transition: background 0.4s; }
         #setup-overlay.active { background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); }
         .setup-panel { background: white; width: 90%; max-width: 360px; padding: 40px 30px; border-radius: 32px; transform: translateY(100px); opacity: 0; transition: 0.4s; }
@@ -66,7 +85,7 @@
         .setup-input { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 12px; border: 2px solid #f1f5f9; outline: none; font-size: 1.1rem; }
 
         #customModal, #secretEditModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 2000000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
-        .modal-content { background: #fff; width: 85%; max-width: 320px; padding: 30px 20px; border-radius: 24px; text-align: center; }
+        .modal-content { background: #fff; width: 85%; max-width: 320px; padding: 30px 20px; border-radius: 24px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
@@ -174,7 +193,6 @@
             }
         }
 
-        // --- ① Rewrite Shift の切り替え命令を強化 ---
         function selectDate(dateStr) {
             selectedDateStr = dateStr;
             const log = logs.find(l => l.fullDate === dateStr);
@@ -182,7 +200,7 @@
             if(log) {
                 document.getElementById('work-start').value = log.start;
                 document.getElementById('work-end').value = log.end;
-                btn.textContent = "Rewrite Shift"; // 文字を強制変更
+                btn.textContent = "Rewrite Shift"; 
             } else {
                 document.getElementById('work-start').value = "09:00";
                 document.getElementById('work-end').value = "18:00";
@@ -194,8 +212,8 @@
         function handleLogShift() {
             if(!selectedDateStr) return;
             if(logs.find(l => l.fullDate === selectedDateStr)) {
-                // ② 文言：Rewrite / デザイン：青グラデクラス
-                showModal("Update Record?", "Overwrite existing shift?", "Rewrite", "grad-blue-btn", () => executeSave());
+                // ② 強化された青グラデーションクラスを適用
+                showModal("Update Record?", "Overwrite existing shift?", "Rewrite", "grad-blue-btn-vivid", () => executeSave());
             } else executeSave();
         }
 
@@ -259,21 +277,19 @@
         }
 
         function closeModal() { document.getElementById('customModal').style.display='none'; }
-        
-        // 文字とグラデーションクラスを「強制注入」する関数
         function showModal(title, msg, btnText, btnClass, onConfirm) {
             document.getElementById('modalTitle').textContent = title;
             document.getElementById('modalMsg').textContent = msg;
             const btn = document.getElementById('modalConfirmBtn');
             btn.textContent = btnText;
-            btn.className = "add-btn " + btnClass; // ここでグラデーションクラスを強制
+            btn.className = "add-btn " + btnClass; // ここでグラデーションを強制適用
             btn.onclick = () => { onConfirm(); closeModal(); };
             document.getElementById('customModal').style.display='flex';
         }
 
         function confirmDelete(id) {
-            // ③ 文言：Delete / デザイン：赤グラデクラス
-            showModal("Delete Record?", "Remove this shift record?", "Delete", "grad-red-btn", () => {
+            // ③ 強化された赤グラデーションクラスを適用
+            showModal("Delete Record?", "Remove this shift record?", "Delete", "grad-red-btn-vivid", () => {
                 logs = logs.filter(l => l.id !== id);
                 localStorage.setItem('workLogsV34', JSON.stringify(logs));
                 updateDash();

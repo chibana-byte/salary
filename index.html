@@ -24,7 +24,7 @@
         .dot { width: 10px; height: 10px; background: #ccc; border-radius: 50%; transition: 0.3s; cursor: pointer; }
         .dot.active { background: #6366f1; width: 25px; border-radius: 10px; }
 
-        /* Page 1: Dashboard */
+        /* --- Page 1: Dashboard --- */
         #page1 { background: #f8fafc; }
         .work-card { 
             background: var(--accent-work); border-radius: 24px; padding: 25px; color: white; 
@@ -42,11 +42,30 @@
         .month-display { font-size: 0.95rem; font-weight: 800; color: #1e293b; text-transform: uppercase; letter-spacing: 1px; }
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
         .cal-day-label { font-size: 0.65rem; color: var(--text-sub); font-weight: 800; text-align: center; margin-bottom: 8px; }
+        
+        /* カレンダーセル */
         .cal-cell { height: 48px; border-radius: 10px; background: #f8fafc; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid transparent; transition: 0.15s; cursor: pointer; z-index: 1; }
+        
+        /* 記載済みのところ：薄いブルー */
         .cal-cell.has-data { background: #f0f7ff; }
-        .cal-cell.today { background: #ebf0ff; }
-        .cal-cell.today .cal-date-num { color: #4f46e5; font-weight: 900; }
+
+        /* --- 修正：今日の日付 (v35) --- */
+        .cal-cell.today { 
+            background: #1e293b !important; /* 濃いネイビー */
+        }
+        .cal-cell.today .cal-date-num { 
+            color: white !important; /* 文字を白にして視認性を最大化 */
+            font-weight: 900; 
+        }
+        .cal-cell.today .cal-amt-hint { 
+            color: #7dd3fc !important; /* ヒントも明るい水色で見やすく */
+        }
+
+        /* 選択中のところ：太い青枠 */
         .cal-cell.selected { background: white !important; outline: 3px solid var(--color-1); outline-offset: -3px; z-index: 10; box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3); }
+        /* 今日かつ選択中の時も白文字を維持 */
+        .cal-cell.today.selected .cal-date-num { color: var(--color-1) !important; }
+
         .cal-date-num { font-size: 0.85rem; font-weight: 700; color: var(--text-main); }
         .cal-amt-hint { font-size: 0.5rem; color: var(--color-1); font-weight: 800; margin-top: 2px; }
 
@@ -69,19 +88,14 @@
 
         #footer-secret { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); padding: 15px 20px 40px; z-index: 900; border-top: 1px solid #d1d1d6; transform: translateY(100%); transition: transform 0.3s; }
 
-        /* Setup Layer & Animation */
+        /* Setup & Modals (v34を継承・固定) */
         #setup-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0); z-index: 999999; width: 100vw; height: 100vh; flex-direction: column; align-items: center; justify-content: center; transition: background 0.4s ease, backdrop-filter 0.4s ease; }
         #setup-overlay.active { background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); }
         .setup-panel { background: white; width: 90%; max-width: 360px; padding: 40px 30px; border-radius: 32px; transform: translateY(100px); opacity: 0; transition: transform 0.45s cubic-bezier(0.1, 0.8, 0.2, 1), opacity 0.3s ease; }
         #setup-overlay.active .setup-panel { transform: translateY(0); opacity: 1; }
-
-        /* ダイアログ */
         #customModal, #alertModal, #secretEditModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 2000000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
-        .modal-content { background: #fff; width: 85%; max-width: 320px; padding: 30px 20px; border-radius: 24px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-        
-        /* 入力欄（修正：プレースホルダーを排除） */
-        .setup-input { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 12px; border: 2px solid #f1f5f9; outline: none; font-size: 1.1rem; font-weight: 600; color: #1e293b; background: #fff; }
-        .setup-input:focus { border-color: var(--color-1); }
+        .modal-content { background: #fff; width: 85%; max-width: 320px; padding: 30px 20px; border-radius: 24px; text-align: center; }
+        .setup-input { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 12px; border: 2px solid #f1f5f9; outline: none; font-size: 1.1rem; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -137,27 +151,21 @@
             <h2 style="font-weight: 950; margin-bottom: 30px; text-align: center;">Settings</h2>
             <label style="font-size: 0.7rem; font-weight: 800; color: #888; display:block; margin-bottom:5px;">STORE NAME</label>
             <input type="text" id="setup-shop" class="setup-input"> 
-            
             <label style="font-size: 0.7rem; font-weight: 800; color: #888; display:block; margin-bottom:5px;">HOURLY WAGE (¥)</label>
             <input type="text" id="setup-wage" class="setup-input" inputmode="numeric">
-            
             <label style="font-size: 0.7rem; font-weight: 800; color: #888; display:block; margin-bottom:5px;">NIGHT RATE (%)</label>
             <input type="text" id="setup-night-rate" class="setup-input" inputmode="numeric">
-            
             <button class="add-btn" onclick="saveSetup()" style="margin-top:20px;">Save & Start</button>
             <button id="setup-cancel-btn" class="add-btn" style="background:none; color:#888; margin-top:10px; display:none;" onclick="hideSetup()">Cancel</button>
         </div>
     </div>
-
-    <div id="customModal"><div class="modal-content"><h3 id="modalTitle"></h3><p id="modalMsg" style="color:#888; margin-bottom:20px;"></p><button id="modalConfirmBtn" class="add-btn" style="background:var(--color-1);">Confirm</button><button class="add-btn" style="background:none; color:#888; margin-top:5px;" onclick="closeModal()">Cancel</button></div></div>
-    <div id="alertModal" onclick="this.style.display='none'"><div class="modal-content"><h3>Notice</h3><p id="alertMsg" style="font-weight:800; color:var(--color-2)"></p><button class="add-btn" style="margin-top:15px;">OK</button></div></div>
-    <div id="secretEditModal"><div class="modal-content"><span id="secretModalDate" style="font-weight:800; font-size:1.2rem;"></span><div style="display:flex; flex-direction:column; gap:10px; margin-top:25px;"><button class="add-btn" id="secretConfirmEdit">Edit</button><button style="padding:15px; border:1px solid var(--color-2); color:var(--color-2); background:none; border-radius:12px; font-weight:700;" id="secretConfirmReset">Reset</button><button class="add-btn" style="background:none; color:#888;" onclick="document.getElementById('secretEditModal').style.display='none'">Cancel</button></div></div></div>
 
     <script>
         let config = JSON.parse(localStorage.getItem('workConfigV34')) || null;
         let logs = JSON.parse(localStorage.getItem('workLogsV34')) || [];
         let salaryData = JSON.parse(localStorage.getItem('myTenYearSalaryData')) || {};
         let viewDate = new Date(); let selectedDateStr = "";
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
         const slider = document.getElementById('mainSlider');
         slider.addEventListener('scroll', () => {
@@ -168,37 +176,18 @@
         });
         function goToPage(idx) { slider.scrollTo({ left: slider.offsetWidth * idx, behavior: 'smooth' }); }
 
-        // --- 修正：数値バリデーション機能 ---
         function showSetup(edit) { 
             const overlay = document.getElementById('setup-overlay'); overlay.style.display = 'flex';
             requestAnimationFrame(() => { requestAnimationFrame(() => { overlay.classList.add('active'); }); });
-            if(edit && config) { 
-                document.getElementById('setup-shop').value = config.name; 
-                document.getElementById('setup-wage').value = config.wage; 
-                document.getElementById('setup-night-rate').value = config.nightRate; 
-                document.getElementById('setup-cancel-btn').style.display = 'block'; 
-            }
+            if(edit && config) { document.getElementById('setup-shop').value = config.name; document.getElementById('setup-wage').value = config.wage; document.getElementById('setup-night-rate').value = config.nightRate; document.getElementById('setup-cancel-btn').style.display = 'block'; }
         }
         function hideSetup() { const o = document.getElementById('setup-overlay'); o.classList.remove('active'); setTimeout(() => { o.style.display = 'none'; }, 450); }
-        
         function saveSetup() {
-            const n = document.getElementById('setup-shop').value.trim();
-            const wVal = document.getElementById('setup-wage').value.trim();
-            const rVal = document.getElementById('setup-night-rate').value.trim();
-
-            // エラー表示の優先：未記入
+            const n = document.getElementById('setup-shop').value.trim(), wVal = document.getElementById('setup-wage').value.trim(), rVal = document.getElementById('setup-night-rate').value.trim();
             if(!n || wVal === "" || rVal === "") { showAlert("Error: All fields required"); return; }
-            
-            // 重要：正規表現による「数字のみ」の判定
-            const isPureNum = (str) => /^\d+$/.test(str);
-            if(!isPureNum(wVal) || !isPureNum(rVal)) { 
-                showAlert("Error: Numbers Only for Wage and Rate"); 
-                return; 
-            }
-
+            if(!(/^\d+$/.test(wVal)) || !(/^\d+$/.test(rVal))) { showAlert("Error: Numbers Only for Wage and Rate"); return; }
             config = { name:n, wage:parseInt(wVal), nightRate:parseInt(rVal) };
-            localStorage.setItem('workConfigV34', JSON.stringify(config));
-            hideSetup(); updateDash();
+            localStorage.setItem('workConfigV34', JSON.stringify(config)); hideSetup(); updateDash();
         }
 
         function changeMonth(dir) { viewDate.setMonth(viewDate.getMonth() + dir); updateDash(); }
@@ -257,7 +246,7 @@
                     const d = salaryData[`${y}/${m}`] || { amount: 0, memo: '' };
                     const card = document.createElement('div'); card.className = `month-card ${d.amount > 0 ? 'has-data' : ''}`;
                     let lastTap = 0; card.addEventListener('touchend', (e) => { let now = Date.now(); if (now - lastTap < 300 && now - lastTap > 0) { if (d.amount > 0) openSecretEdit(y, m, d); e.preventDefault(); } lastTap = now; });
-                    card.innerHTML = `<div>${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][m-1]}</div><b>¥${d.amount.toLocaleString()}</b>${d.memo ? `<div style="font-size:0.5rem; color:var(--color-3);">📄 ${d.memo}</div>` : ''}`;
+                    card.innerHTML = `<div>${monthNames[m-1]}</div><b>¥${d.amount.toLocaleString()}</b>${d.memo ? `<div style="font-size:0.5rem; color:var(--color-3);">📄 ${d.memo}</div>` : ''}`;
                     grid.appendChild(card);
                 }
                 container.appendChild(section);
@@ -267,7 +256,7 @@
             const el = document.getElementById('salaryInput'); const val = el.value.trim().toLowerCase();
             if (!val) return;
             if (val === 'a') { let total = 0; Object.values(salaryData).forEach(d => total += d.amount); alert(`GRAND TOTAL: ¥${total.toLocaleString()}`); }
-            else { const m = val.match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/); if (m) { const y = parseInt(m[1]), mo = parseInt(m[2]), amt = parseInt(m[3]), memo = m[4] || ''; salaryData[`${y}/${mo}`] = { amount: amt, memo: memo }; localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData)); initSalaryCalendar(y); } else { showAlert("Format: yy/mm/amt/memo"); } }
+            else { const m = val.match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/); if (m) { const y = parseInt(m[1]), mo = parseInt(m[2]), amt = parseInt(m[3]), memo = m[4] || ''; salaryData[`${y}/${mo}`] = { amount: amt, memo: memo }; localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData)); initSalaryCalendar(y); } }
             el.value = ''; el.blur();
         }
         function openSecretEdit(y, m, d) {
@@ -278,7 +267,6 @@
 
         function showAlert(msg) { document.getElementById('alertMsg').innerText = msg; document.getElementById('alertModal').style.display = 'flex'; }
         function closeModal() { document.getElementById('customModal').style.display = 'none'; }
-        function openHint() { document.getElementById('hintModal').style.display='flex'; }
         function showModal(title, msg, onConfirm) { document.getElementById('modalTitle').innerText = title; document.getElementById('modalMsg').innerText = msg; document.getElementById('modalConfirmBtn').onclick = () => { onConfirm(); closeModal(); }; document.getElementById('customModal').style.display = 'flex'; }
         function confirmDelete(id) { showModal("Delete?", "Remove shift?", () => { logs = logs.filter(l => l.id !== id); localStorage.setItem('workLogsV34', JSON.stringify(logs)); updateDash(); selectDate(selectedDateStr); }); }
 

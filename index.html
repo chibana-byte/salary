@@ -43,14 +43,14 @@
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
         .cal-day-label { font-size: 0.65rem; color: var(--text-sub); font-weight: 800; text-align: center; margin-bottom: 8px; }
         
+        /* カレンダーセル */
         .cal-cell { height: 48px; border-radius: 10px; background: #f8fafc; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid transparent; transition: 0.15s; cursor: pointer; z-index: 1; }
         .cal-cell.has-data { background: #f0f7ff; }
         
-        /* 濃いネイビーの今日の日付 */
-        .cal-cell.today { background: #1e293b !important; }
-        .cal-cell.today .cal-date-num { color: white !important; font-weight: 900; }
-        .cal-cell.today .cal-amt-hint { color: #7dd3fc !important; }
-
+        /* --- 今日の日付：元の淡いスタイルに復元 --- */
+        .cal-cell.today { background: #ebf0ff; }
+        .cal-cell.today .cal-date-num { color: #4f46e5; font-weight: 900; }
+        
         /* 選択中の青枠 */
         .cal-cell.selected { background: white !important; outline: 3px solid var(--color-1); outline-offset: -3px; z-index: 10; box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3); }
 
@@ -63,13 +63,13 @@
         input[type="time"] { flex:1; min-width: 0; border: 1px solid #f1f5f9; background: #f8fafc; padding: 12px 5px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; color: #4f46e5; text-align: center; -webkit-appearance: none; }
         .add-btn { width: 100%; background: #1e293b; color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; }
 
-        /* レポートヘッダー：グレーに修正 */
+        /* レポートヘッダー：グレー（text-sub）を維持 */
         .report-header { font-weight: 800; font-size: 0.75rem; color: var(--text-sub) !important; margin-bottom: 12px; padding-left: 5px; letter-spacing: 2px; text-transform: uppercase; }
         
         .history-item { background: white; padding: 14px; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border-left: 4px solid #eef2f6; }
         .history-item.has-night { border-left-color: var(--color-1); }
 
-        /* Page 2: Secret Records */
+        /* --- Page 2: Secret Records --- */
         #page2 { background: var(--bg-color); }
         .year-section { background: var(--card-bg); border-radius: 14px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
         .year-header { padding: 18px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 800; }
@@ -80,7 +80,7 @@
 
         #footer-secret { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); padding: 15px 20px 40px; z-index: 900; border-top: 1px solid #d1d1d6; transform: translateY(100%); transition: transform 0.3s; }
 
-        /* 初期設定レイヤー & モーダル */
+        /* 初期設定レイヤー & モーダル (固定) */
         #setup-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0); z-index: 999999; width: 100vw; height: 100vh; flex-direction: column; align-items: center; justify-content: center; transition: background 0.4s ease, backdrop-filter 0.4s ease; }
         #setup-overlay.active { background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); }
         .setup-panel { background: white; width: 90%; max-width: 360px; padding: 40px 30px; border-radius: 32px; transform: translateY(100px); opacity: 0; transition: transform 0.45s cubic-bezier(0.1, 0.8, 0.2, 1), opacity 0.3s ease; }
@@ -152,10 +152,6 @@
         </div>
     </div>
 
-    <div id="customModal"><div class="modal-content"><h3 id="modalTitle"></h3><p id="modalMsg" style="color:#888; margin-bottom:20px;"></p><button id="modalConfirmBtn" class="add-btn" style="background:var(--color-1);">Confirm</button><button class="add-btn" style="background:none; color:#888; margin-top:5px;" onclick="closeModal()">Cancel</button></div></div>
-    <div id="alertModal" onclick="this.style.display='none'"><div class="modal-content"><h3>Notice</h3><p id="alertMsg" style="font-weight:800; color:var(--color-2)"></p><button class="add-btn" style="margin-top:15px;">OK</button></div></div>
-    <div id="secretEditModal"><div class="modal-content"><span id="secretModalDate" style="font-weight:800; font-size:1.2rem;"></span><div style="display:flex; flex-direction:column; gap:10px; margin-top:25px;"><button class="add-btn" id="secretConfirmEdit">Edit</button><button style="padding:15px; border:1px solid var(--color-2); color:var(--color-2); background:none; border-radius:12px; font-weight:700;" id="secretConfirmReset">Reset</button><button class="add-btn" style="background:none; color:#888;" onclick="document.getElementById('secretEditModal').style.display='none'">Cancel</button></div></div></div>
-
     <script>
         let config = JSON.parse(localStorage.getItem('workConfigV34')) || null;
         let logs = JSON.parse(localStorage.getItem('workLogsV34')) || [];
@@ -171,7 +167,6 @@
         });
         function goToPage(idx) { slider.scrollTo({ left: slider.offsetWidth * idx, behavior: 'smooth' }); }
 
-        // --- 初期設定ロジック (固定) ---
         function showSetup(edit) { 
             const overlay = document.getElementById('setup-overlay'); overlay.style.display = 'flex';
             requestAnimationFrame(() => { requestAnimationFrame(() => { overlay.classList.add('active'); }); });
@@ -186,7 +181,6 @@
             localStorage.setItem('workConfigV34', JSON.stringify(config)); hideSetup(); updateDash();
         }
 
-        // --- 時給計算ロジック ---
         function changeMonth(dir) { viewDate.setMonth(viewDate.getMonth() + dir); updateDash(); }
         function renderCalendar() {
             const body = document.getElementById('cal-body'); body.innerHTML = '';
@@ -224,7 +218,6 @@
             localStorage.setItem('workLogsV34', JSON.stringify(logs)); updateDash(); selectDate(selectedDateStr);
         }
         
-        // --- 修正：レポート描画 & 削除ボタン ---
         function updateDash() {
             if(!config) { showSetup(false); return; }
             const monthKey = `${viewDate.getFullYear()%100}/${viewDate.getMonth()+1}`;
@@ -256,7 +249,6 @@
         }
         function timeToMin(t) { const [h, m] = t.split(':').map(Number); return h * 60 + m; }
 
-        // --- 10年日記ロジック ---
         function initSalaryCalendar(openYear = null) {
             const container = document.getElementById('salary-calendar-container'); container.innerHTML = '';
             for (let y = 25; y <= 34; y++) {
@@ -287,7 +279,6 @@
             document.getElementById('secretConfirmReset').onclick = () => { delete salaryData[`${y}/${m}`]; localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData)); initSalaryCalendar(y); document.getElementById('secretEditModal').style.display = 'none'; };
         }
 
-        // --- 全般 ---
         function showAlert(msg) { document.getElementById('alertMsg').innerText = msg; document.getElementById('alertModal').style.display = 'flex'; }
         function closeModal() { document.getElementById('customModal').style.display = 'none'; }
         function showModal(title, msg, onConfirm) { document.getElementById('modalTitle').innerText = title; document.getElementById('modalMsg').innerText = msg; document.getElementById('modalConfirmBtn').onclick = () => { onConfirm(); closeModal(); }; document.getElementById('customModal').style.display = 'flex'; }

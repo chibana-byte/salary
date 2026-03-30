@@ -10,61 +10,61 @@
             --text-main: #1c1c1e; --text-sub: #8e8e93;
             --accent-work: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
             --color-1: #007AFF; --color-2: #FF3B30; --color-3: #34C759; --color-4: #FF9500;
-            /* 強力なグラデーション定義 */
-            --grad-blue: linear-gradient(135deg, #007AFF 0%, #0051D5 100%);
-            --grad-red: linear-gradient(135deg, #FF3B30 0%, #D7261B 100%);
+            /* グラデーション定義 */
+            --grad-blue: linear-gradient(135deg, #007AFF 0%, #0051D5 100%) !important;
+            --grad-red: linear-gradient(135deg, #FF3B30 0%, #D7261B 100%) !important;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: var(--bg-color); font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
 
-        /* スライダー構造 */
-        .main-slider { display: flex; width: 100%; height: 100%; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-behavior: smooth; }
+        .main-slider { display: flex; width: 100%; height: 100%; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; }
         .main-slider::-webkit-scrollbar { display: none; }
         .page { width: 100%; height: 100%; flex: 0 0 100%; scroll-snap-align: start; overflow-y: auto; padding: 85px 15px 120px; position: relative; }
 
-        /* ナビゲーション */
         .nav-dots { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); display: flex; gap: 12px; z-index: 10000; padding: 10px 20px; background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); border-radius: 20px; }
         .dot { width: 10px; height: 10px; background: #ccc; border-radius: 50%; transition: 0.3s; }
         .dot.active { background: #6366f1; width: 25px; border-radius: 10px; }
 
-        /* --- Page 1: Dashboard --- */
-        #page1 { background: #f8fafc; }
-        .work-card { background: var(--accent-work); border-radius: 24px; padding: 25px; color: white; box-shadow: 0 8px 25px rgba(99, 102, 241, 0.25); min-height: 190px; position: relative; display: flex; flex-direction: column; justify-content: space-between; align-items: center; }
-        #display-shop { align-self: flex-start; font-size: 1.4rem; font-weight: 800; opacity: 0.95; letter-spacing: 0.2px; max-width: 80%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .current-total { font-size: 2.7rem; font-weight: 950; margin: 0; line-height: 1; }
+        /* Page 1: Dashboard */
+        .work-card { background: var(--accent-work); border-radius: 24px; padding: 25px; color: white; box-shadow: 0 8px 25px rgba(99, 102, 241, 0.25); margin-bottom: 20px; min-height: 190px; position: relative; display: flex; flex-direction: column; justify-content: space-between; align-items: center; }
+        #display-shop { align-self: flex-start; font-size: 1.4rem; font-weight: 800; opacity: 0.95; max-width: 80%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .current-total { font-size: 2.7rem; font-weight: 950; }
         .edit-cfg-btn { align-self: flex-end; background: rgba(255,255,255,0.25); border: none; color: white; padding: 10px 18px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
 
-        /* カレンダー */
         .cal-container { background: white; border-radius: 22px; padding: 20px 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 15px; }
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
         .cal-day-label { font-size: 0.65rem; color: var(--text-sub); font-weight: 800; text-align: center; margin-bottom: 8px; }
-        .cal-cell { height: 48px; border-radius: 10px; background: #f8fafc; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid transparent; transition: 0.15s; cursor: pointer; }
+        
+        .cal-cell { height: 48px; border-radius: 10px; background: #f8fafc; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid transparent; transition: 0.1s; cursor: pointer; }
         .cal-cell.has-data { background: #f0f7ff; }
         .cal-cell.today { background: #1e293b !important; }
         .cal-cell.today .cal-date-num { color: white !important; font-weight: 900; }
         .cal-cell.today .cal-amt-hint { color: #7dd3fc !important; }
         .cal-cell.selected { background: inherit !important; outline: 3px solid var(--color-1) !important; outline-offset: -3px; z-index: 10; }
+
         .cal-date-num { font-size: 0.85rem; font-weight: 700; color: var(--text-main); }
         .cal-amt-hint { font-size: 0.5rem; color: var(--color-1); font-weight: 800; }
 
-        /* 記録・報告エリア */
         .record-board { background: white; border-radius: 22px; padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 25px; border: 1px solid #eef2f6; }
         input[type="time"] { border: 1px solid #f1f5f9; background: #f8fafc; padding: 12px 5px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; color: #4f46e5; text-align: center; width: 45%; }
-        .add-btn { width: 100%; background: #1e293b; color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s ease; }
         
-        /* レポートヘッダー */
+        /* メインボタン */
+        .add-btn { width: 100%; background: #1e293b; color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; }
+
+        /* ダイアログボタンのグラデーション */
+        .grad-blue-btn { background: var(--grad-blue) !important; color: white !important; }
+        .grad-red-btn { background: var(--grad-red) !important; color: white !important; }
+
         .report-header { font-weight: 800; font-size: 0.75rem; color: var(--text-sub) !important; margin-bottom: 12px; padding-left: 5px; letter-spacing: 2px; }
         .history-item { background: white; padding: 14px; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border-left: 4px solid #eef2f6; }
 
-        /* --- 修正：ダイアログ用グラデーションクラス --- */
-        .btn-rewrite { background: var(--grad-blue) !important; color: white !important; }
-        .btn-delete { background: var(--grad-red) !important; color: white !important; }
-
-        /* --- Setup & Modals --- */
-        #setup-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0); z-index: 999999; flex-direction: column; align-items: center; justify-content: center; transition: 0.4s; }
+        /* Setup & Modals */
+        #setup-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0); z-index: 999999; flex-direction: column; align-items: center; justify-content: center; transition: background 0.4s; }
         #setup-overlay.active { background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); }
-        .setup-panel { background: white; width: 90%; max-width: 360px; padding: 40px 30px; border-radius: 32px; transform: translateY(100px); opacity: 0; transition: 0.45s; }
+        .setup-panel { background: white; width: 90%; max-width: 360px; padding: 40px 30px; border-radius: 32px; transform: translateY(100px); opacity: 0; transition: 0.4s; }
         #setup-overlay.active .setup-panel { transform: translateY(0); opacity: 1; }
+        .setup-input { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 12px; border: 2px solid #f1f5f9; outline: none; font-size: 1.1rem; }
+
         #customModal, #secretEditModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 2000000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
         .modal-content { background: #fff; width: 85%; max-width: 320px; padding: 30px 20px; border-radius: 24px; text-align: center; }
     </style>
@@ -85,14 +85,14 @@
             </div>
             <div class="cal-container">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding:0 10px;">
-                    <button style="background:none; border:none; color:var(--color-1); font-weight:900;" onclick="changeMonth(-1)">←</button>
+                    <button style="background:none; border:none; color:var(--color-1); font-weight:900; font-size:1.2rem;" onclick="changeMonth(-1)">←</button>
                     <div id="display-month" style="font-weight:800; color:#1e293b; letter-spacing:1px;">---</div>
-                    <button style="background:none; border:none; color:var(--color-1); font-weight:900;" onclick="changeMonth(1)">→</button>
+                    <button style="background:none; border:none; color:var(--color-1); font-weight:900; font-size:1.2rem;" onclick="changeMonth(1)">→</button>
                 </div>
                 <div id="cal-body" class="cal-grid"></div>
             </div>
             <div class="record-board">
-                <div id="selected-date-text" style="font-weight:900; margin-bottom:15px;">SELECT DATE</div>
+                <div id="selected-date-text" style="font-weight:900; margin-bottom:15px; font-size:1.1rem;">SELECT DATE</div>
                 <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
                     <input type="time" id="work-start" value="09:00">
                     <input type="time" id="work-end" value="18:00">
@@ -125,10 +125,10 @@
 
     <div id="customModal">
         <div class="modal-content">
-            <h3 id="modalTitle"></h3>
-            <p id="modalMsg" style="color:#888; margin-bottom:20px;"></p>
+            <h3 id="modalTitle" style="font-weight:900;"></h3>
+            <p id="modalMsg" style="color:#888; margin-bottom:20px; font-size:0.9rem;"></p>
             <button id="modalConfirmBtn" class="add-btn">Action</button>
-            <button class="add-btn" style="background:none; color:#888; margin-top:5px;" onclick="closeModal()">Cancel</button>
+            <button class="add-btn" style="background:none; color:#888; margin-top:5px; border:none;" onclick="closeModal()">Cancel</button>
         </div>
     </div>
 
@@ -137,6 +137,7 @@
         let logs = JSON.parse(localStorage.getItem('workLogsV34')) || [];
         let salaryData = JSON.parse(localStorage.getItem('myTenYearSalaryData')) || {};
         let viewDate = new Date(); let selectedDateStr = "";
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
         const slider = document.getElementById('mainSlider');
         slider.addEventListener('scroll', () => {
@@ -149,7 +150,7 @@
         function showSetup(edit) { document.getElementById('setup-overlay').style.display='flex'; setTimeout(()=>document.getElementById('setup-overlay').classList.add('active'),10); }
         function hideSetup() { document.getElementById('setup-overlay').classList.remove('active'); setTimeout(()=>document.getElementById('setup-overlay').style.display='none',450); }
         function saveSetup() {
-            const n = document.getElementById('setup-shop').value, w = document.getElementById('setup-wage').value, r = document.getElementById('setup-night-rate').value;
+            const n = document.getElementById('setup-shop').value.trim(), w = document.getElementById('setup-wage').value.trim(), r = document.getElementById('setup-night-rate').value.trim();
             if(n && /^\d+$/.test(w)) { config = {name:n, wage:parseInt(w), nightRate:parseInt(r)||0}; localStorage.setItem('workConfigV34', JSON.stringify(config)); hideSetup(); updateDash(); }
         }
 
@@ -173,7 +174,7 @@
             }
         }
 
-        // --- ① Rewrite Shift の切り替えロジック ---
+        // --- ① Rewrite Shift の切り替え命令を強化 ---
         function selectDate(dateStr) {
             selectedDateStr = dateStr;
             const log = logs.find(l => l.fullDate === dateStr);
@@ -181,11 +182,11 @@
             if(log) {
                 document.getElementById('work-start').value = log.start;
                 document.getElementById('work-end').value = log.end;
-                btn.innerText = "Rewrite Shift"; // 確実に書き換える
+                btn.textContent = "Rewrite Shift"; // 文字を強制変更
             } else {
                 document.getElementById('work-start').value = "09:00";
                 document.getElementById('work-end').value = "18:00";
-                btn.innerText = "Record Shift";
+                btn.textContent = "Record Shift";
             }
             renderCalendar();
         }
@@ -193,15 +194,15 @@
         function handleLogShift() {
             if(!selectedDateStr) return;
             if(logs.find(l => l.fullDate === selectedDateStr)) {
-                // ② 文言：Rewrite / デザイン：btn-rewrite (青グラデ)
-                showModal("Update Record?", "Overwrite existing shift?", "Rewrite", "btn-rewrite", () => executeSave());
+                // ② 文言：Rewrite / デザイン：青グラデクラス
+                showModal("Update Record?", "Overwrite existing shift?", "Rewrite", "grad-blue-btn", () => executeSave());
             } else executeSave();
         }
 
         function executeSave() {
             const s = document.getElementById('work-start').value, e = document.getElementById('work-end').value;
-            logs = logs.filter(l => l.fullDate !== selectedDateStr);
             const res = calculatePay(s, e);
+            logs = logs.filter(l => l.fullDate !== selectedDateStr);
             logs.unshift({ id:Date.now(), fullDate:selectedDateStr, start:s, end:e, amt:res.total, rate:config.nightRate, wage:config.wage, date: `${new Date(selectedDateStr.replace(/-/g,'/')).getMonth()+1}/${new Date(selectedDateStr.replace(/-/g,'/')).getDate()}`, monthKey: `${new Date(selectedDateStr.replace(/-/g,'/')).getFullYear()%100}/${new Date(selectedDateStr.replace(/-/g,'/')).getMonth()+1}`, dur:res.duration });
             localStorage.setItem('workLogsV34', JSON.stringify(logs)); updateDash(); selectDate(selectedDateStr);
         }
@@ -257,21 +258,22 @@
             }
         }
 
-        // --- ダイアログ関数 ---
         function closeModal() { document.getElementById('customModal').style.display='none'; }
+        
+        // 文字とグラデーションクラスを「強制注入」する関数
         function showModal(title, msg, btnText, btnClass, onConfirm) {
-            document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalMsg').innerText = msg;
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMsg').textContent = msg;
             const btn = document.getElementById('modalConfirmBtn');
-            btn.innerText = btnText;
-            btn.className = "add-btn " + btnClass; // ここでグラデーションを強制適用
+            btn.textContent = btnText;
+            btn.className = "add-btn " + btnClass; // ここでグラデーションクラスを強制
             btn.onclick = () => { onConfirm(); closeModal(); };
             document.getElementById('customModal').style.display='flex';
         }
 
         function confirmDelete(id) {
-            // ③ 文言：Delete / デザイン：btn-delete (赤グラデ)
-            showModal("Delete Record?", "Are you sure you want to remove this record?", "Delete", "btn-delete", () => {
+            // ③ 文言：Delete / デザイン：赤グラデクラス
+            showModal("Delete Record?", "Remove this shift record?", "Delete", "grad-red-btn", () => {
                 logs = logs.filter(l => l.id !== id);
                 localStorage.setItem('workLogsV34', JSON.stringify(logs));
                 updateDash();

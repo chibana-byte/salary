@@ -8,285 +8,980 @@
         :root {
             --bg-color: #f2f2f7; --card-bg: #ffffff;
             --text-main: #1c1c1e; --text-sub: #8e8e93;
-            --accent-work: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-            --color-1: #007AFF; --color-2: #FF3B30; --color-3: #34C759; --color-4: #FF9500;
+            /* Workplace Gradients */
+            --wp-0: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); /* Purple */
+            --wp-1: linear-gradient(135deg, #f87171 0%, #ef4444 100%); /* Red */
+            --wp-2: linear-gradient(135deg, #34d399 0%, #10b981 100%); /* Green */
+            --wp-3: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); /* Dark Blue (是正済み) */
+            
+            --color-1: #4f46e5; --color-2: #FF3B30; --color-3: #007AFF; --color-4: #34C759;
+            --black-grad: linear-gradient(180deg, #434343 0%, #000000 100%);
+            --red-grad: linear-gradient(180deg, #FF5E5E 0%, #FF3B30 100%);
+            --blue-grad: linear-gradient(180deg, #3598FF 0%, #007AFF 100%);
+            --btn-bg: #f1f5f9;
         }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: var(--bg-color); font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
 
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: var(--bg-color); font-family: -apple-system, BlinkMacSystemFont, sans-serif; user-select: none; -webkit-user-select: none; }
+        
         .main-slider { display: flex; width: 100%; height: 100%; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; }
         .main-slider::-webkit-scrollbar { display: none; }
-        .page { width: 100%; height: 100%; flex: 0 0 100%; scroll-snap-align: start; overflow-y: auto; padding: 85px 15px 120px; position: relative; }
+        .page { width: 100%; height: 100%; flex: 0 0 100%; scroll-snap-align: start; overflow-y: auto; padding: 30px 15px 120px; position: relative; }
 
-        .nav-dots { position: fixed; top: 25px; left: 50%; transform: translateX(-50%); display: flex; gap: 12px; z-index: 10000; padding: 10px 20px; background: rgba(255,255,255,0.7); backdrop-filter: blur(10px); border-radius: 20px; }
-        .dot { width: 10px; height: 10px; background: #ccc; border-radius: 50%; transition: 0.3s; }
-        .dot.active { background: #6366f1; width: 25px; border-radius: 10px; }
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        .anim-slide-up { animation: slideUpFade 0.4s ease forwards; }
 
-        /* Page 1: Dashboard */
-        .work-card { background: var(--accent-work); border-radius: 24px; padding: 25px; color: white; box-shadow: 0 8px 25px rgba(99, 102, 241, 0.25); min-height: 190px; position: relative; display: flex; flex-direction: column; justify-content: space-between; align-items: center; }
-        #display-shop { align-self: flex-start; font-size: 1.4rem; font-weight: 800; opacity: 0.95; max-width: 80%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .current-total { font-size: 2.7rem; font-weight: 950; }
-        .edit-cfg-btn { align-self: flex-end; background: rgba(255,255,255,0.25); border: none; color: white; padding: 10px 18px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; cursor: pointer; }
+        .salary-history-title { text-align: center; color: #d1d1d6; font-size: 1.1rem; font-weight: 900; letter-spacing: 2px; margin: 10px 0 25px; }
 
+        /* --- PAGE 1: 時給計算 --- */
+        .work-card { border-radius: 24px; color: white; box-shadow: 0 8px 25px rgba(0,0,0,0.15); display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 15px; min-height: 125px; position: relative; overflow: hidden; transition: opacity 0.3s ease, background 0.4s ease; background: var(--wp-0); }
+        .nav-arrow { position: absolute; top: 0; bottom: 0; width: 40px; background: rgba(0,0,0,0.05); border: none; color: white; font-weight: 900; font-size: 1.3rem; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+        .nav-arrow:active { background: rgba(0,0,0,0.2); }
+        .nav-arrow.left { left: 0; }
+        .nav-arrow.right { right: 0; }
+        
+        #work-card-content { text-align: center; width: 100%; padding: 15px 50px; }
+        #display-shop { font-size: 1rem; font-weight: 800; opacity: 0.9; margin-bottom: 2px; letter-spacing: 0.5px; }
+        #display-total { font-size: 2.5rem; font-weight: 950; margin: 0; line-height: 1; transition: opacity 0.3s ease; }
+        
+        .edit-info-btn { position: absolute; bottom: 12px; right: 45px; background: rgba(255, 255, 255, 0.2); border: none; color: white; padding: 6px 8px; border-radius: 12px; font-size: 1rem; backdrop-filter: blur(5px); cursor: pointer; transition: background 0.2s; display: flex; align-items: center; justify-content: center; z-index: 15; }
+        
         .cal-container { background: white; border-radius: 22px; padding: 20px 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 15px; }
-        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; transition: opacity 0.3s ease; }
         .cal-day-label { font-size: 0.65rem; color: var(--text-sub); font-weight: 800; text-align: center; margin-bottom: 8px; }
+        .cal-day-sun { color: var(--color-2) !important; }
+        .cal-day-sat { color: var(--color-3) !important; }
+        .cal-cell { height: 48px; border-radius: 10px; background: #f8fafc; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 2px solid transparent; position: relative; }
+        .cal-cell.is-today { background-color: #e2e8f0 !important; border: 1px solid #cbd5e1 !important; }
+        .cal-cell.selected { border: 4px solid var(--color-1) !important; background: white; z-index: 10; }
+        .cal-date-num { font-size: 0.85rem; font-weight: 700; }
         
-        /* 今日のネイビー、選択の透明枠線は維持 */
-        .cal-cell { height: 48px; border-radius: 10px; background: #f8fafc; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 2px solid transparent; transition: 0.1s; cursor: pointer; }
-        .cal-cell.has-data { background: #f0f7ff; }
-        .cal-cell.today { background: #1e293b !important; }
-        .cal-cell.today .cal-date-num { color: white !important; font-weight: 900; }
-        .cal-cell.today .cal-amt-hint { color: #7dd3fc !important; }
-        .cal-cell.selected { background: inherit !important; outline: 3px solid var(--color-1) !important; outline-offset: -3px; z-index: 10; }
+        .cal-dots-wrapper { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; align-items: center; justify-content: center; }
+        .cal-dots-row { display: flex; gap: 3px; justify-content: center; }
+        .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+        .dot-deleted { background: transparent !important; border: 1.5px solid #1c1c1e; box-sizing: border-box; }
 
-        .cal-date-num { font-size: 0.85rem; font-weight: 700; color: var(--text-main); }
-        .cal-amt-hint { font-size: 0.5rem; color: var(--color-1); font-weight: 800; }
+        #display-month { font-weight: 900; letter-spacing: 0.5px; color: #4f46e5; cursor: pointer; background: var(--btn-bg); padding: 6px 16px; border-radius: 12px; font-size: 0.85rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.2s; }
+        .record-board { background: white; border-radius: 22px; padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 25px; }
+        #selected-date-title { font-weight: 900; margin-bottom: 15px; border-left: 5px solid var(--color-1); padding-left: 10px; color: #1e293b; font-size: 0.9rem; }
+        .time-input { flex: 1; padding: 12px; border-radius: 12px; border: 1.5px solid transparent; background: var(--btn-bg); font-weight: 700; color: var(--color-1); font-size: 1rem; outline: none; transition: border-color 0.2s; }
+        .add-btn { width: 100%; background: var(--black-grad); color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 800; font-size: 1rem; cursor: pointer; margin-top: 5px; }
 
-        .record-board { background: white; border-radius: 22px; padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 25px; border: 1px solid #eef2f6; }
-        input[type="time"] { border: 1px solid #f1f5f9; background: #f8fafc; padding: 12px 5px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; color: #4f46e5; text-align: center; width: 45%; }
+        /* --- 🎯 目標ゲージ --- */
+        #goal-container { display: flex; flex-direction: column; gap: 20px; margin-bottom: 25px; }
+        .goal-item { background: white; border-radius: 22px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); position: relative; padding-bottom: 40px; }
+        .goal-del-btn { position: absolute; top: 12px; right: 15px; color: var(--color-2); font-size: 1.1rem; font-weight: 800; cursor: pointer; padding: 5px; opacity: 0.4; transition: opacity 0.2s; }
+        .goal-del-btn:active { opacity: 1; }
+        .goal-edit-btn { position: absolute; bottom: 15px; right: 15px; color: var(--color-1); font-size: 0.85rem; font-weight: 800; cursor: pointer; padding: 5px; background: none; border: none; opacity: 0.8; transition: opacity 0.2s; }
+        .goal-edit-btn:active { opacity: 1; }
+
+        .goal-header { text-align: center; margin-bottom: 15px; padding: 0 20px; }
+        .goal-name-disp { font-size: 1.15rem; font-weight: 950; color: var(--text-main); letter-spacing: 1px; }
+        .goal-period-disp { font-size: 0.75rem; font-weight: 700; color: var(--color-1); margin-top: 4px; }
+        .goal-gauge-wrapper { display: flex; justify-content: center; align-items: center; position: relative; }
+        .circular-chart { display: block; margin: 0 auto; max-width: 180px; max-height: 180px; }
+        .circle-bg { fill: none; stroke-width: 2.5; }
+        .circle { fill: none; stroke-width: 2.5; stroke-linecap: round; transition: stroke-dasharray 1s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .gauge-info { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 100%; }
+        .gauge-percent { font-size: 2rem; font-weight: 950; color: var(--text-main); line-height: 1; }
+        .gauge-amount { font-size: 0.65rem; font-weight: 800; color: var(--text-sub); margin-top: 6px; }
+
+        /* --- PAGE 2: 給与記録 --- */
+        .hint-btn { position: fixed; top: 15px; left: 15px; width: 35px; height: 35px; background: rgba(0,0,0,0.03); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-sub); font-size: 14px; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+        #allTotalOverlay { position: fixed; top: 15px; right: 15px; background: rgba(0,0,0,0.85); color: #fff; padding: 12px 22px; border-radius: 40px; z-index: 3000; font-weight: 700; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+        #allTotalOverlay.active { opacity: 1; pointer-events: auto; }
+        .year-section { background: var(--card-bg); border-radius: 14px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+        .year-header { padding: 18px 15px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .year-title { font-weight: 600; font-size: 1.1rem; }
+        .year-total { font-weight: 600; color: var(--color-1); font-size: 1rem; }
+        .month-content { max-height: 0; opacity: 0; display: grid; padding: 0 10px; grid-template-columns: repeat(2, 1fr); gap: 10px; background: var(--card-bg); transition: max-height 0.4s ease, opacity 0.3s ease; }
+        .year-section.active .month-content { max-height: 1000px; opacity: 1; padding: 0 10px 15px; }
+        .month-card { background: var(--bg-color); padding: 12px; border-radius: 12px; min-height: 60px; display: flex; flex-direction: column; justify-content: center; position: relative; }
+        .has-data { border-left: 4px solid var(--color-1); background-color: #f0f7ff; }
+        .month-name-text { font-weight: 600; font-size: 0.8rem; color: var(--text-sub); }
+        .salary-value-text { font-weight: 700; font-size: 1rem; margin-top: 2px; }
+        #graphOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 2500; flex-direction: column; padding: 50px 5px; box-sizing: border-box; transform: translateY(100vh); transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1); }
+        #graphOverlay.active { transform: translateY(0); }
+        #graphSvgContainer { width: 100%; height: 400px; overflow: visible; }
+        .axis-label { font-size: 10px; fill: var(--text-sub); }
+        .data-label { font-size: 9px; font-weight: 900; }
+        .footer-fixed { position: fixed; bottom: 0; left: 0; right: 0; padding: 10px 20px 30px; z-index: 900; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+        .input-container { display: flex; gap: 10px; max-width: 600px; margin: 0 auto; }
+        input[type="text"].salary-record-input { flex: 1; padding: 12px 18px; font-size: 16px; border: none; border-radius: 14px; outline: none; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+        .blue-save-btn { padding: 0 22px; background: var(--blue-grad); color: white; border: none; border-radius: 14px; font-weight: 800; font-size: 0.9rem; box-shadow: 0 5px 15px rgba(0,122,255,0.25); cursor: pointer; }
+
+        /* --- 共通モダール --- */
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(8px); z-index: 1000000; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
+        .modal-overlay.active { opacity: 1; }
+        .modal-content { background: white; width: 80%; max-width: 280px; padding: 25px; border-radius: 28px; text-align: center; transform: scale(0.85); opacity: 0; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .modal-overlay.active .modal-content { transform: scale(1); opacity: 1; }
+        #validation-modal-overlay .modal-content { max-width: 320px; }
+
+        /* --- セットアップ画面 --- */
+        .setup-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(12px); z-index: 999999; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.4s ease; }
+        .setup-overlay.active { opacity: 1; }
+        .setup-panel { background: white; width: 90%; max-width: 360px; padding: 45px 25px; border-radius: 35px; text-align: center; transform: translateY(100vh); transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1); }
+        .setup-overlay.active .setup-panel { transform: translateY(0); }
+        .setup-group { text-align: left; margin-bottom: 22px; width: 100%; }
+        .setup-group label { display: block; font-size: 1.05rem; font-weight: 800; color: #000; margin-bottom: 10px; }
+        .required-mark { color: var(--color-2); font-weight: 900; margin-right: 4px; }
+        .setup-input { width: 100%; padding: 14px; border-radius: 16px; border: 2px solid #f1f1f5; background: #f9f9fb; font-size: 1.1rem; font-weight: 700; outline: none; }
+        .black-save-btn { width: 100%; background: var(--black-grad); color: white; border: none; padding: 20px; border-radius: 20px; font-weight: 800; font-size: 1.1rem; cursor: pointer; }
+
+        .menu-btn { width: 100%; padding: 18px; border-radius: 18px; border: none; font-weight: 800; font-size: 1rem; margin-bottom: 10px; cursor: pointer; transition: transform 0.1s; }
+        .menu-btn:active { transform: scale(0.98); }
+        .btn-edit { background: var(--black-grad); color: white; }
+        .btn-add-work { background: linear-gradient(135deg, #34d399 0%, #10b981 100%); color: white; }
+        .btn-goal { background: linear-gradient(135deg, #a855f7 0%, #d946ef 100%); color: white; }
         
-        /* メインボタン（動的切り替え） */
-        .add-btn { width: 100%; background: #1e293b; color: white; border: none; padding: 18px; border-radius: 16px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        /* 🎯 新設：Backup / Restore ボタンのスタイル */
+        .btn-backup { background: #e2e8f0; color: #475569; }
+        .btn-restore { background: #f8fafc; color: #94a3b8; border: 1px solid #e2e8f0; }
 
-        /* --- 修正ポイント：ダイアログ用グラデーションボタン（シンプル） --- */
-        /* Rewriteボタン：シンプルで綺麗な青のグラデーション（上：明るい青 -> 下：普通の青） */
-        .grad-blue-btn-simple { 
-            background: linear-gradient(180deg, #3598FF 0%, #007AFF 100%) !important; 
-            color: white !important; 
-            border: none !important; 
-        }
-        /* Deleteボタン：シンプルで綺麗な赤のグラデーション（上：鮮やかな赤 -> 下：少し濃い赤） */
-        .grad-red-btn-simple { 
-            background: linear-gradient(180deg, #FF5E5E 0%, #FF3B30 100%) !important; 
-            color: white !important; 
-            border: none !important; 
-        }
+        /* 🎯 新設：コピートーストポップアップ */
+        #toast-pop { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 40px; font-weight: 700; font-size: 0.85rem; z-index: 2000000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        #toast-pop.show { opacity: 1; }
 
-        .report-header { font-weight: 800; font-size: 0.75rem; color: var(--text-sub) !important; margin-bottom: 12px; padding-left: 5px; letter-spacing: 2px; }
-        .history-item { background: white; padding: 14px; border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.03); border-left: 4px solid #eef2f6; }
+        /* MONTHLY REPORT 画面 */
+        #report-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(242, 242, 247, 0.98); backdrop-filter: blur(25px); z-index: 500000; flex-direction: column; padding: 30px 15px 10px; opacity: 0; transition: opacity 0.4s ease; }
+        #report-modal-overlay.active { opacity: 1; display: flex; }
+        .report-modal-header { text-align: center; margin-bottom: 15px; }
+        .report-modal-title { font-weight: 950; font-size: 1.1rem; color: var(--text-main); letter-spacing: 1px; line-height: 1.1; transition: opacity 0.3s ease; will-change: opacity; transform: translateZ(0); }
+        .report-scroll-area { flex: 1; overflow-y: auto; padding: 5px; mask-image: linear-gradient(to bottom, transparent, black 3%, black 97%, transparent); -webkit-mask-image: linear-gradient(to bottom, transparent, black 3%, black 97%, transparent); transition: opacity 0.3s ease; will-change: opacity; transform: translateZ(0); }
+        
+        .history-item { background: white; padding: 10px 16px; border-radius: 18px; margin-bottom: 8px; display: flex; flex-direction: column; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
+        .log-row-top { display: flex; align-items: baseline; margin-bottom: 1px; }
+        .log-date { font-size: 0.9rem; font-weight: 950; color: var(--text-main); margin-right: 6px; }
+        .log-sub-text { font-size: 0.75rem; font-weight: 700; color: #a1a1aa; }
+        .log-details-small { font-size: 0.68rem; font-weight: 700; color: #a1a1aa; letter-spacing: -0.2px; }
+        .log-row-mid { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1px; }
+        .log-shop-name { flex: 1; display: flex; align-items: center; }
+        .log-shop-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+        .log-right-group { display: flex; align-items: center; gap: 8px; }
+        .log-amt { font-size: 0.9rem; font-weight: 900; color: var(--color-1); }
+        .log-del { color: var(--color-2); font-size: 1rem; font-weight: 800; cursor: pointer; padding: 2px; opacity: 0.4; }
+        .log-row-bottom { display: block; }
+        .close-report-btn { background: none; border: none; color: #8e8e93; font-weight: 700; font-size: 0.9rem; padding: 10px; cursor: pointer; text-align: center; width: 100%; }
 
-        /* Page 2 & Setup & Modals (既存の完璧な状態) */
-        #page2 { background: var(--bg-color); }
-        #setup-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0); z-index: 999999; flex-direction: column; align-items: center; justify-content: center; transition: background 0.4s; }
-        #setup-overlay.active { background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); }
-        .setup-panel { background: white; width: 90%; max-width: 360px; padding: 40px 30px; border-radius: 32px; transform: translateY(100px); opacity: 0; transition: 0.4s; }
-        #setup-overlay.active .setup-panel { transform: translateY(0); opacity: 1; }
-        .setup-input { width: 100%; padding: 14px; margin-bottom: 15px; border-radius: 12px; border: 2px solid #f1f5f9; outline: none; font-size: 1.1rem; }
+        /* DAILY REPORT */
+        #daily-report-overlay .modal-content { max-width: 300px; padding: 25px 15px; }
+        .daily-report-title { font-weight: 950; font-size: 1.2rem; letter-spacing: 1px; margin-bottom: 15px; color: var(--text-main); border-bottom: 2px solid #f1f1f5; padding-bottom: 10px; }
+        .daily-item { background: #f8fafc; border-radius: 14px; padding: 15px; margin-bottom: 10px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02); position: relative; }
 
-        #customModal, #secretEditModal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 2000000; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
-        .modal-content { background: #fff; width: 85%; max-width: 320px; padding: 30px 20px; border-radius: 24px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+        .missing-list { text-align: left; list-style: none; padding: 0; margin: 15px 0 25px 10px; color: var(--text-main); font-weight: 700; font-size: 0.9rem; line-height: 1.6; }
+        .missing-list li::before { content: "• "; color: var(--color-2); font-weight: 900; }
     </style>
 </head>
 <body>
 
-    <div class="nav-dots">
-        <div class="dot active" id="dot1" onclick="goToPage(0)"></div>
-        <div class="dot" id="dot2" onclick="goToPage(1)"></div>
-    </div>
+    <div class="hint-btn" id="page2-hint" onclick="openHint()">?</div>
+    
+    <div id="toast-pop">Copied to clipboard.</div>
 
-    <div class="main-slider" id="mainSlider">
+    <div class="main-slider" id="mainSlider" onscroll="handleSliderScroll()">
         <div class="page" id="page1">
-            <div class="work-card">
-                <div id="display-shop">---</div>
-                <div id="display-total" class="current-total">¥0</div>
-                <button class="edit-cfg-btn" onclick="showSetup(true)">EDIT SETTINGS</button>
+            <div class="salary-history-title">Wage Calculator / Report</div>
+            
+            <div class="work-card" id="work-card-bg">
+                <button class="nav-arrow left" onclick="changeWorkplace(-1)">←</button>
+                <div id="work-card-content">
+                    <div id="display-shop">---</div>
+                    <div id="display-total">¥0</div>
+                </div>
+                <button class="nav-arrow right" onclick="changeWorkplace(1)">→</button>
+                <button class="edit-info-btn" onclick="openSettingsMenu()">⚙️</button>
             </div>
+
             <div class="cal-container">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding:0 10px;">
                     <button style="background:none; border:none; color:var(--color-1); font-weight:900; font-size:1.2rem;" onclick="changeMonth(-1)">←</button>
-                    <div id="display-month" style="font-weight:800; color:#1e293b; letter-spacing:1px;">---</div>
+                    <div id="display-month" onclick="openReportModal()">---</div>
                     <button style="background:none; border:none; color:var(--color-1); font-weight:900; font-size:1.2rem;" onclick="changeMonth(1)">→</button>
                 </div>
                 <div id="cal-body" class="cal-grid"></div>
             </div>
             <div class="record-board">
-                <div id="selected-date-text" style="font-weight:900; margin-bottom:15px; font-size:1.1rem;">SELECT DATE</div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-                    <input type="time" id="work-start" value="09:00">
-                    <input type="time" id="work-end" value="18:00">
+                <div id="selected-date-title">IN TIME & OUT TIME</div>
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <input type="time" id="work-start" value="09:00" class="time-input">
+                    <input type="time" id="work-end" value="18:00" class="time-input">
                 </div>
-                <button class="add-btn" id="save-btn" onclick="handleLogShift()">Record Shift</button>
+                <button class="add-btn" onclick="handleLogShift()">Record Shift</button>
             </div>
-            <div class="report-header">MONTHLY REPORT</div>
-            <div id="log-container"></div>
+            
+            <div id="goal-container"></div>
         </div>
 
         <div class="page" id="page2">
-            <div style="padding: 20px 0; text-align: center; font-weight: 800; color: var(--text-sub); letter-spacing: 2px;">SECRET SALARY CENTER</div>
-            <div id="salary-calendar-container"></div>
-            <div style="position:fixed; bottom:0; left:0; right:0; background:rgba(255,255,255,0.95); padding:15px 20px 40px; border-top:1px solid #ddd; display:flex; gap:10px;">
-                <input type="text" id="salaryInput" placeholder="yy/mm/amt..." style="flex:1; padding:14px; border-radius:12px; border:1px solid #ddd;">
-                <button class="add-btn" style="width:auto; padding:0 20px;" onclick="handleSecretInput()">Save</button>
+            <div class="salary-history-title">SALARY HISTORY</div>
+            <div id="allTotalOverlay" onclick="closeAllTotal()"></div>
+            <div id="graphOverlay">
+                <h2 id="graphTitle" style="text-align:center; font-weight: 800; font-size:0.9rem; margin-bottom:10px;"></h2>
+                <svg id="graphSvgContainer" viewBox="0 0 380 400"></svg>
+                <p style="text-align:center; color:#ddd; font-size:0.7rem; margin-top:20px;">Double-tap to close</p>
+            </div>
+            <div id="salary-manager-container"></div>
+        </div>
+    </div>
+
+    <div id="page2-footer" class="footer-fixed">
+        <div class="input-container">
+            <input type="text" id="salaryInput" class="salary-record-input" placeholder="Year/Month/Amount..." autocomplete="off">
+            <button class="blue-save-btn" onclick="handleSalaryInput()">Save</button>
+        </div>
+    </div>
+
+    <div id="settings-menu-overlay" class="setup-overlay">
+        <div class="setup-panel">
+            <h2 style="font-weight:950; margin-bottom:30px;">Settings</h2>
+            <button class="menu-btn btn-edit" onclick="showEditScreen()">Edit Setting</button>
+            <button class="menu-btn btn-add-work" onclick="showAddWorkplaceScreen()">Add Workplace</button>
+            <button class="menu-btn btn-goal" onclick="showGoalScreen()">Goal Amount</button>
+            <button class="menu-btn btn-backup" onclick="handleBackup()">Backup</button>
+            <button class="menu-btn btn-restore" onclick="showRestoreScreen()">Restore</button>
+            <button style="background:none; border:none; color:#a1a1aa; font-weight:700; padding:10px; margin-top:10px; width:100%; cursor:pointer;" onclick="closeSettingsMenu()">Cancel</button>
+        </div>
+    </div>
+
+    <div id="restore-overlay" class="setup-overlay">
+        <div class="setup-panel">
+            <h2 style="font-weight:950; margin-bottom:20px;">Restore Data</h2>
+            <div style="font-size:0.8rem; color:var(--text-sub); margin-bottom:15px; text-align:left;">Paste your backup code here.</div>
+            <textarea id="restore-input" class="setup-input" style="height:120px; font-size:0.7rem; font-family:monospace; padding:12px; margin-bottom:15px; resize:none;" placeholder="Paste string..."></textarea>
+            <button class="black-save-btn" onclick="handleRestoreAction()">Restore</button>
+            <button style="background:none; border:none; color:#a1a1aa; font-weight:700; padding:10px; margin-top:10px; width:100%; cursor:pointer;" onclick="closeRestoreScreen()">Cancel</button>
+        </div>
+    </div>
+
+    <div id="goal-setup-overlay" class="setup-overlay">
+        <div class="setup-panel">
+            <h2 style="font-weight:950; margin-bottom:30px;">Goal Amount</h2>
+            <div class="setup-group"><label>Goal Name</label><input type="text" id="goal-name" class="setup-input"></div>
+            <div class="setup-group"><label>Limited (¥)</label><input type="text" id="goal-limit" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="setup-group">
+                <label>Select Period</label>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <input type="date" id="goal-start" class="setup-input" style="padding:10px; font-size:0.9rem;">
+                    <span style="font-weight:900; color:var(--text-sub);">~</span>
+                    <input type="date" id="goal-end" class="setup-input" style="padding:10px; font-size:0.9rem;">
+                </div>
+            </div>
+            <button class="black-save-btn" onclick="saveGoalSetup()">Save Goal</button>
+            <button style="background:none; border:none; color:#a1a1aa; font-weight:700; padding:10px; margin-top:10px; width:100%; cursor:pointer;" onclick="backToSettingsMenu('goal-setup-overlay')">Back</button>
+        </div>
+    </div>
+
+    <div id="edit-goal-overlay" class="setup-overlay">
+        <div class="setup-panel">
+            <h2 style="font-weight:950; margin-bottom:30px;">Edit Goal</h2>
+            <div class="setup-group"><label>Goal Name</label><input type="text" id="edit-goal-name" class="setup-input"></div>
+            <div class="setup-group"><label>Limited (¥)</label><input type="text" id="edit-goal-limit" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="setup-group">
+                <label>Select Period</label>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <input type="date" id="edit-goal-start" class="setup-input" style="padding:10px; font-size:0.9rem;">
+                    <span style="font-weight:900; color:var(--text-sub);">~</span>
+                    <input type="date" id="edit-goal-end" class="setup-input" style="padding:10px; font-size:0.9rem;">
+                </div>
+            </div>
+            <button class="black-save-btn" onclick="saveEditGoal()">Update Goal</button>
+            <button style="background:none; border:none; color:#a1a1aa; font-weight:700; padding:10px; margin-top:10px; width:100%; cursor:pointer;" onclick="closeEditGoalModal()">Cancel</button>
+        </div>
+    </div>
+
+    <div id="initial-setup-overlay" class="setup-overlay">
+        <div class="setup-panel">
+            <h2 style="font-weight:950; margin-bottom:30px;">Initial Setting</h2>
+            <div class="setup-group"><label><span class="required-mark">※</span>Name</label><input type="text" id="setup-shop" class="setup-input"></div>
+            <div class="setup-group"><label><span class="required-mark">※</span>Hourly Wage (¥)</label><input type="text" id="setup-wage" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="setup-group"><label>Night Rate (%)</label><input type="text" id="setup-night-rate" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="setup-group"><label>Commuting Allowance (¥)</label><input type="text" id="setup-transport" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
+            <button class="black-save-btn" onclick="saveInitialSetup()">Start</button>
+        </div>
+    </div>
+
+    <div id="edit-setup-overlay" class="setup-overlay">
+        <div class="setup-panel">
+            <h2 style="font-weight:950; margin-bottom:30px;">Edit Information</h2>
+            <div class="setup-group"><label><span class="required-mark">※</span>Name</label><input type="text" id="edit-shop" class="setup-input"></div>
+            <div class="setup-group"><label><span class="required-mark">※</span>Hourly Wage (¥)</label><input type="text" id="edit-wage" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="setup-group"><label>Night Rate (%)</label><input type="text" id="edit-night-rate" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="setup-group"><label>Commuting Allowance (¥)</label><input type="text" id="edit-transport" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
+            <button class="black-save-btn" onclick="saveEditSetup()">Update</button>
+            <button style="background:none; border:none; color:#a1a1aa; font-weight:700; padding:10px; margin-top:10px; width:100%; cursor:pointer;" onclick="backToSettingsMenu('edit-setup-overlay')">Back</button>
+        </div>
+    </div>
+
+    <div id="add-work-overlay" class="setup-overlay">
+        <div class="setup-panel">
+            <h2 style="font-weight:950; margin-bottom:30px;">Add Workplace</h2>
+            <div class="setup-group"><label><span class="required-mark">※</span>Name</label><input type="text" id="add-shop" class="setup-input"></div>
+            <div class="setup-group"><label><span class="required-mark">※</span>Hourly Wage (¥)</label><input type="text" id="add-wage" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="setup-group"><label>Night Rate (%)</label><input type="text" id="add-night-rate" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="setup-group"><label>Commuting Allowance (¥)</label><input type="text" id="add-transport" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
+            <button class="black-save-btn" onclick="saveAddWorkplace()">Add</button>
+            <button style="background:none; border:none; color:#a1a1aa; font-weight:700; padding:10px; margin-top:10px; width:100%; cursor:pointer;" onclick="backToSettingsMenu('add-work-overlay')">Back</button>
+        </div>
+    </div>
+
+    <div id="daily-report-overlay" class="modal-overlay">
+        <div class="modal-content" style="padding: 20px 15px;">
+            <div class="daily-report-title" id="daily-title-text"></div>
+            <div id="daily-container" style="display:flex; flex-direction:column; gap:8px;"></div>
+            <div style="font-size:0.65rem; color:var(--text-sub); margin-top:15px; font-weight:700;">Double-tap outside to close</div>
+        </div>
+    </div>
+
+    <div id="report-modal-overlay">
+        <div class="report-modal-header">
+            <div class="report-modal-title" id="modal-month-name">MONTHLY REPORT</div>
+        </div>
+        <div class="report-scroll-area" id="log-container"></div>
+        <button class="close-report-btn" onclick="closeReportModal()">Close</button>
+    </div>
+
+    <div id="confirm-modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <div id="confirm-title" style="font-weight:950; font-size:1.15rem; margin-bottom:10px;">Confirm</div>
+            <div id="confirm-msg" style="font-size:0.85rem; font-weight:600; color:var(--text-sub); margin-bottom:20px;">Are you sure?</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <button id="confirm-action-btn" style="width:100%; border-radius:18px; border:none; color:white; font-weight:800; padding:16px; cursor:pointer;">Action</button>
+                <button style="background:none; border:none; color:#a1a1aa; font-weight:700; padding:10px; cursor:pointer;" onclick="closeConfirmModal()">Cancel</button>
             </div>
         </div>
     </div>
 
-    <div id="setup-overlay">
-        <div class="setup-panel">
-            <h2 style="text-align:center; font-weight:950; margin-bottom:20px;">Settings</h2>
-            <input type="text" id="setup-shop" class="setup-input" placeholder="Store Name">
-            <input type="text" id="setup-wage" class="setup-input" inputmode="numeric" placeholder="Hourly Wage">
-            <input type="text" id="setup-night-rate" class="setup-input" inputmode="numeric" placeholder="Night Rate %">
-            <button class="add-btn" onclick="saveSetup()">Save & Start</button>
+    <div id="validation-modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <div id="val-modal-title" style="font-weight:950; font-size:1.1rem; color:var(--text-main); margin-bottom:10px; text-align:left;">Some items are not filled out.</div>
+            <ul id="missing-fields-list" class="missing-list"></ul>
+            <div id="val-modal-btns" style="display:flex; flex-direction:column; gap:8px;"></div>
         </div>
     </div>
 
-    <div id="customModal">
+    <div id="invalid-input-modal" class="modal-overlay">
         <div class="modal-content">
-            <h3 id="modalTitle" style="font-weight:900;"></h3>
-            <p id="modalMsg" style="color:#888; margin-bottom:20px; font-size:0.9rem;"></p>
-            <button id="modalConfirmBtn" class="add-btn">Action</button>
-            <button class="add-btn" style="background:none; color:#888; margin-top:5px; border:none;" onclick="closeModal()">Cancel</button>
+            <div style="font-weight:950; font-size:1.15rem; margin-bottom:10px; color:var(--text-main);">Invalid input.</div>
+            <div style="font-size:0.85rem; font-weight:600; color:var(--text-sub); margin-bottom:20px;">Y/M/A...</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <button style="background:none; border:none; color:#a1a1aa; font-weight:700; padding:10px; cursor:pointer;" onclick="closeInvalidModal()">Back</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="limit-modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <div style="font-weight:950; font-size:1.15rem; margin-bottom:10px; color:var(--text-main);">Create Limited</div>
+            <div style="font-size:0.85rem; font-weight:600; color:var(--text-sub); margin-bottom:20px;">Limit Reached.</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+                <button style="background:none; border:none; color:#a1a1aa; font-weight:700; padding:10px; cursor:pointer;" onclick="closeLimitModal()">Back</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="hintModal" class="modal-overlay" onclick="closeHint()">
+        <div class="modal-content" style="width: fit-content; min-width: 160px; font-family: monospace;">
+            <p>a</p><p>gyy/yy/yy/yy</p><p>y/m/a/c</p>
+        </div>
+    </div>
+
+    <div id="salaryEditModal" class="modal-overlay">
+        <div class="modal-content">
+            <span id="modalDate" style="font-weight: 800; font-size: 1.2rem; display:block;"></span>
+            <div style="margin-top:15px; color:var(--text-sub); font-size: 0.95rem;">What would you like to do?</div>
+            <div style="display:flex; flex-direction:column; gap:10px; margin-top:25px;">
+                <button class="add-btn" style="padding:15px; margin-top:0;" id="confirmSalaryEdit">Edit</button>
+                <button style="padding:16px; border:none; color:white; background:var(--red-grad); border-radius:18px; font-weight:800; cursor:pointer;" id="confirmSalaryReset">Reset</button>
+                <button style="padding:10px; background:none; border:none; color:var(--text-sub); font-weight:700; cursor:pointer;" onclick="closeSalaryModal()">Cancel</button>
+            </div>
         </div>
     </div>
 
     <script>
-        let config = JSON.parse(localStorage.getItem('workConfigV34')) || null;
+        let configs = JSON.parse(localStorage.getItem('workConfigsListV34')) || [];
+        let oldConfig = JSON.parse(localStorage.getItem('workConfigV34'));
+        if (configs.length === 0 && oldConfig) {
+            configs.push(oldConfig);
+            localStorage.setItem('workConfigsListV34', JSON.stringify(configs));
+        }
+        let currentWorkIndex = 0;
+        
         let logs = JSON.parse(localStorage.getItem('workLogsV34')) || [];
         let salaryData = JSON.parse(localStorage.getItem('myTenYearSalaryData')) || {};
-        let viewDate = new Date(); let selectedDateStr = "";
-        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-        const slider = document.getElementById('mainSlider');
-        slider.addEventListener('scroll', () => {
-            const pageIndex = Math.round(slider.scrollLeft / slider.offsetWidth);
-            document.getElementById('dot1').classList.toggle('active', pageIndex === 0);
-            document.getElementById('dot2').classList.toggle('active', pageIndex === 1);
-        });
-        function goToPage(idx) { slider.scrollTo({ left: slider.offsetWidth * idx, behavior: 'smooth' }); }
-
-        function showSetup(edit) { document.getElementById('setup-overlay').style.display='flex'; setTimeout(()=>document.getElementById('setup-overlay').classList.add('active'),10); }
-        function hideSetup() { document.getElementById('setup-overlay').classList.remove('active'); setTimeout(()=>document.getElementById('setup-overlay').style.display='none',450); }
-        function saveSetup() {
-            const n = document.getElementById('setup-shop').value.trim(), w = document.getElementById('setup-wage').value.trim(), r = document.getElementById('setup-night-rate').value.trim();
-            if(n && /^\d+$/.test(w)) { config = {name:n, wage:parseInt(w), nightRate:parseInt(r)||0}; localStorage.setItem('workConfigV34', JSON.stringify(config)); hideSetup(); updateDash(); }
-        }
-
-        function changeMonth(dir) { viewDate.setMonth(viewDate.getMonth() + dir); updateDash(); }
+        let goals = JSON.parse(localStorage.getItem('workGoalsListV34')) || [];
         
-        function renderCalendar() {
-            const body = document.getElementById('cal-body'); body.innerHTML = '';
-            ["S","M","T","W","T","F","S"].forEach(d => { const l = document.createElement('div'); l.className="cal-day-label"; l.innerText=d; body.appendChild(l); });
-            const y = viewDate.getFullYear(), m = viewDate.getMonth();
-            const first = new Date(y, m, 1).getDay(), last = new Date(y, m+1, 0).getDate();
-            const todayStr = `${new Date().getFullYear()}-${(new Date().getMonth()+1).toString().padStart(2,'0')}-${new Date().getDate().toString().padStart(2,'0')}`;
-            for(let i=0; i<first; i++) body.appendChild(document.createElement('div'));
-            for(let d=1; d<=last; d++) {
-                const f = `${y}-${(m+1).toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
-                const log = logs.find(l => l.fullDate === f); const cell = document.createElement('div');
-                cell.className = `cal-cell ${log?'has-data':''} ${selectedDateStr===f?'selected':''}`;
-                if(f === todayStr) cell.classList.add('today');
-                cell.innerHTML = `<div class="cal-date-num">${d}</div>${log?`<div class="cal-amt-hint">¥${(log.amt/1000).toFixed(1)}k</div>`:''}`;
-                cell.onclick = () => selectDate(f);
-                body.appendChild(cell);
-            }
-        }
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const graphColors = ["var(--color-1)", "var(--color-2)", "var(--color-3)", "var(--color-4)"];
+        const wpColors = ['#8b5cf6', '#ef4444', '#10b981', '#2563eb']; 
+        const wpGradients = [
+            'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)', // Purple
+            'linear-gradient(135deg, #f87171 0%, #ef4444 100%)', // Red
+            'linear-gradient(135deg, #34d399 0%, #10b981 100%)', // Green
+            'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)'  // Dark Blue
+        ]; 
+        const startYear = 24, endYear = 34;
 
-        function selectDate(dateStr) {
-            selectedDateStr = dateStr;
-            const log = logs.find(l => l.fullDate === dateStr);
-            const btn = document.getElementById('save-btn');
-            if(log) {
-                document.getElementById('work-start').value = log.start;
-                document.getElementById('work-end').value = log.end;
-                btn.textContent = "Rewrite Shift"; 
+        const lapGradients = [
+            ['#fef08a', '#facc15'], // 1周目: 薄い黄色 -> 鮮やかな黄色
+            ['#facc15', '#f59e0b'], // 2周目: 黄色 -> オレンジ
+            ['#f59e0b', '#d97706'], // 3周目: オレンジ -> アンバー
+            ['#d97706', '#9a3412'], // 4周目: アンバー -> ダークオレンジ
+            ['#9a3412', '#451a03']  // 5周目以降: ダークオレンジ -> ダークブラウン
+        ];
+
+        let viewDate = new Date(), selectedDateStr = "", lastClickTime = 0, lastSavedDate = null, lastSavedSalaryKey = null, isSalaryEditMode = false;
+        let currentEditingGoalIndex = null;
+
+        window.onload = () => {
+            if (configs.length > 0) {
+                const activeIndex = configs.findIndex(c => !c.deleted);
+                currentWorkIndex = activeIndex !== -1 ? activeIndex : 0;
+            }
+            if (configs.length === 0 || configs.every(c => c.deleted)) {
+                const overlay = document.getElementById('initial-setup-overlay');
+                overlay.style.display = 'flex';
+                setTimeout(() => overlay.classList.add('active'), 50);
             } else {
-                document.getElementById('work-start').value = "09:00";
-                document.getElementById('work-end').value = "18:00";
-                btn.textContent = "Record Shift";
-            }
-            renderCalendar();
-        }
-
-        function handleLogShift() {
-            if(!selectedDateStr) return;
-            if(logs.find(l => l.fullDate === selectedDateStr)) {
-                // ② シンプルな青グラデーションクラスを適用
-                showModal("Update Record?", "Overwrite existing shift?", "Rewrite", "grad-blue-btn-simple", () => executeSave());
-            } else executeSave();
-        }
-
-        function executeSave() {
-            const s = document.getElementById('work-start').value, e = document.getElementById('work-end').value;
-            const res = calculatePay(s, e);
-            logs = logs.filter(l => l.fullDate !== selectedDateStr);
-            logs.unshift({ id:Date.now(), fullDate:selectedDateStr, start:s, end:e, amt:res.total, rate:config.nightRate, wage:config.wage, date: `${new Date(selectedDateStr.replace(/-/g,'/')).getMonth()+1}/${new Date(selectedDateStr.replace(/-/g,'/')).getDate()}`, monthKey: `${new Date(selectedDateStr.replace(/-/g,'/')).getFullYear()%100}/${new Date(selectedDateStr.replace(/-/g,'/')).getMonth()+1}`, dur:res.duration });
-            localStorage.setItem('workLogsV34', JSON.stringify(logs)); updateDash(); selectDate(selectedDateStr);
-        }
-
-        function updateDash() {
-            if(!config) { showSetup(false); return; }
-            document.getElementById('display-month').innerText = viewDate.toLocaleString('en', {month:'long'}).toUpperCase() + ` (${viewDate.getMonth()+1})`;
-            document.getElementById('display-shop').innerText = config.name.toUpperCase();
-            const monthKey = `${viewDate.getFullYear()%100}/${viewDate.getMonth()+1}`;
-            const mLogs = logs.filter(l => l.monthKey === monthKey).sort((a,b) => a.fullDate.localeCompare(b.fullDate));
-            document.getElementById('display-total').innerText = `¥${mLogs.reduce((s,l)=>s+l.amt, 0).toLocaleString()}`;
-            renderCalendar();
-            document.getElementById('log-container').innerHTML = mLogs.map(l => `
-                <div class="history-item">
-                    <div style="flex:1;">
-                        <div style="font-weight:700;">${l.date} <span style="font-size:10px; color:#888;">(${l.start}-${l.end})</span></div>
-                        <div style="font-size:10px; color:#888;">${l.dur}h / ¥${(l.wage||0).toLocaleString()} / N.R-${l.rate||0}%</div>
-                    </div>
-                    <div style="text-align:right; font-weight:900; color:#4f46e5; margin-right:15px;">+¥${l.amt.toLocaleString()}</div>
-                    <div onclick="confirmDelete(${l.id})" style="color:var(--color-2); font-size:22px; font-weight:900; padding: 0 10px; cursor:pointer; min-width:44px; text-align:right;">✕</div>
-                </div>
-            `).join('');
-        }
-
-        function calculatePay(s, e) {
-            const toM = (t) => { const [h,m] = t.split(':').map(Number); return h*60+m; };
-            let sM = toM(s), eM = toM(e); if(eM <= sM) eM += 1440;
-            let night = 0; for(let i=sM; i<eM; i++) { const c = i%1440; if(c >= 1320 || c < 300) night++; }
-            const totalH = (eM-sM)/60, nightH = night/60;
-            return { total: Math.floor(totalH * config.wage + nightH * (config.wage * (config.nightRate/100))), duration: totalH.toFixed(1) };
-        }
-
-        function handleSecretInput() {
-            const el = document.getElementById('salaryInput'); const m = el.value.trim().match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/);
-            if (m) { const y = parseInt(m[1]), mo = parseInt(m[2]), amt = parseInt(m[3]), memo = m[4] || ''; salaryData[`${y}/${mo}`] = { amount: amt, memo: memo }; localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData)); initSalaryCalendar(y); }
-            el.value = '';
-        }
-
-        function initSalaryCalendar(openYear = null) {
-            const cont = document.getElementById('salary-calendar-container'); cont.innerHTML = '';
-            for (let y = 25; y <= 34; y++) {
-                let yearly = 0; for (let m = 1; m <= 12; m++) yearly += (salaryData[`${y}/${m}`]?.amount || 0);
-                const sec = document.createElement('div'); sec.className = 'year-section' + (y === openYear ? ' active' : '');
-                sec.innerHTML = `<div class="year-header" onclick="this.parentElement.classList.toggle('active')"><div>20${y}</div><div>¥${yearly.toLocaleString()}</div></div><div class="month-content"></div>`;
-                const grid = sec.querySelector('.month-content');
-                for (let m = 1; m <= 12; m++) {
-                    const d = salaryData[`${y}/${m}`] || { amount: 0 };
-                    const card = document.createElement('div'); card.className = `month-card ${d.amount > 0 ? 'has-data' : ''}`;
-                    card.innerHTML = `<div>${monthNames[m-1]}</div><b>¥${d.amount.toLocaleString()}</b>`;
-                    grid.appendChild(card);
-                }
-                cont.appendChild(sec);
-            }
-        }
-
-        function closeModal() { document.getElementById('customModal').style.display='none'; }
-        function showModal(title, msg, btnText, btnClass, onConfirm) {
-            document.getElementById('modalTitle').textContent = title;
-            document.getElementById('modalMsg').textContent = msg;
-            const btn = document.getElementById('modalConfirmBtn');
-            btn.textContent = btnText;
-            btn.className = "add-btn " + btnClass; // ここでシンプルなグラデーションクラスを適用
-            btn.onclick = () => { onConfirm(); closeModal(); };
-            document.getElementById('customModal').style.display='flex';
-        }
-
-        function confirmDelete(id) {
-            // ③ シンプルな赤グラデーションクラスを適用
-            showModal("Delete Record?", "Remove this shift record?", "Delete", "grad-red-btn-simple", () => {
-                logs = logs.filter(l => l.id !== id);
-                localStorage.setItem('workLogsV34', JSON.stringify(logs));
+                const today = new Date();
+                selectedDateStr = `${today.getFullYear()}-${(today.getMonth()+1).toString().padStart(2,'0')}-${today.getDate().toString().padStart(2,'0')}`;
                 updateDash();
+                initSalaryCalendar(today.getFullYear() % 100);
+            }
+        };
+
+        function handleSliderScroll() {
+            const slider = document.getElementById('mainSlider'), p2f = document.getElementById('page2-footer'), p2h = document.getElementById('page2-hint');
+            if (slider.scrollLeft >= window.innerWidth * 0.5) { p2f.style.opacity = '1'; p2f.style.pointerEvents = 'auto'; p2h.style.opacity = '1'; p2h.style.pointerEvents = 'auto'; }
+            else { p2f.style.opacity = '0'; p2f.style.pointerEvents = 'none'; p2h.style.opacity = '0'; p2h.style.pointerEvents = 'none'; }
+        }
+
+        // ================= WORK CARD LONG PRESS (Delete) =================
+        let pressTimer;
+        const cardBg = document.getElementById('work-card-bg');
+        cardBg.addEventListener('touchstart', (e) => {
+            if(e.target.tagName.toLowerCase() === 'button') return;
+            pressTimer = window.setTimeout(() => {
+                promptDeleteWorkplace();
+            }, 500);
+        }, {passive: true});
+        cardBg.addEventListener('touchend', () => { clearTimeout(pressTimer); });
+        cardBg.addEventListener('touchmove', () => { clearTimeout(pressTimer); });
+
+        function promptDeleteWorkplace() {
+            const activeCount = configs.filter(c => !c.deleted).length;
+            if (activeCount <= 1) {
+                alert("Cannot delete the last active workplace.");
+                return;
+            }
+            openConfirmModal("Delete Workplace?", "Past records stay, but this workplace will be removed.", "Delete", "red", () => {
+                configs[currentWorkIndex].deleted = true;
+                localStorage.setItem('workConfigsListV34', JSON.stringify(configs));
+                changeWorkplace(1);
             });
         }
 
-        updateDash(); initSalaryCalendar(26);
+        // ================= SETTINGS MENU & GOAL & BACKUP =================
+        function openSettingsMenu() { const o = document.getElementById('settings-menu-overlay'); o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 50); }
+        function closeSettingsMenu() { const o = document.getElementById('settings-menu-overlay'); o.classList.remove('active'); setTimeout(() => o.style.display = 'none', 400); }
+
+        // 🎯 新設：Backup 処理ロジック
+        function handleBackup() {
+            const backupObj = { configs, logs, salaryData, goals };
+            // JSON文字列をエンコードしてBase64化
+            const backupStr = btoa(unescape(encodeURIComponent(JSON.stringify(backupObj)))); 
+            navigator.clipboard.writeText(backupStr).then(() => {
+                const toast = document.getElementById('toast-pop');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 1500);
+            }).catch(err => {
+                alert("Failed to copy backup code to clipboard.");
+            });
+        }
+
+        // 🎯 新設：Restore 画面の表示と処理
+        function showRestoreScreen() { 
+            closeSettingsMenu(); 
+            setTimeout(() => { const o = document.getElementById('restore-overlay'); o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 50); }, 450); 
+        }
+        function closeRestoreScreen() { const o = document.getElementById('restore-overlay'); o.classList.remove('active'); setTimeout(() => o.style.display = 'none', 300); }
+        
+        function handleRestoreAction() {
+            const input = document.getElementById('restore-input').value.trim();
+            if(!input) return;
+            try {
+                // Base64からデコードしてJSONパース
+                const decoded = JSON.parse(decodeURIComponent(escape(atob(input))));
+                if(decoded.configs && decoded.logs && decoded.salaryData) {
+                    localStorage.setItem('workConfigsListV34', JSON.stringify(decoded.configs));
+                    localStorage.setItem('workLogsV34', JSON.stringify(decoded.logs));
+                    localStorage.setItem('myTenYearSalaryData', JSON.stringify(decoded.salaryData));
+                    localStorage.setItem('workGoalsListV34', JSON.stringify(decoded.goals || []));
+                    // 完全に復元できたのでリロードして反映
+                    location.reload(); 
+                } else { 
+                    throw new Error("Invalid Format"); 
+                }
+            } catch(e) { 
+                showInvalidModal(); // 不正なフォーマットの場合はいつものエラーダイアログを出す
+            }
+        }
+
+        function showEditScreen() { 
+            if(configs.length === 0) return;
+            const currentConf = configs[currentWorkIndex];
+            document.getElementById('edit-shop').value = currentConf.name;
+            document.getElementById('edit-wage').value = currentConf.wage;
+            document.getElementById('edit-night-rate').value = (currentConf.nightRate === 0) ? "" : currentConf.nightRate;
+            document.getElementById('edit-transport').value = (currentConf.transport === 0) ? "" : currentConf.transport;
+            closeSettingsMenu(); 
+            setTimeout(() => { const o = document.getElementById('edit-setup-overlay'); o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 50); }, 450); 
+        }
+        
+        function showAddWorkplaceScreen() {
+            if (configs.filter(c => !c.deleted).length >= 5) {
+                closeSettingsMenu(); setTimeout(() => { const m = document.getElementById('limit-modal-overlay'); m.style.display = 'flex'; setTimeout(() => m.classList.add('active'), 10); }, 450); return;
+            }
+            document.getElementById('add-shop').value = ''; document.getElementById('add-wage').value = ''; document.getElementById('add-night-rate').value = ''; document.getElementById('add-transport').value = '';
+            closeSettingsMenu(); 
+            setTimeout(() => { const o = document.getElementById('add-work-overlay'); o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 50); }, 450);
+        }
+        
+        function showGoalScreen() { 
+            if (goals.length >= 6) {
+                closeSettingsMenu(); setTimeout(() => { const m = document.getElementById('limit-modal-overlay'); m.style.display = 'flex'; setTimeout(() => m.classList.add('active'), 10); }, 450); return;
+            }
+            closeSettingsMenu(); 
+            setTimeout(() => { const o = document.getElementById('goal-setup-overlay'); o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 50); }, 450); 
+        }
+
+        function closeLimitModal() { const m = document.getElementById('limit-modal-overlay'); m.classList.remove('active'); setTimeout(() => m.style.display = 'none', 300); }
+        function backToSettingsMenu(currentId) { const current = document.getElementById(currentId); current.classList.remove('active'); setTimeout(() => { current.style.display = 'none'; openSettingsMenu(); }, 400); }
+
+        function saveGoalSetup() {
+            const name = document.getElementById('goal-name').value.trim(), limit = document.getElementById('goal-limit').value.trim(), start = document.getElementById('goal-start').value, end = document.getElementById('goal-end').value;
+            if(!name || !limit || !start || !end) { showValidationModal(["Goal Name", "Limited", "Period"], true, false); return; }
+            goals.push({ name, limit: parseInt(limit), start, end }); localStorage.setItem('workGoalsListV34', JSON.stringify(goals));
+            document.getElementById('goal-name').value = ''; document.getElementById('goal-limit').value = ''; document.getElementById('goal-start').value = ''; document.getElementById('goal-end').value = '';
+            const o = document.getElementById('goal-setup-overlay'); o.classList.remove('active'); setTimeout(() => { o.style.display = 'none'; updateDash(); }, 400);
+        }
+
+        function openEditGoalModal(index) {
+            currentEditingGoalIndex = index;
+            const goal = goals[index];
+            document.getElementById('edit-goal-name').value = goal.name;
+            document.getElementById('edit-goal-limit').value = goal.limit;
+            document.getElementById('edit-goal-start').value = goal.start;
+            document.getElementById('edit-goal-end').value = goal.end;
+            const o = document.getElementById('edit-goal-overlay');
+            o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 50);
+        }
+
+        function closeEditGoalModal() { const o = document.getElementById('edit-goal-overlay'); o.classList.remove('active'); setTimeout(() => o.style.display = 'none', 300); }
+
+        function saveEditGoal() {
+            const name = document.getElementById('edit-goal-name').value.trim(), limit = document.getElementById('edit-goal-limit').value.trim(), start = document.getElementById('edit-goal-start').value, end = document.getElementById('edit-goal-end').value;
+            if(!name || !limit || !start || !end) { showValidationModal(["Goal Name", "Limited", "Period"], true, 'edit-goal'); return; }
+            goals[currentEditingGoalIndex] = { name, limit: parseInt(limit), start, end };
+            localStorage.setItem('workGoalsListV34', JSON.stringify(goals));
+            closeEditGoalModal(); updateDash();
+        }
+
+        function deleteGoal(index) {
+            openConfirmModal("Delete Goal?", "This will permanently remove this goal.", "Delete", "red", () => { goals.splice(index, 1); localStorage.setItem('workGoalsListV34', JSON.stringify(goals)); updateDash(); });
+        }
+
+        function renderGoalGauges() {
+            const container = document.getElementById('goal-container'); container.innerHTML = '';
+            if (goals.length === 0) return;
+            goals.forEach((goal, index) => {
+                const sTime = new Date(goal.start.replace(/-/g,'/')).getTime(), eTime = new Date(goal.end.replace(/-/g,'/')).getTime() + 86400000;
+                let logsTotal = logs.filter(l => { let t = new Date(l.fullDate.replace(/-/g,'/')).getTime(); return t >= sTime && t < eTime; }).reduce((sum, l) => sum + l.amt, 0);
+                let salaryTotal = Object.keys(salaryData).filter(k => { let [y, m] = k.split('/'); let t = new Date(`20${y}/${m}/01`).getTime(); return t >= sTime && t < eTime; }).reduce((sum, k) => sum + salaryData[k].amount, 0);
+                const combinedTotal = logsTotal + salaryTotal;
+                
+                let rawPercent = Math.floor((combinedTotal / goal.limit) * 100), lap = Math.floor(rawPercent / 100), gaugeVal = rawPercent % 100;
+                if (rawPercent > 0 && gaugeVal === 0) { gaugeVal = 100; lap -= 1; }
+                
+                let bgLap = lap > 0 ? lap - 1 : 0; let fgLap = lap;
+                if (bgLap >= lapGradients.length) bgLap = lapGradients.length - 1;
+                if (fgLap >= lapGradients.length) fgLap = lapGradients.length - 1;
+
+                const wrapper = document.createElement('div'); wrapper.className = 'goal-item';
+                const startStr = goal.start.replace(/-/g, '/'), endStr = goal.end.replace(/-/g, '/');
+
+                let offsetDegree = (rawPercent > 0 && rawPercent % 100 !== 0) ? 4.5 : 0;
+
+                wrapper.innerHTML = `
+                    <div class="goal-del-btn" onclick="deleteGoal(${index})">✕</div>
+                    <div class="goal-header">
+                        <div class="goal-name-disp">${goal.name}</div>
+                        <div class="goal-period-disp">${startStr} - ${endStr}</div>
+                    </div>
+                    <div class="goal-gauge-wrapper">
+                        <svg viewBox="0 0 36 36" class="circular-chart">
+                            <defs>
+                                <linearGradient id="fgGrad${index}" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="${lapGradients[fgLap][0]}" />
+                                    <stop offset="100%" stop-color="${lapGradients[fgLap][1]}" />
+                                </linearGradient>
+                                ${lap > 0 ? `<linearGradient id="bgGrad${index}" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="${lapGradients[bgLap][0]}" />
+                                    <stop offset="100%" stop-color="${lapGradients[bgLap][1]}" />
+                                </linearGradient>` : ''}
+                            </defs>
+                            <path class="circle-bg" stroke="${lap === 0 ? '#e6e6e6' : `url(#bgGrad${index})`}" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path class="circle" id="goal-path-${index}" stroke="url(#fgGrad${index})" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        </svg>
+                        <div class="gauge-info">
+                            <div class="gauge-percent">${rawPercent}%</div>
+                            <div class="gauge-amount">¥${combinedTotal.toLocaleString()} / ¥${goal.limit.toLocaleString()}</div>
+                        </div>
+                    </div>
+                    <button class="goal-edit-btn" onclick="openEditGoalModal(${index})">Edit Setting</button>
+                `;
+                container.appendChild(wrapper);
+
+                setTimeout(() => { 
+                    const path = document.getElementById(`goal-path-${index}`); 
+                    if(path) path.setAttribute('stroke-dasharray', `${gaugeVal}, 100`); 
+                }, 50);
+            });
+        }
+
+        // ================= PAGE 1 SETUP FUNCTIONS =================
+        function showValidationModal(emptyFields, isRequiredMissing, isEditMode) {
+            const title = document.getElementById('val-modal-title'), list = document.getElementById('missing-fields-list'), btnArea = document.getElementById('val-modal-btns');
+            list.innerHTML = emptyFields.map(f => `<li>${f}</li>`).join('');
+            if (isRequiredMissing) { title.innerText = "Required fields are missing."; btnArea.innerHTML = `<button style="background:none; border:none; color:#a1a1aa; font-weight:700; padding:10px; cursor:pointer;" onclick="closeValidationModal()">Back</button>`; }
+            else { 
+                title.innerText = "Some items are not filled out."; 
+                let targetFunc = "finalizeInitialSetup()";
+                if (isEditMode === 'add') targetFunc = "finalizeAddWorkplace()";
+                else if (isEditMode === true) targetFunc = "finalizeEditSetup()";
+                else if (isEditMode === 'edit-goal') targetFunc = "saveEditGoal()";
+
+                btnArea.innerHTML = `<button style="background:var(--black-grad); width:100%; border-radius:18px; color:white; padding:16px; border:none; font-weight:800; cursor:pointer;" onclick="${targetFunc}">Setting</button><button style="background:none; border:none; color:#a1a1aa; font-weight:700; padding:10px; cursor:pointer;" onclick="closeValidationModal()">Back</button>`; 
+            }
+            const m = document.getElementById('validation-modal-overlay'); m.style.display = 'flex'; setTimeout(() => m.classList.add('active'), 10);
+        }
+        function closeValidationModal() { const m = document.getElementById('validation-modal-overlay'); m.classList.remove('active'); setTimeout(() => m.style.display = 'none', 300); }
+
+        function saveInitialSetup() {
+            const n = document.getElementById('setup-shop').value.trim(), w = document.getElementById('setup-wage').value.trim(), r = document.getElementById('setup-night-rate').value.trim(), t = document.getElementById('setup-transport').value.trim();
+            let req = []; if (!n) req.push("Name"); if (!w || parseInt(w) === 0) req.push("Hourly Wage"); if (req.length > 0) { showValidationModal(req, true, false); return; }
+            let opt = []; if (!r || parseInt(r) === 0) opt.push("Night Rate"); if (!t || parseInt(t) === 0) opt.push("Commuting Allowance"); if (opt.length > 0) { showValidationModal(opt, false, false); return; }
+            finalizeInitialSetup();
+        }
+        function finalizeInitialSetup() {
+            closeValidationModal();
+            const n = document.getElementById('setup-shop').value.trim(), w = document.getElementById('setup-wage').value.trim(), r = document.getElementById('setup-night-rate').value.trim(), t = document.getElementById('setup-transport').value.trim();
+            configs.push({ name: n, wage: parseInt(w), nightRate: parseInt(r) || 0, transport: parseInt(t) || 0 }); localStorage.setItem('workConfigsListV34', JSON.stringify(configs));
+            currentWorkIndex = 0; const o = document.getElementById('initial-setup-overlay'); o.classList.remove('active'); setTimeout(() => { o.style.display = 'none'; updateDash(); initSalaryCalendar(new Date().getFullYear() % 100); }, 400);
+        }
+
+        function saveAddWorkplace() {
+            const n = document.getElementById('add-shop').value.trim(), w = document.getElementById('add-wage').value.trim(), r = document.getElementById('add-night-rate').value.trim(), t = document.getElementById('add-transport').value.trim();
+            let req = []; if (!n) req.push("Name"); if (!w || parseInt(w) === 0) req.push("Hourly Wage"); if (req.length > 0) { showValidationModal(req, true, 'add'); return; }
+            let opt = []; if (!r || parseInt(r) === 0) opt.push("Night Rate"); if (!t || parseInt(t) === 0) opt.push("Commuting Allowance"); if (opt.length > 0) { showValidationModal(opt, false, 'add'); return; }
+            finalizeAddWorkplace();
+        }
+        function finalizeAddWorkplace() {
+            closeValidationModal();
+            const n = document.getElementById('add-shop').value.trim(), w = document.getElementById('add-wage').value.trim(), r = document.getElementById('add-night-rate').value.trim(), t = document.getElementById('add-transport').value.trim();
+            configs.push({ name: n, wage: parseInt(w), nightRate: parseInt(r) || 0, transport: parseInt(t) || 0 }); localStorage.setItem('workConfigsListV34', JSON.stringify(configs));
+            currentWorkIndex = configs.length - 1; const o = document.getElementById('add-work-overlay'); o.classList.remove('active'); setTimeout(() => { o.style.display = 'none'; updateDash(); }, 400);
+        }
+
+        function saveEditSetup() {
+            const n = document.getElementById('edit-shop').value.trim(), w = document.getElementById('edit-wage').value.trim(), r = document.getElementById('edit-night-rate').value.trim(), t = document.getElementById('edit-transport').value.trim();
+            let req = []; if (!n) req.push("Name"); if (!w || parseInt(w) === 0) req.push("Hourly Wage"); if (req.length > 0) { showValidationModal(req, true, true); return; }
+            let opt = []; if (!r || parseInt(r) === 0) opt.push("Night Rate"); if (!t || parseInt(t) === 0) opt.push("Commuting Allowance"); if (opt.length > 0) { showValidationModal(opt, false, true); return; }
+            finalizeEditSetup();
+        }
+        function finalizeEditSetup() {
+            closeValidationModal();
+            const n = document.getElementById('edit-shop').value.trim(), w = document.getElementById('edit-wage').value.trim(), r = document.getElementById('edit-night-rate').value.trim(), t = document.getElementById('edit-transport').value.trim();
+            configs[currentWorkIndex] = { name: n, wage: parseInt(w), nightRate: parseInt(r) || 0, transport: parseInt(t) || 0 }; localStorage.setItem('workConfigsListV34', JSON.stringify(configs));
+            const o = document.getElementById('edit-setup-overlay'); o.classList.remove('active'); setTimeout(() => { o.style.display = 'none'; updateDash(); }, 400);
+        }
+
+        // ================= PAGE 1 DASHBOARD & LOGIC =================
+        function changeWorkplace(dir) {
+            const activeCount = configs.filter(c => !c.deleted).length;
+            if (activeCount <= 1) return;
+            const cardBg = document.getElementById('work-card-bg');
+            cardBg.style.opacity = '0';
+            setTimeout(() => { 
+                let nextIndex = currentWorkIndex;
+                for(let i=0; i<configs.length; i++) {
+                    nextIndex = (nextIndex + dir + configs.length) % configs.length;
+                    if (!configs[nextIndex].deleted) {
+                        currentWorkIndex = nextIndex;
+                        break;
+                    }
+                }
+                updateDash(); 
+                cardBg.style.opacity = '1'; 
+            }, 300);
+        }
+
+        function updateDash() {
+            if(configs.filter(c=>!c.deleted).length === 0) return;
+            const currentConf = configs[currentWorkIndex];
+            
+            document.getElementById('work-card-bg').style.background = wpGradients[currentWorkIndex % 4];
+            document.getElementById('display-shop').innerText = currentConf.name.toUpperCase();
+            document.getElementById('display-month').innerText = viewDate.toLocaleString('en', {month:'long'}).toUpperCase();
+            
+            const monthKey = `${viewDate.getFullYear()%100}/${viewDate.getMonth()+1}`;
+            const mLogs = logs.filter(l => l.monthKey === monthKey && (l.workIndex || 0) === currentWorkIndex);
+            const total = mLogs.reduce((s, l) => s + l.amt, 0);
+            document.getElementById('display-total').innerText = `¥${total.toLocaleString()}`;
+            
+            renderCalendar();
+            const allMLogs = logs.filter(l => l.monthKey === monthKey).sort((a,b) => parseInt(a.date) - parseInt(b.date));
+            renderLogs(allMLogs);
+            renderGoalGauges(); 
+        }
+
+        function changeMonth(dir) {
+            lastSavedDate = null;
+            const cal = document.getElementById('cal-body'), total = document.getElementById('display-total');
+            cal.style.opacity = '0'; total.style.opacity = '0';
+            setTimeout(() => { viewDate.setMonth(viewDate.getMonth() + dir); updateDash(); cal.style.opacity = '1'; total.style.opacity = '1'; }, 300);
+        }
+
+        function renderCalendar() {
+            const body = document.getElementById('cal-body'); body.innerHTML = '';
+            const now = new Date();
+            ["S","M","T","W","T","F","S"].forEach((d, i) => { const l = document.createElement('div'); l.className="cal-day-label"; if(i === 0) l.classList.add('cal-day-sun'); if(i === 6) l.classList.add('cal-day-sat'); l.innerText=d; body.appendChild(l); });
+            const y = viewDate.getFullYear(), m = viewDate.getMonth(), first = new Date(y, m, 1).getDay(), last = new Date(y, m+1, 0).getDate();
+            for(let i=0; i<first; i++) body.appendChild(document.createElement('div'));
+            for(let d=1; d<=last; d++) {
+                const f = `${y}-${(m+1).toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
+                const cell = document.createElement('div');
+                cell.className = `cal-cell ${selectedDateStr === f ? 'selected' : ''}`;
+                if (y === now.getFullYear() && m === now.getMonth() && d === now.getDate()) cell.classList.add('is-today');
+                
+                const dayLogs = logs.filter(l => l.fullDate === f);
+                let dotsHtml = '';
+                
+                if (dayLogs.length > 0) {
+                    const animClass = (f === lastSavedDate) ? 'anim-slide-up' : '';
+                    const uniqueWorkIndices = [...new Set(dayLogs.map(l => l.workIndex || 0))].sort();
+                    const N = uniqueWorkIndices.length;
+                    let topDots = [], bottomDots = [];
+                    
+                    if (N === 5) { topDots = uniqueWorkIndices.slice(0,3); bottomDots = uniqueWorkIndices.slice(3); }
+                    else if (N === 4) { topDots = uniqueWorkIndices.slice(0,2); bottomDots = uniqueWorkIndices.slice(2); }
+                    else if (N === 3) { topDots = uniqueWorkIndices.slice(0,2); bottomDots = uniqueWorkIndices.slice(2); }
+                    else { topDots = uniqueWorkIndices; }
+
+                    dotsHtml = `<div class="cal-dots-wrapper ${animClass}">`;
+                    dotsHtml += '<div class="cal-dots-row">' + topDots.map(idx => {
+                        const isDel = configs[idx]?.deleted;
+                        return `<span class="dot ${isDel ? 'dot-deleted' : ''}" style="${isDel ? '' : `background:${wpColors[idx % 4]}`}"></span>`;
+                    }).join('') + '</div>';
+                    if (bottomDots.length > 0) {
+                        dotsHtml += '<div class="cal-dots-row">' + bottomDots.map(idx => {
+                            const isDel = configs[idx]?.deleted;
+                            return `<span class="dot ${isDel ? 'dot-deleted' : ''}" style="${isDel ? '' : `background:${wpColors[idx % 4]}`}"></span>`;
+                        }).join('') + '</div>';
+                    }
+                    dotsHtml += '</div>';
+                }
+                
+                cell.innerHTML = `<div class="cal-date-num">${d}</div>${dotsHtml}`;
+                
+                cell.onclick = (e) => {
+                    const ct = new Date().getTime(), tl = ct - lastClickTime;
+                    if (tl < 300 && tl > 0) { if(dayLogs.length > 0) openDailyReport(f, dayLogs); e.preventDefault(); } 
+                    else { selectedDateStr = f; updateDash(); }
+                    lastClickTime = ct;
+                };
+                body.appendChild(cell);
+            }
+            lastSavedDate = null;
+        }
+
+        function handleLogShift() {
+            if(!selectedDateStr || configs.filter(c=>!c.deleted).length === 0) return;
+            const existing = logs.find(l => l.fullDate === selectedDateStr && (l.workIndex || 0) === currentWorkIndex);
+            if (existing) openConfirmModal("Overwrite?", "Existing record found for this day.", "Overwrite", "blue", () => executeLog());
+            else executeLog();
+        }
+
+        function executeLog() {
+            lastSavedDate = selectedDateStr;
+            const currentConf = configs[currentWorkIndex];
+            const s = document.getElementById('work-start').value, e = document.getElementById('work-end').value, res = calculatePay(s, e, currentConf);
+            logs = logs.filter(l => !(l.fullDate === selectedDateStr && (l.workIndex || 0) === currentWorkIndex));
+            logs.push({ id: Date.now(), fullDate: selectedDateStr, monthKey: `${new Date(selectedDateStr.replace(/-/g,'/')).getFullYear()%100}/${new Date(selectedDateStr.replace(/-/g,'/')).getMonth()+1}`, amt: res.total, date: selectedDateStr.split('-')[2], start: s, end: e, dur: res.dur, wage: currentConf.wage, nr: currentConf.nightRate, ca: currentConf.transport, shopName: currentConf.name, workIndex: currentWorkIndex });
+            localStorage.setItem('workLogsV34', JSON.stringify(logs));
+            updateDash();
+        }
+
+        function calculatePay(s, e, conf) {
+            const toM = (t) => { const [h,m] = t.split(':').map(Number); return h*60+m; };
+            let sM = toM(s), eM = toM(e); if(eM <= sM) eM += 1440;
+            let nMin = 0; for(let i=sM; i<eM; i++) { if((i%1440) >= 1320 || (i%1440) < 300) nMin++; }
+            const dur = (eM - sM) / 60; return { total: Math.floor((dur * conf.wage) + (nMin/60)*(conf.wage*(conf.nightRate/100)) + conf.transport), dur: dur.toFixed(1) };
+        }
+        function deleteLog(id) { openConfirmModal("Delete Record?", "This will permanently remove this shift.", "Delete", "red", () => { logs = logs.filter(l => l.id !== id); localStorage.setItem('workLogsV34', JSON.stringify(logs)); updateDash(); }); }
+        
+        function openConfirmModal(t, m, bt, g, onC) { document.getElementById('confirm-title').innerText = t; document.getElementById('confirm-msg').innerText = m; const b = document.getElementById('confirm-action-btn'); b.innerText = bt; b.style.background = (g === 'red') ? 'var(--red-grad)' : 'var(--blue-grad)'; b.onclick = () => { onC(); closeConfirmModal(); }; const o = document.getElementById('confirm-modal-overlay'); o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 10); }
+        function closeConfirmModal() { const o = document.getElementById('confirm-modal-overlay'); o.classList.remove('active'); setTimeout(() => o.style.display = 'none', 300); }
+
+        // --- 🎯 DAILY REPORT ---
+        let dailyOverlayLastTap = 0;
+        document.getElementById('daily-report-overlay').addEventListener('touchend', (e) => {
+            if (e.target.closest('.modal-content')) return;
+            const ct = Date.now();
+            if (ct - dailyOverlayLastTap < 300 && ct - dailyOverlayLastTap > 0) { closeDailyReport(); e.preventDefault(); }
+            dailyOverlayLastTap = ct;
+        }, {passive: false});
+
+        function openDailyReport(dateStr, dayLogs) {
+            const o = document.getElementById('daily-report-overlay');
+            document.getElementById('daily-title-text').innerText = dateStr.replace(/-/g, '/');
+            const container = document.getElementById('daily-container');
+            container.innerHTML = dayLogs.map(l => {
+                const isDel = configs[l.workIndex || 0]?.deleted;
+                const dotStyle = isDel ? 'background:transparent; border:1.5px solid #1c1c1e; box-sizing:border-box;' : `background:${wpColors[(l.workIndex || 0) % 4]};`;
+                return `<div class="daily-item"><div style="font-weight: 800; font-size:1.1rem; color:var(--text-main); margin-bottom:2px; display:flex; align-items:center; justify-content:center;"><span style="display:inline-block; width:10px; height:10px; border-radius:50%; ${dotStyle} margin-right:8px;"></span>${l.shopName}</div><div style="font-size:0.8rem; color:var(--text-sub);">${l.start} - ${l.end} (${l.dur}h)</div><div style="font-weight: 900; font-size:1.2rem; color:var(--color-1); margin-top:6px;">¥${l.amt.toLocaleString()}</div><div class="goal-del-btn" style="top:10px; right:10px;" onclick="deleteLogAndRefreshDaily(${l.id}, '${dateStr}')">✕</div></div>`;
+            }).join('');
+            o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 10);
+        }
+        function closeDailyReport() { const o = document.getElementById('daily-report-overlay'); o.classList.remove('active'); setTimeout(() => o.style.display = 'none', 300); }
+        function deleteLogAndRefreshDaily(id, dateStr) { openConfirmModal("Delete Record?", "This will permanently remove this shift.", "Delete", "red", () => { logs = logs.filter(l => l.id !== id); localStorage.setItem('workLogsV34', JSON.stringify(logs)); updateDash(); const remainingLogs = logs.filter(l => l.fullDate === dateStr); if (remainingLogs.length > 0) openDailyReport(dateStr, remainingLogs); else closeDailyReport(); }); }
+
+        // --- 🚨 MONTHLY REPORT 🚨 ---
+        function openReportModal() {
+            const o = document.getElementById('report-modal-overlay');
+            const title = document.getElementById('modal-month-name');
+            const y = viewDate.getFullYear();
+            const mStr = viewDate.toLocaleString('en', {month:'long'}).toUpperCase();
+            title.innerHTML = `<div style="font-size:0.8rem; color:var(--color-1); margin-bottom:4px;">${y}</div><div>${mStr} REPORT</div>`;
+            o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 10);
+            updateDash();
+        }
+        function closeReportModal() { const o = document.getElementById('report-modal-overlay'); o.classList.remove('active'); setTimeout(() => o.style.display = 'none', 400); }
+
+        let reportTouchStartX = 0; let reportTouchEndX = 0; let isReportAnimating = false; 
+        const reportOverlay = document.getElementById('report-modal-overlay');
+        reportOverlay.addEventListener('touchstart', e => { reportTouchStartX = e.changedTouches[0].screenX; }, {passive: true});
+        reportOverlay.addEventListener('touchend', e => { reportTouchEndX = e.changedTouches[0].screenX; handleReportSwipe(); }, {passive: true});
+        
+        function handleReportSwipe() { if (isReportAnimating) return; const diff = reportTouchStartX - reportTouchEndX; if (Math.abs(diff) > 50) { if (diff > 0) changeReportMonth(1); else changeReportMonth(-1); } }
+
+        function changeReportMonth(dir) {
+            if (isReportAnimating) return;
+            isReportAnimating = true;
+            const container = document.getElementById('log-container'), title = document.getElementById('modal-month-name');
+            container.style.opacity = '0'; title.style.opacity = '0';
+            setTimeout(() => {
+                viewDate.setMonth(viewDate.getMonth() + dir);
+                const y = viewDate.getFullYear(), mStr = viewDate.toLocaleString('en', {month:'long'}).toUpperCase();
+                title.innerHTML = `<div style="font-size:0.8rem; color:var(--color-1); margin-bottom:4px;">${y}</div><div>${mStr} REPORT</div>`;
+                updateDash();
+                container.style.opacity = '1'; title.style.opacity = '1';
+                setTimeout(() => { isReportAnimating = false; }, 350); 
+            }, 350); 
+        }
+
+        function renderLogs(mLogs) {
+            const container = document.getElementById('log-container');
+            if (mLogs.length === 0) { container.innerHTML = '<div style="text-align:center; color:#ccc; margin-top:50px; font-weight:700;">No records found.</div>'; return; }
+            container.innerHTML = mLogs.map(l => {
+                const dO = new Date(l.fullDate.replace(/-/g,'/'));
+                const isDel = configs[l.workIndex || 0]?.deleted;
+                const dotStyle = isDel ? 'background:transparent; border:1.5px solid #1c1c1e; box-sizing:border-box;' : `background:${wpColors[(l.workIndex || 0) % 4]};`;
+                return `<div class="history-item"><div class="log-row-top"><div class="log-date">${dO.getMonth()+1}/${dO.getDate()}</div><div class="log-sub-text">(${l.start}-${l.end})</div></div><div class="log-row-mid"><div class="log-shop-name log-sub-text" style="display:flex; align-items:center;"><span class="log-shop-dot" style="${dotStyle}"></span>${l.shopName || configs[0].name}</div><div class="log-right-group"><div class="log-amt">+¥${l.amt.toLocaleString()}</div><div class="log-del" onclick="deleteLog(${l.id})">✕</div></div></div><div class="log-row-bottom"><div class="log-details-small">${l.dur}h / ¥${l.wage.toLocaleString()} / N.R-${l.nr}% / C.A-¥${l.ca.toLocaleString()}</div></div></div>`;
+            }).join('');
+        }
+
+        // ================= PAGE 2 =================
+        function initSalaryCalendar(openYear = new Date().getFullYear() % 100) {
+            const container = document.getElementById('salary-manager-container');
+            container.innerHTML = '';
+            for (let y = startYear; y <= endYear; y++) {
+                let yearlyTotal = 0;
+                for (let m = 1; m <= 12; m++) yearlyTotal += (salaryData[`${y}/${m}`]?.amount || 0);
+                const section = document.createElement('div');
+                section.className = 'year-section' + (y === openYear ? ' active' : '');
+                section.id = `salary-year-${y}`;
+                section.innerHTML = `<div class="year-header" onclick="toggleSalaryYear(${y})"><div class="year-title">20${y}</div><div class="year-total">¥${yearlyTotal.toLocaleString()}</div></div><div class="month-content"></div>`;
+                const grid = section.querySelector('.month-content');
+                for (let m = 1; m <= 12; m++) {
+                    const key = `${y}/${m}`, d = salaryData[key] || { amount: 0, memo: '' }, card = document.createElement('div');
+                    card.className = `month-card ${d.amount > 0 ? 'has-data' : ''}`;
+                    let lastTap = 0;
+                    card.onclick = (e) => {
+                        let n = Date.now();
+                        if (n - lastTap < 300 && n - lastTap > 0) { if (d.amount > 0) openSalaryEditModal(y, m, d); e.preventDefault(); }
+                        lastTap = n;
+                    };
+                    const animClass = (key === lastSavedSalaryKey) ? 'anim-slide-up' : '';
+                    card.innerHTML = `<div class="month-name-text">${monthNames[m-1]}</div><div class="salary-value-text ${animClass}">¥${d.amount.toLocaleString()}</div>${d.memo ? `<div style="font-size:0.6rem; color:var(--color-4); margin-top:3px; font-weight:700;">📄 ${d.memo}</div>` : ''}`;
+                    grid.appendChild(card);
+                }
+                container.appendChild(section);
+            }
+            lastSavedSalaryKey = null;
+            renderGoalGauges();
+        }
+
+        function toggleSalaryYear(y) { document.getElementById(`salary-year-${y}`).classList.toggle('active'); }
+        function showInvalidModal() { const m = document.getElementById('invalid-input-modal'); m.style.display = 'flex'; setTimeout(() => m.classList.add('active'), 10); }
+        function closeInvalidModal() { const m = document.getElementById('invalid-input-modal'); m.classList.remove('active'); setTimeout(() => m.style.display = 'none', 300); }
+
+        function handleSalaryInput() { 
+            const el = document.getElementById('salaryInput'), val = el.value.trim().toLowerCase(); 
+            if (!val) return; 
+            if (val === 'a') { showAllTotal(); el.value = ''; el.blur(); } 
+            else if (val.startsWith('g')) { if(!showGraph(val)) showInvalidModal(); el.value = ''; el.blur(); } 
+            else { 
+                const m = el.value.trim().match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/);
+                if (!m) { showInvalidModal(); el.value = ''; el.blur(); return; }
+                const y = parseInt(m[1]), mo = parseInt(m[2]);
+                if (mo < 1 || mo > 12 || y < startYear || y > endYear) { showInvalidModal(); el.value = ''; el.blur(); return; }
+                const key = `${y}/${mo}`, rawInput = el.value.trim();
+                if (salaryData[key] && !isSalaryEditMode) { openConfirmModal("Overwrite?", "Existing record found for this month.", "Overwrite", "blue", () => { saveSalaryRecord(rawInput); }); el.value = ''; el.blur(); } 
+                else { if(!saveSalaryRecord(rawInput)) showInvalidModal(); el.value = ''; el.blur(); }
+            } 
+        }
+
+        function saveSalaryRecord(input) {
+            const m = input.match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/);
+            if (!m) return false;
+            const y = parseInt(m[1]), mo = parseInt(m[2]), amt = parseInt(m[3]), memo = m[4] || '';
+            if (mo < 1 || mo > 12 || y < startYear || y > endYear) return false;
+            lastSavedSalaryKey = `${y}/${mo}`;
+            salaryData[lastSavedSalaryKey] = { amount: amt, memo: memo };
+            localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData));
+            initSalaryCalendar(y);
+            isSalaryEditMode = false;
+            return true;
+        }
+
+        function openSalaryEditModal(y, m, d) { document.getElementById('modalDate').innerText = `${monthNames[m-1]} 20${y}`; const mo = document.getElementById('salaryEditModal'); mo.style.display = 'flex'; setTimeout(() => mo.classList.add('active'), 10); document.getElementById('confirmSalaryEdit').onclick = () => { const i = document.getElementById('salaryInput'); i.value = `${y}/${m}/${d.amount}${d.memo ? '/' + d.memo : ''}`; isSalaryEditMode = true; closeSalaryModal(); setTimeout(() => { i.focus(); }, 150); }; document.getElementById('confirmSalaryReset').onclick = () => { delete salaryData[`${y}/${m}`]; localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData)); initSalaryCalendar(y); closeSalaryModal(); }; }
+        function showAllTotal() { let total = 0; Object.values(salaryData).forEach(d => total += d.amount); const overlay = document.getElementById('allTotalOverlay'); overlay.innerText = `GRAND TOTAL: ¥${total.toLocaleString()}`; overlay.classList.add('active'); setTimeout(closeAllTotal, 5000); }
+        function closeAllTotal() { document.getElementById('allTotalOverlay').classList.remove('active'); }
+        
+        function showGraph(cmd) { 
+            const parts = cmd.replace('g', '').split('/'), years = parts.map(p => parseInt(p)).filter(y => !isNaN(y) && y >= startYear && y <= endYear).slice(0, 4); 
+            if (years.length === 0) return false; 
+            const overlay = document.getElementById('graphOverlay'), svg = document.getElementById('graphSvgContainer'); svg.innerHTML = ''; 
+            overlay.style.display = 'flex'; setTimeout(() => overlay.classList.add('active'), 20);
+            let gTap = 0; overlay.ontouchend = (e) => { let now = Date.now(); if (now - gTap < 300 && now - gTap > 0) { closeGraph(); e.preventDefault(); } gTap = now; }; 
+            document.getElementById('graphTitle').innerHTML = years.map((y, i) => `<span style="color:${graphColors[i]}">20${y}</span>`).join(' vs '); 
+            let maxV = 1; years.forEach(y => { for(let m=1; m<=12; m++) maxV = Math.max(maxV, salaryData[`${y}/${m}`]?.amount || 0); }); 
+            const padX = 50, padY = 50, w = 380, h = 400, getX = (m) => padX + (m - 1) * ((w - padX * 2) / 11), getY = (v) => h - padY - (v / maxV) * (h - padY * 2); [0, 0.5, 1].forEach(r => { const yPos = getY(maxV * r); svg.innerHTML += `<line x1="${padX}" y1="${yPos}" x2="${w-10}" y2="${yPos}" stroke="#eee" />`; svg.innerHTML += `<text x="5" y="${yPos+3}" class="axis-label">¥${Math.floor(maxV*r/1000)}k</text>`; }); years.forEach((y, idx) => { let pts = ""; for(let m=1; m<=12; m++) { const val = salaryData[`${y}/${m}`]?.amount || 0, px = getX(m), py = getY(val); pts += `${px},${py} `; if(val > 0) { const offY = (idx * 10) - 15; svg.innerHTML += `<text x="${px}" y="${py + offY}" class="data-label" text-anchor="middle" fill="${graphColors[idx]}">${(val/1000).toFixed(0)}k</text>`; } svg.innerHTML += `<circle cx="${px}" cy="${py}" r="4" fill="${graphColors[idx]}" stroke="#fff" stroke-width="1"/>`; } svg.innerHTML += `<polyline points="${pts}" fill="none" stroke="${graphColors[idx]}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />`; }); return true; 
+        }
+        function closeGraph() { const o = document.getElementById('graphOverlay'); o.classList.remove('active'); setTimeout(() => { o.style.display = 'none'; }, 400); }
+        function openHint() { const m = document.getElementById('hintModal'); m.style.display = 'flex'; setTimeout(() => m.classList.add('active'), 10); }
+        function closeHint() { const m = document.getElementById('hintModal'); m.classList.remove('active'); setTimeout(() => { m.style.display = 'none'; }, 200); }
+        function closeSalaryModal() { const m = document.getElementById('salaryEditModal'); m.classList.remove('active'); setTimeout(() => { m.style.display = 'none'; }, 200); }
     </script>
 </body>
 </html>

@@ -8,11 +8,6 @@
         :root {
             --bg-color: #f2f2f7; --card-bg: #ffffff;
             --text-main: #1c1c1e; --text-sub: #8e8e93;
-            /* Workplace Gradients */
-            --wp-0: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); /* Purple */
-            --wp-1: linear-gradient(135deg, #f87171 0%, #ef4444 100%); /* Red */
-            --wp-2: linear-gradient(135deg, #34d399 0%, #10b981 100%); /* Green */
-            --wp-3: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%); /* Dark Blue (是正済み) */
             
             --color-1: #4f46e5; --color-2: #FF3B30; --color-3: #007AFF; --color-4: #34C759;
             --black-grad: linear-gradient(180deg, #434343 0%, #000000 100%);
@@ -33,8 +28,8 @@
 
         .salary-history-title { text-align: center; color: #d1d1d6; font-size: 1.1rem; font-weight: 900; letter-spacing: 2px; margin: 10px 0 25px; }
 
-        /* --- PAGE 1: 時給計算 --- */
-        .work-card { border-radius: 24px; color: white; box-shadow: 0 8px 25px rgba(0,0,0,0.15); display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 15px; min-height: 125px; position: relative; overflow: hidden; transition: opacity 0.3s ease, background 0.4s ease; background: var(--wp-0); }
+        /* --- PAGE 1 --- */
+        .work-card { border-radius: 24px; color: white; box-shadow: 0 8px 25px rgba(0,0,0,0.15); display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 15px; min-height: 125px; position: relative; overflow: hidden; transition: opacity 0.3s ease, background 0.4s ease; background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
         .nav-arrow { position: absolute; top: 0; bottom: 0; width: 40px; background: rgba(0,0,0,0.05); border: none; color: white; font-weight: 900; font-size: 1.3rem; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
         .nav-arrow:active { background: rgba(0,0,0,0.2); }
         .nav-arrow.left { left: 0; }
@@ -86,7 +81,7 @@
         .gauge-percent { font-size: 2rem; font-weight: 950; color: var(--text-main); line-height: 1; }
         .gauge-amount { font-size: 0.65rem; font-weight: 800; color: var(--text-sub); margin-top: 6px; }
 
-        /* --- PAGE 2: 給与記録 --- */
+        /* --- PAGE 2 --- */
         .hint-btn { position: fixed; top: 15px; left: 15px; width: 35px; height: 35px; background: rgba(0,0,0,0.03); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-sub); font-size: 14px; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
         #allTotalOverlay { position: fixed; top: 15px; right: 15px; background: rgba(0,0,0,0.85); color: #fff; padding: 12px 22px; border-radius: 40px; z-index: 3000; font-weight: 700; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
         #allTotalOverlay.active { opacity: 1; pointer-events: auto; }
@@ -133,12 +128,9 @@
         .btn-edit { background: var(--black-grad); color: white; }
         .btn-add-work { background: linear-gradient(135deg, #34d399 0%, #10b981 100%); color: white; }
         .btn-goal { background: linear-gradient(135deg, #a855f7 0%, #d946ef 100%); color: white; }
-        
-        /* 🎯 新設：Backup / Restore ボタンのスタイル */
         .btn-backup { background: #e2e8f0; color: #475569; }
         .btn-restore { background: #f8fafc; color: #94a3b8; border: 1px solid #e2e8f0; }
 
-        /* 🎯 新設：コピートーストポップアップ */
         #toast-pop { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 40px; font-weight: 700; font-size: 0.85rem; z-index: 2000000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         #toast-pop.show { opacity: 1; }
 
@@ -398,18 +390,36 @@
     </div>
 
     <script>
-        let configs = JSON.parse(localStorage.getItem('workConfigsListV34')) || [];
+        // 🌟 鉄壁のデータロードとマイグレーション（過去の全バージョン互換対応）🌟
+        let configs = JSON.parse(localStorage.getItem('workConfigsListV34'));
+        if (!Array.isArray(configs)) configs = [];
         let oldConfig = JSON.parse(localStorage.getItem('workConfigV34'));
         if (configs.length === 0 && oldConfig) {
             configs.push(oldConfig);
             localStorage.setItem('workConfigsListV34', JSON.stringify(configs));
         }
+        
+        let logs = JSON.parse(localStorage.getItem('workLogsV34'));
+        if (!Array.isArray(logs)) logs = [];
+
+        // SALARY DATA マイグレーション（数値だった頃のデータをオブジェクトに変換）
+        let rawSalary = JSON.parse(localStorage.getItem('myTenYearSalaryData')) || {};
+        let salaryData = {};
+        let isMigrated = false;
+        for (let k in rawSalary) {
+            if (typeof rawSalary[k] === 'number') {
+                salaryData[k] = { amount: rawSalary[k], memo: '' };
+                isMigrated = true;
+            } else if (rawSalary[k] && typeof rawSalary[k] === 'object') {
+                salaryData[k] = rawSalary[k];
+            }
+        }
+        if (isMigrated) localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData));
+
+        let goals = JSON.parse(localStorage.getItem('workGoalsListV34'));
+        if (!Array.isArray(goals)) goals = [];
+        
         let currentWorkIndex = 0;
-        
-        let logs = JSON.parse(localStorage.getItem('workLogsV34')) || [];
-        let salaryData = JSON.parse(localStorage.getItem('myTenYearSalaryData')) || {};
-        let goals = JSON.parse(localStorage.getItem('workGoalsListV34')) || [];
-        
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         const graphColors = ["var(--color-1)", "var(--color-2)", "var(--color-3)", "var(--color-4)"];
         const wpColors = ['#8b5cf6', '#ef4444', '#10b981', '#2563eb']; 
@@ -422,11 +432,11 @@
         const startYear = 24, endYear = 34;
 
         const lapGradients = [
-            ['#fef08a', '#facc15'], // 1周目: 薄い黄色 -> 鮮やかな黄色
-            ['#facc15', '#f59e0b'], // 2周目: 黄色 -> オレンジ
-            ['#f59e0b', '#d97706'], // 3周目: オレンジ -> アンバー
-            ['#d97706', '#9a3412'], // 4周目: アンバー -> ダークオレンジ
-            ['#9a3412', '#451a03']  // 5周目以降: ダークオレンジ -> ダークブラウン
+            ['#fef08a', '#facc15'], // 1周目
+            ['#facc15', '#f59e0b'], // 2周目
+            ['#f59e0b', '#d97706'], // 3周目
+            ['#d97706', '#9a3412'], // 4周目
+            ['#9a3412', '#451a03']  // 5周目以降
         ];
 
         let viewDate = new Date(), selectedDateStr = "", lastClickTime = 0, lastSavedDate = null, lastSavedSalaryKey = null, isSalaryEditMode = false;
@@ -455,7 +465,7 @@
             else { p2f.style.opacity = '0'; p2f.style.pointerEvents = 'none'; p2h.style.opacity = '0'; p2h.style.pointerEvents = 'none'; }
         }
 
-        // ================= WORK CARD LONG PRESS (Delete) =================
+        // ================= WORK CARD LONG PRESS =================
         let pressTimer;
         const cardBg = document.getElementById('work-card-bg');
         cardBg.addEventListener('touchstart', (e) => {
@@ -469,10 +479,7 @@
 
         function promptDeleteWorkplace() {
             const activeCount = configs.filter(c => !c.deleted).length;
-            if (activeCount <= 1) {
-                alert("Cannot delete the last active workplace.");
-                return;
-            }
+            if (activeCount <= 1) { alert("Cannot delete the last active workplace."); return; }
             openConfirmModal("Delete Workplace?", "Past records stay, but this workplace will be removed.", "Delete", "red", () => {
                 configs[currentWorkIndex].deleted = true;
                 localStorage.setItem('workConfigsListV34', JSON.stringify(configs));
@@ -480,50 +487,36 @@
             });
         }
 
-        // ================= SETTINGS MENU & GOAL & BACKUP =================
+        // ================= SETTINGS & BACKUP =================
         function openSettingsMenu() { const o = document.getElementById('settings-menu-overlay'); o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 50); }
         function closeSettingsMenu() { const o = document.getElementById('settings-menu-overlay'); o.classList.remove('active'); setTimeout(() => o.style.display = 'none', 400); }
 
-        // 🎯 新設：Backup 処理ロジック
         function handleBackup() {
             const backupObj = { configs, logs, salaryData, goals };
-            // JSON文字列をエンコードしてBase64化
             const backupStr = btoa(unescape(encodeURIComponent(JSON.stringify(backupObj)))); 
             navigator.clipboard.writeText(backupStr).then(() => {
                 const toast = document.getElementById('toast-pop');
                 toast.classList.add('show');
                 setTimeout(() => toast.classList.remove('show'), 1500);
-            }).catch(err => {
-                alert("Failed to copy backup code to clipboard.");
-            });
+            }).catch(err => { alert("Failed to copy to clipboard."); });
         }
 
-        // 🎯 新設：Restore 画面の表示と処理
-        function showRestoreScreen() { 
-            closeSettingsMenu(); 
-            setTimeout(() => { const o = document.getElementById('restore-overlay'); o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 50); }, 450); 
-        }
+        function showRestoreScreen() { closeSettingsMenu(); setTimeout(() => { const o = document.getElementById('restore-overlay'); o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 50); }, 450); }
         function closeRestoreScreen() { const o = document.getElementById('restore-overlay'); o.classList.remove('active'); setTimeout(() => o.style.display = 'none', 300); }
         
         function handleRestoreAction() {
             const input = document.getElementById('restore-input').value.trim();
             if(!input) return;
             try {
-                // Base64からデコードしてJSONパース
                 const decoded = JSON.parse(decodeURIComponent(escape(atob(input))));
                 if(decoded.configs && decoded.logs && decoded.salaryData) {
                     localStorage.setItem('workConfigsListV34', JSON.stringify(decoded.configs));
                     localStorage.setItem('workLogsV34', JSON.stringify(decoded.logs));
                     localStorage.setItem('myTenYearSalaryData', JSON.stringify(decoded.salaryData));
                     localStorage.setItem('workGoalsListV34', JSON.stringify(decoded.goals || []));
-                    // 完全に復元できたのでリロードして反映
                     location.reload(); 
-                } else { 
-                    throw new Error("Invalid Format"); 
-                }
-            } catch(e) { 
-                showInvalidModal(); // 不正なフォーマットの場合はいつものエラーダイアログを出す
-            }
+                } else { throw new Error("Invalid Format"); }
+            } catch(e) { showInvalidModal(); }
         }
 
         function showEditScreen() { 
@@ -542,16 +535,14 @@
                 closeSettingsMenu(); setTimeout(() => { const m = document.getElementById('limit-modal-overlay'); m.style.display = 'flex'; setTimeout(() => m.classList.add('active'), 10); }, 450); return;
             }
             document.getElementById('add-shop').value = ''; document.getElementById('add-wage').value = ''; document.getElementById('add-night-rate').value = ''; document.getElementById('add-transport').value = '';
-            closeSettingsMenu(); 
-            setTimeout(() => { const o = document.getElementById('add-work-overlay'); o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 50); }, 450);
+            closeSettingsMenu(); setTimeout(() => { const o = document.getElementById('add-work-overlay'); o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 50); }, 450);
         }
         
         function showGoalScreen() { 
             if (goals.length >= 6) {
                 closeSettingsMenu(); setTimeout(() => { const m = document.getElementById('limit-modal-overlay'); m.style.display = 'flex'; setTimeout(() => m.classList.add('active'), 10); }, 450); return;
             }
-            closeSettingsMenu(); 
-            setTimeout(() => { const o = document.getElementById('goal-setup-overlay'); o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 50); }, 450); 
+            closeSettingsMenu(); setTimeout(() => { const o = document.getElementById('goal-setup-overlay'); o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 50); }, 450); 
         }
 
         function closeLimitModal() { const m = document.getElementById('limit-modal-overlay'); m.classList.remove('active'); setTimeout(() => m.style.display = 'none', 300); }
@@ -586,20 +577,32 @@
             closeEditGoalModal(); updateDash();
         }
 
-        function deleteGoal(index) {
-            openConfirmModal("Delete Goal?", "This will permanently remove this goal.", "Delete", "red", () => { goals.splice(index, 1); localStorage.setItem('workGoalsListV34', JSON.stringify(goals)); updateDash(); });
-        }
+        function deleteGoal(index) { openConfirmModal("Delete Goal?", "This will permanently remove this goal.", "Delete", "red", () => { goals.splice(index, 1); localStorage.setItem('workGoalsListV34', JSON.stringify(goals)); updateDash(); }); }
 
+        // 🌟 鉄壁のガード付きゲージ描画
         function renderGoalGauges() {
             const container = document.getElementById('goal-container'); container.innerHTML = '';
             if (goals.length === 0) return;
             goals.forEach((goal, index) => {
                 const sTime = new Date(goal.start.replace(/-/g,'/')).getTime(), eTime = new Date(goal.end.replace(/-/g,'/')).getTime() + 86400000;
-                let logsTotal = logs.filter(l => { let t = new Date(l.fullDate.replace(/-/g,'/')).getTime(); return t >= sTime && t < eTime; }).reduce((sum, l) => sum + l.amt, 0);
-                let salaryTotal = Object.keys(salaryData).filter(k => { let [y, m] = k.split('/'); let t = new Date(`20${y}/${m}/01`).getTime(); return t >= sTime && t < eTime; }).reduce((sum, k) => sum + salaryData[k].amount, 0);
+                let logsTotal = logs.filter(l => { let t = new Date(l.fullDate.replace(/-/g,'/')).getTime(); return t >= sTime && t < eTime; }).reduce((sum, l) => sum + (Number(l.amt) || 0), 0);
+                
+                let salaryTotal = Object.keys(salaryData).filter(k => { let [y, m] = k.split('/'); let t = new Date(`20${y}/${m}/01`).getTime(); return t >= sTime && t < eTime; }).reduce((sum, k) => {
+                    let d = salaryData[k];
+                    let amt = typeof d === 'number' ? d : (d.amount || 0); // Guard
+                    return sum + amt;
+                }, 0);
                 const combinedTotal = logsTotal + salaryTotal;
                 
-                let rawPercent = Math.floor((combinedTotal / goal.limit) * 100), lap = Math.floor(rawPercent / 100), gaugeVal = rawPercent % 100;
+                let rawPercent = Math.floor((combinedTotal / goal.limit) * 100);
+                if(isNaN(rawPercent)) rawPercent = 0; // 鉄壁ガード
+                
+                let lap = Math.floor(rawPercent / 100);
+                if(isNaN(lap)) lap = 0;
+                
+                let gaugeVal = rawPercent % 100;
+                if(isNaN(gaugeVal)) gaugeVal = 0;
+                
                 if (rawPercent > 0 && gaugeVal === 0) { gaugeVal = 100; lap -= 1; }
                 
                 let bgLap = lap > 0 ? lap - 1 : 0; let fgLap = lap;
@@ -608,8 +611,6 @@
 
                 const wrapper = document.createElement('div'); wrapper.className = 'goal-item';
                 const startStr = goal.start.replace(/-/g, '/'), endStr = goal.end.replace(/-/g, '/');
-
-                let offsetDegree = (rawPercent > 0 && rawPercent % 100 !== 0) ? 4.5 : 0;
 
                 wrapper.innerHTML = `
                     <div class="goal-del-btn" onclick="deleteGoal(${index})">✕</div>
@@ -648,7 +649,7 @@
             });
         }
 
-        // ================= PAGE 1 SETUP FUNCTIONS =================
+        // ================= SETUP FUNCTIONS =================
         function showValidationModal(emptyFields, isRequiredMissing, isEditMode) {
             const title = document.getElementById('val-modal-title'), list = document.getElementById('missing-fields-list'), btnArea = document.getElementById('val-modal-btns');
             list.innerHTML = emptyFields.map(f => `<li>${f}</li>`).join('');
@@ -705,7 +706,7 @@
             const o = document.getElementById('edit-setup-overlay'); o.classList.remove('active'); setTimeout(() => { o.style.display = 'none'; updateDash(); }, 400);
         }
 
-        // ================= PAGE 1 DASHBOARD & LOGIC =================
+        // ================= DASHBOARD & LOGIC =================
         function changeWorkplace(dir) {
             const activeCount = configs.filter(c => !c.deleted).length;
             if (activeCount <= 1) return;
@@ -720,8 +721,15 @@
                         break;
                     }
                 }
-                updateDash(); 
-                cardBg.style.opacity = '1'; 
+                
+                // 🌟 エラーが起きても絶対にカードを再表示させる安全装置
+                try {
+                    updateDash(); 
+                } catch(e) {
+                    console.error("Dashboard Update Error:", e);
+                } finally {
+                    cardBg.style.opacity = '1'; 
+                }
             }, 300);
         }
 
@@ -735,7 +743,7 @@
             
             const monthKey = `${viewDate.getFullYear()%100}/${viewDate.getMonth()+1}`;
             const mLogs = logs.filter(l => l.monthKey === monthKey && (l.workIndex || 0) === currentWorkIndex);
-            const total = mLogs.reduce((s, l) => s + l.amt, 0);
+            const total = mLogs.reduce((s, l) => s + (Number(l.amt) || 0), 0);
             document.getElementById('display-total').innerText = `¥${total.toLocaleString()}`;
             
             renderCalendar();
@@ -902,33 +910,46 @@
 
         // ================= PAGE 2 =================
         function initSalaryCalendar(openYear = new Date().getFullYear() % 100) {
-            const container = document.getElementById('salary-manager-container');
-            container.innerHTML = '';
-            for (let y = startYear; y <= endYear; y++) {
-                let yearlyTotal = 0;
-                for (let m = 1; m <= 12; m++) yearlyTotal += (salaryData[`${y}/${m}`]?.amount || 0);
-                const section = document.createElement('div');
-                section.className = 'year-section' + (y === openYear ? ' active' : '');
-                section.id = `salary-year-${y}`;
-                section.innerHTML = `<div class="year-header" onclick="toggleSalaryYear(${y})"><div class="year-title">20${y}</div><div class="year-total">¥${yearlyTotal.toLocaleString()}</div></div><div class="month-content"></div>`;
-                const grid = section.querySelector('.month-content');
-                for (let m = 1; m <= 12; m++) {
-                    const key = `${y}/${m}`, d = salaryData[key] || { amount: 0, memo: '' }, card = document.createElement('div');
-                    card.className = `month-card ${d.amount > 0 ? 'has-data' : ''}`;
-                    let lastTap = 0;
-                    card.onclick = (e) => {
-                        let n = Date.now();
-                        if (n - lastTap < 300 && n - lastTap > 0) { if (d.amount > 0) openSalaryEditModal(y, m, d); e.preventDefault(); }
-                        lastTap = n;
-                    };
-                    const animClass = (key === lastSavedSalaryKey) ? 'anim-slide-up' : '';
-                    card.innerHTML = `<div class="month-name-text">${monthNames[m-1]}</div><div class="salary-value-text ${animClass}">¥${d.amount.toLocaleString()}</div>${d.memo ? `<div style="font-size:0.6rem; color:var(--color-4); margin-top:3px; font-weight:700;">📄 ${d.memo}</div>` : ''}`;
-                    grid.appendChild(card);
+            try {
+                const container = document.getElementById('salary-manager-container');
+                container.innerHTML = '';
+                for (let y = startYear; y <= endYear; y++) {
+                    let yearlyTotal = 0;
+                    for (let m = 1; m <= 12; m++) {
+                        let d = salaryData[`${y}/${m}`];
+                        let amt = d ? (typeof d === 'number' ? d : (d.amount || 0)) : 0;
+                        yearlyTotal += amt;
+                    }
+                    const section = document.createElement('div');
+                    section.className = 'year-section' + (y === openYear ? ' active' : '');
+                    section.id = `salary-year-${y}`;
+                    section.innerHTML = `<div class="year-header" onclick="toggleSalaryYear(${y})"><div class="year-title">20${y}</div><div class="year-total">¥${yearlyTotal.toLocaleString()}</div></div><div class="month-content"></div>`;
+                    const grid = section.querySelector('.month-content');
+                    for (let m = 1; m <= 12; m++) {
+                        const key = `${y}/${m}`;
+                        let d = salaryData[key] || { amount: 0, memo: '' };
+                        if (typeof d === 'number') d = { amount: d, memo: '' }; // Safety check
+                        const amt = d.amount || 0;
+
+                        const card = document.createElement('div');
+                        card.className = `month-card ${amt > 0 ? 'has-data' : ''}`;
+                        let lastTap = 0;
+                        card.onclick = (e) => {
+                            let n = Date.now();
+                            if (n - lastTap < 300 && n - lastTap > 0) { if (amt > 0) openSalaryEditModal(y, m, d); e.preventDefault(); }
+                            lastTap = n;
+                        };
+                        const animClass = (key === lastSavedSalaryKey) ? 'anim-slide-up' : '';
+                        card.innerHTML = `<div class="month-name-text">${monthNames[m-1]}</div><div class="salary-value-text ${animClass}">¥${amt.toLocaleString()}</div>${d.memo ? `<div style="font-size:0.6rem; color:var(--color-4); margin-top:3px; font-weight:700;">📄 ${d.memo}</div>` : ''}`;
+                        grid.appendChild(card);
+                    }
+                    container.appendChild(section);
                 }
-                container.appendChild(section);
+                lastSavedSalaryKey = null;
+                renderGoalGauges();
+            } catch(e) {
+                console.error("Salary Calendar Init Error:", e);
             }
-            lastSavedSalaryKey = null;
-            renderGoalGauges();
         }
 
         function toggleSalaryYear(y) { document.getElementById(`salary-year-${y}`).classList.toggle('active'); }
@@ -947,41 +968,4 @@
                 if (mo < 1 || mo > 12 || y < startYear || y > endYear) { showInvalidModal(); el.value = ''; el.blur(); return; }
                 const key = `${y}/${mo}`, rawInput = el.value.trim();
                 if (salaryData[key] && !isSalaryEditMode) { openConfirmModal("Overwrite?", "Existing record found for this month.", "Overwrite", "blue", () => { saveSalaryRecord(rawInput); }); el.value = ''; el.blur(); } 
-                else { if(!saveSalaryRecord(rawInput)) showInvalidModal(); el.value = ''; el.blur(); }
-            } 
-        }
-
-        function saveSalaryRecord(input) {
-            const m = input.match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/);
-            if (!m) return false;
-            const y = parseInt(m[1]), mo = parseInt(m[2]), amt = parseInt(m[3]), memo = m[4] || '';
-            if (mo < 1 || mo > 12 || y < startYear || y > endYear) return false;
-            lastSavedSalaryKey = `${y}/${mo}`;
-            salaryData[lastSavedSalaryKey] = { amount: amt, memo: memo };
-            localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData));
-            initSalaryCalendar(y);
-            isSalaryEditMode = false;
-            return true;
-        }
-
-        function openSalaryEditModal(y, m, d) { document.getElementById('modalDate').innerText = `${monthNames[m-1]} 20${y}`; const mo = document.getElementById('salaryEditModal'); mo.style.display = 'flex'; setTimeout(() => mo.classList.add('active'), 10); document.getElementById('confirmSalaryEdit').onclick = () => { const i = document.getElementById('salaryInput'); i.value = `${y}/${m}/${d.amount}${d.memo ? '/' + d.memo : ''}`; isSalaryEditMode = true; closeSalaryModal(); setTimeout(() => { i.focus(); }, 150); }; document.getElementById('confirmSalaryReset').onclick = () => { delete salaryData[`${y}/${m}`]; localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData)); initSalaryCalendar(y); closeSalaryModal(); }; }
-        function showAllTotal() { let total = 0; Object.values(salaryData).forEach(d => total += d.amount); const overlay = document.getElementById('allTotalOverlay'); overlay.innerText = `GRAND TOTAL: ¥${total.toLocaleString()}`; overlay.classList.add('active'); setTimeout(closeAllTotal, 5000); }
-        function closeAllTotal() { document.getElementById('allTotalOverlay').classList.remove('active'); }
-        
-        function showGraph(cmd) { 
-            const parts = cmd.replace('g', '').split('/'), years = parts.map(p => parseInt(p)).filter(y => !isNaN(y) && y >= startYear && y <= endYear).slice(0, 4); 
-            if (years.length === 0) return false; 
-            const overlay = document.getElementById('graphOverlay'), svg = document.getElementById('graphSvgContainer'); svg.innerHTML = ''; 
-            overlay.style.display = 'flex'; setTimeout(() => overlay.classList.add('active'), 20);
-            let gTap = 0; overlay.ontouchend = (e) => { let now = Date.now(); if (now - gTap < 300 && now - gTap > 0) { closeGraph(); e.preventDefault(); } gTap = now; }; 
-            document.getElementById('graphTitle').innerHTML = years.map((y, i) => `<span style="color:${graphColors[i]}">20${y}</span>`).join(' vs '); 
-            let maxV = 1; years.forEach(y => { for(let m=1; m<=12; m++) maxV = Math.max(maxV, salaryData[`${y}/${m}`]?.amount || 0); }); 
-            const padX = 50, padY = 50, w = 380, h = 400, getX = (m) => padX + (m - 1) * ((w - padX * 2) / 11), getY = (v) => h - padY - (v / maxV) * (h - padY * 2); [0, 0.5, 1].forEach(r => { const yPos = getY(maxV * r); svg.innerHTML += `<line x1="${padX}" y1="${yPos}" x2="${w-10}" y2="${yPos}" stroke="#eee" />`; svg.innerHTML += `<text x="5" y="${yPos+3}" class="axis-label">¥${Math.floor(maxV*r/1000)}k</text>`; }); years.forEach((y, idx) => { let pts = ""; for(let m=1; m<=12; m++) { const val = salaryData[`${y}/${m}`]?.amount || 0, px = getX(m), py = getY(val); pts += `${px},${py} `; if(val > 0) { const offY = (idx * 10) - 15; svg.innerHTML += `<text x="${px}" y="${py + offY}" class="data-label" text-anchor="middle" fill="${graphColors[idx]}">${(val/1000).toFixed(0)}k</text>`; } svg.innerHTML += `<circle cx="${px}" cy="${py}" r="4" fill="${graphColors[idx]}" stroke="#fff" stroke-width="1"/>`; } svg.innerHTML += `<polyline points="${pts}" fill="none" stroke="${graphColors[idx]}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />`; }); return true; 
-        }
-        function closeGraph() { const o = document.getElementById('graphOverlay'); o.classList.remove('active'); setTimeout(() => { o.style.display = 'none'; }, 400); }
-        function openHint() { const m = document.getElementById('hintModal'); m.style.display = 'flex'; setTimeout(() => m.classList.add('active'), 10); }
-        function closeHint() { const m = document.getElementById('hintModal'); m.classList.remove('active'); setTimeout(() => { m.style.display = 'none'; }, 200); }
-        function closeSalaryModal() { const m = document.getElementById('salaryEditModal'); m.classList.remove('active'); setTimeout(() => { m.style.display = 'none'; }, 200); }
-    </script>
-</body>
-</html>
+                else { if(!saveSalaryRecord(rawInput)) showInvalidModal(); el.value = ''; el.

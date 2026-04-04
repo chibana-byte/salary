@@ -17,19 +17,24 @@
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: var(--bg-color); font-family: -apple-system, BlinkMacSystemFont, sans-serif; user-select: none; -webkit-user-select: none; }
+        body, html { 
+            margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; 
+            background-color: var(--bg-color); font-family: -apple-system, BlinkMacSystemFont, sans-serif; 
+            user-select: none; -webkit-user-select: none; 
+        }
         
         .main-slider { display: flex; width: 100%; height: 100%; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; }
         .main-slider::-webkit-scrollbar { display: none; }
         .page { width: 100%; height: 100%; flex: 0 0 100%; scroll-snap-align: start; overflow-y: auto; padding: 30px 15px 120px; position: relative; }
 
+        @keyframes popInDot { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         @keyframes slideUpFade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
         .anim-slide-up { animation: slideUpFade 0.4s ease forwards; }
 
         .salary-history-title { text-align: center; color: #d1d1d6; font-size: 1.1rem; font-weight: 900; letter-spacing: 2px; margin: 10px 0 25px; }
 
-        /* --- PAGE 1 --- */
-        .work-card { border-radius: 24px; color: white; box-shadow: 0 8px 25px rgba(0,0,0,0.15); display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 15px; min-height: 125px; position: relative; overflow: hidden; transition: opacity 0.3s ease, background 0.4s ease; background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); }
+        /* --- PAGE 1: 時給計算 --- */
+        .work-card { border-radius: 24px; color: white; box-shadow: 0 8px 25px rgba(0,0,0,0.15); display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 15px; min-height: 125px; position: relative; overflow: hidden; transition: opacity 0.3s ease, background 0.4s ease; }
         .nav-arrow { position: absolute; top: 0; bottom: 0; width: 40px; background: rgba(0,0,0,0.05); border: none; color: white; font-weight: 900; font-size: 1.3rem; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
         .nav-arrow:active { background: rgba(0,0,0,0.2); }
         .nav-arrow.left { left: 0; }
@@ -65,9 +70,9 @@
         /* --- 🎯 目標ゲージ --- */
         #goal-container { display: flex; flex-direction: column; gap: 20px; margin-bottom: 25px; }
         .goal-item { background: white; border-radius: 22px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); position: relative; padding-bottom: 40px; }
-        .goal-del-btn { position: absolute; top: 12px; right: 15px; color: var(--color-2); font-size: 1.1rem; font-weight: 800; cursor: pointer; padding: 5px; opacity: 0.4; transition: opacity 0.2s; }
+        .goal-del-btn { position: absolute; top: 12px; right: 15px; color: var(--color-2); font-size: 1.1rem; font-weight: 800; cursor: pointer; padding: 5px; opacity: 0.4; transition: opacity 0.2s; z-index: 10; }
         .goal-del-btn:active { opacity: 1; }
-        .goal-edit-btn { position: absolute; bottom: 15px; right: 15px; color: var(--color-1); font-size: 0.85rem; font-weight: 800; cursor: pointer; padding: 5px; background: none; border: none; opacity: 0.8; transition: opacity 0.2s; }
+        .goal-edit-btn { position: absolute; bottom: 15px; right: 15px; color: var(--color-1); font-size: 0.85rem; font-weight: 800; cursor: pointer; padding: 5px; background: none; border: none; opacity: 0.8; transition: opacity 0.2s; z-index: 10; }
         .goal-edit-btn:active { opacity: 1; }
 
         .goal-header { text-align: center; margin-bottom: 15px; padding: 0 20px; }
@@ -81,7 +86,7 @@
         .gauge-percent { font-size: 2rem; font-weight: 950; color: var(--text-main); line-height: 1; }
         .gauge-amount { font-size: 0.65rem; font-weight: 800; color: var(--text-sub); margin-top: 6px; }
 
-        /* --- PAGE 2 --- */
+        /* --- PAGE 2: 給与記録 --- */
         .hint-btn { position: fixed; top: 15px; left: 15px; width: 35px; height: 35px; background: rgba(0,0,0,0.03); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-sub); font-size: 14px; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
         #allTotalOverlay { position: fixed; top: 15px; right: 15px; background: rgba(0,0,0,0.85); color: #fff; padding: 12px 22px; border-radius: 40px; z-index: 3000; font-weight: 700; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
         #allTotalOverlay.active { opacity: 1; pointer-events: auto; }
@@ -95,11 +100,13 @@
         .has-data { border-left: 4px solid var(--color-1); background-color: #f0f7ff; }
         .month-name-text { font-weight: 600; font-size: 0.8rem; color: var(--text-sub); }
         .salary-value-text { font-weight: 700; font-size: 1rem; margin-top: 2px; }
+        
         #graphOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 2500; flex-direction: column; padding: 50px 5px; box-sizing: border-box; transform: translateY(100vh); transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1); }
         #graphOverlay.active { transform: translateY(0); }
         #graphSvgContainer { width: 100%; height: 400px; overflow: visible; }
         .axis-label { font-size: 10px; fill: var(--text-sub); }
         .data-label { font-size: 9px; font-weight: 900; }
+        
         .footer-fixed { position: fixed; bottom: 0; left: 0; right: 0; padding: 10px 20px 30px; z-index: 900; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
         .input-container { display: flex; gap: 10px; max-width: 600px; margin: 0 auto; }
         input[type="text"].salary-record-input { flex: 1; padding: 12px 18px; font-size: 16px; border: none; border-radius: 14px; outline: none; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
@@ -123,6 +130,7 @@
         .setup-input { width: 100%; padding: 14px; border-radius: 16px; border: 2px solid #f1f1f5; background: #f9f9fb; font-size: 1.1rem; font-weight: 700; outline: none; }
         .black-save-btn { width: 100%; background: var(--black-grad); color: white; border: none; padding: 20px; border-radius: 20px; font-weight: 800; font-size: 1.1rem; cursor: pointer; }
 
+        /* メニューボタン */
         .menu-btn { width: 100%; padding: 18px; border-radius: 18px; border: none; font-weight: 800; font-size: 1rem; margin-bottom: 10px; cursor: pointer; transition: transform 0.1s; }
         .menu-btn:active { transform: scale(0.98); }
         .btn-edit { background: var(--black-grad); color: white; }
@@ -131,6 +139,7 @@
         .btn-backup { background: #e2e8f0; color: #475569; }
         .btn-restore { background: #f8fafc; color: #94a3b8; border: 1px solid #e2e8f0; }
 
+        /* トーストポップアップ */
         #toast-pop { position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 40px; font-weight: 700; font-size: 0.85rem; z-index: 2000000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
         #toast-pop.show { opacity: 1; }
 
@@ -151,7 +160,7 @@
         .log-shop-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
         .log-right-group { display: flex; align-items: center; gap: 8px; }
         .log-amt { font-size: 0.9rem; font-weight: 900; color: var(--color-1); }
-        .log-del { color: var(--color-2); font-size: 1rem; font-weight: 800; cursor: pointer; padding: 2px; opacity: 0.4; }
+        .log-del { color: var(--color-2); font-size: 1rem; font-weight: 800; cursor: pointer; padding: 2px; opacity: 0.4; z-index: 10; }
         .log-row-bottom { display: block; }
         .close-report-btn { background: none; border: none; color: #8e8e93; font-weight: 700; font-size: 0.9rem; padding: 10px; cursor: pointer; text-align: center; width: 100%; }
 
@@ -317,7 +326,7 @@
     </div>
 
     <div id="daily-report-overlay" class="modal-overlay">
-        <div class="modal-content" style="padding: 20px 15px;">
+        <div class="modal-content">
             <div class="daily-report-title" id="daily-title-text"></div>
             <div id="daily-container" style="display:flex; flex-direction:column; gap:8px;"></div>
             <div style="font-size:0.65rem; color:var(--text-sub); margin-top:15px; font-weight:700;">Double-tap outside to close</div>
@@ -390,38 +399,39 @@
     </div>
 
     <script>
-        // 🌟 鉄壁のデータロードとマイグレーション（過去の全バージョン互換対応）🌟
-        let configs = JSON.parse(localStorage.getItem('workConfigsListV34'));
-        if (!Array.isArray(configs)) configs = [];
-        let oldConfig = JSON.parse(localStorage.getItem('workConfigV34'));
+        // --- 🛡️ 安全なデータ読み込み関数 🛡️ ---
+        function safeJSONParse(key, fallbackValue) {
+            try {
+                const stored = localStorage.getItem(key);
+                if (stored && stored !== "undefined") {
+                    return JSON.parse(stored);
+                }
+                return fallbackValue;
+            } catch (e) {
+                console.error("Data parsing error for key:", key, e);
+                return fallbackValue;
+            }
+        }
+
+        // --- 💾 グローバル変数の初期化 ---
+        let configs = safeJSONParse('workConfigsListV34', []);
+        let oldConfig = safeJSONParse('workConfigV34', null);
+        
+        // 古いバージョンのデータを引き継ぐ
         if (configs.length === 0 && oldConfig) {
             configs.push(oldConfig);
             localStorage.setItem('workConfigsListV34', JSON.stringify(configs));
         }
         
-        let logs = JSON.parse(localStorage.getItem('workLogsV34'));
-        if (!Array.isArray(logs)) logs = [];
-
-        // SALARY DATA マイグレーション（数値だった頃のデータをオブジェクトに変換）
-        let rawSalary = JSON.parse(localStorage.getItem('myTenYearSalaryData')) || {};
-        let salaryData = {};
-        let isMigrated = false;
-        for (let k in rawSalary) {
-            if (typeof rawSalary[k] === 'number') {
-                salaryData[k] = { amount: rawSalary[k], memo: '' };
-                isMigrated = true;
-            } else if (rawSalary[k] && typeof rawSalary[k] === 'object') {
-                salaryData[k] = rawSalary[k];
-            }
-        }
-        if (isMigrated) localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData));
-
-        let goals = JSON.parse(localStorage.getItem('workGoalsListV34'));
-        if (!Array.isArray(goals)) goals = [];
-        
         let currentWorkIndex = 0;
+        let logs = safeJSONParse('workLogsV34', []);
+        let salaryData = safeJSONParse('myTenYearSalaryData', {});
+        let goals = safeJSONParse('workGoalsListV34', []);
+        
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         const graphColors = ["var(--color-1)", "var(--color-2)", "var(--color-3)", "var(--color-4)"];
+        
+        // 🎨 色の設定 (紫 -> 赤 -> 緑 -> 濃い青)
         const wpColors = ['#8b5cf6', '#ef4444', '#10b981', '#2563eb']; 
         const wpGradients = [
             'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)', // Purple
@@ -429,188 +439,383 @@
             'linear-gradient(135deg, #34d399 0%, #10b981 100%)', // Green
             'linear-gradient(135deg, #3b82f6 0%, #1e40af 100%)'  // Dark Blue
         ]; 
-        const startYear = 24, endYear = 34;
+        const startYear = 24;
+        const endYear = 34;
 
         const lapGradients = [
-            ['#fef08a', '#facc15'], // 1周目
-            ['#facc15', '#f59e0b'], // 2周目
-            ['#f59e0b', '#d97706'], // 3周目
-            ['#d97706', '#9a3412'], // 4周目
-            ['#9a3412', '#451a03']  // 5周目以降
+            ['#fef08a', '#facc15'], // 1周目: 薄い黄色 -> 鮮やかな黄色
+            ['#facc15', '#f59e0b'], // 2周目: 黄色 -> オレンジ
+            ['#f59e0b', '#d97706'], // 3周目: オレンジ -> アンバー
+            ['#d97706', '#9a3412'], // 4周目: アンバー -> ダークオレンジ
+            ['#9a3412', '#451a03']  // 5周目以降: ダークオレンジ -> ダークブラウン
         ];
 
-        let viewDate = new Date(), selectedDateStr = "", lastClickTime = 0, lastSavedDate = null, lastSavedSalaryKey = null, isSalaryEditMode = false;
+        let viewDate = new Date();
+        let selectedDateStr = "";
+        let lastClickTime = 0;
+        let lastSavedDate = null;
+        let lastSavedSalaryKey = null;
+        let isSalaryEditMode = false;
         let currentEditingGoalIndex = null;
+        let allTotalTimer = null;
 
-        window.onload = () => {
-            if (configs.length > 0) {
-                const activeIndex = configs.findIndex(c => !c.deleted);
-                currentWorkIndex = activeIndex !== -1 ? activeIndex : 0;
+        // --- 🚀 起動処理 ---
+        window.onload = function() {
+            const today = new Date();
+            selectedDateStr = `${today.getFullYear()}-${(today.getMonth()+1).toString().padStart(2,'0')}-${today.getDate().toString().padStart(2,'0')}`;
+
+            let activeExists = false;
+            for (let i = 0; i < configs.length; i++) {
+                if (!configs[i].deleted) {
+                    activeExists = true;
+                    currentWorkIndex = i;
+                    break;
+                }
             }
-            if (configs.length === 0 || configs.every(c => c.deleted)) {
+
+            if (!activeExists) {
                 const overlay = document.getElementById('initial-setup-overlay');
                 overlay.style.display = 'flex';
-                setTimeout(() => overlay.classList.add('active'), 50);
+                setTimeout(function() { overlay.classList.add('active'); }, 50);
             } else {
-                const today = new Date();
-                selectedDateStr = `${today.getFullYear()}-${(today.getMonth()+1).toString().padStart(2,'0')}-${today.getDate().toString().padStart(2,'0')}`;
                 updateDash();
                 initSalaryCalendar(today.getFullYear() % 100);
             }
         };
 
+        // --- 画面スクロール監視 ---
         function handleSliderScroll() {
-            const slider = document.getElementById('mainSlider'), p2f = document.getElementById('page2-footer'), p2h = document.getElementById('page2-hint');
-            if (slider.scrollLeft >= window.innerWidth * 0.5) { p2f.style.opacity = '1'; p2f.style.pointerEvents = 'auto'; p2h.style.opacity = '1'; p2h.style.pointerEvents = 'auto'; }
-            else { p2f.style.opacity = '0'; p2f.style.pointerEvents = 'none'; p2h.style.opacity = '0'; p2h.style.pointerEvents = 'none'; }
+            const slider = document.getElementById('mainSlider');
+            const p2f = document.getElementById('page2-footer');
+            const p2h = document.getElementById('page2-hint');
+            if (slider.scrollLeft >= window.innerWidth * 0.5) { 
+                p2f.style.opacity = '1'; 
+                p2f.style.pointerEvents = 'auto'; 
+                p2h.style.opacity = '1'; 
+                p2h.style.pointerEvents = 'auto'; 
+            } else { 
+                p2f.style.opacity = '0'; 
+                p2f.style.pointerEvents = 'none'; 
+                p2h.style.opacity = '0'; 
+                p2h.style.pointerEvents = 'none'; 
+            }
         }
 
-        // ================= WORK CARD LONG PRESS =================
+        // ================= WORK CARD LONG PRESS (Delete) =================
         let pressTimer;
         const cardBg = document.getElementById('work-card-bg');
-        cardBg.addEventListener('touchstart', (e) => {
-            if(e.target.tagName.toLowerCase() === 'button') return;
-            pressTimer = window.setTimeout(() => {
+        cardBg.addEventListener('touchstart', function(e) {
+            if (e.target.closest('button')) return;
+            pressTimer = window.setTimeout(function() {
                 promptDeleteWorkplace();
-            }, 500);
+            }, 500); // 0.5秒でレスポンス
         }, {passive: true});
-        cardBg.addEventListener('touchend', () => { clearTimeout(pressTimer); });
-        cardBg.addEventListener('touchmove', () => { clearTimeout(pressTimer); });
+        
+        cardBg.addEventListener('touchend', function() { clearTimeout(pressTimer); });
+        cardBg.addEventListener('touchmove', function() { clearTimeout(pressTimer); });
 
         function promptDeleteWorkplace() {
-            const activeCount = configs.filter(c => !c.deleted).length;
-            if (activeCount <= 1) { alert("Cannot delete the last active workplace."); return; }
-            openConfirmModal("Delete Workplace?", "Past records stay, but this workplace will be removed.", "Delete", "red", () => {
+            let activeCount = 0;
+            for (let i = 0; i < configs.length; i++) {
+                if (!configs[i].deleted) activeCount++;
+            }
+            if (activeCount <= 1) {
+                alert("Cannot delete the last active workplace.");
+                return;
+            }
+            openConfirmModal("Delete Workplace?", "Past records stay, but this workplace will be removed.", "Delete", "red", function() {
                 configs[currentWorkIndex].deleted = true;
                 localStorage.setItem('workConfigsListV34', JSON.stringify(configs));
                 changeWorkplace(1);
             });
         }
 
-        // ================= SETTINGS & BACKUP =================
-        function openSettingsMenu() { const o = document.getElementById('settings-menu-overlay'); o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 50); }
-        function closeSettingsMenu() { const o = document.getElementById('settings-menu-overlay'); o.classList.remove('active'); setTimeout(() => o.style.display = 'none', 400); }
-
-        function handleBackup() {
-            const backupObj = { configs, logs, salaryData, goals };
-            const backupStr = btoa(unescape(encodeURIComponent(JSON.stringify(backupObj)))); 
-            navigator.clipboard.writeText(backupStr).then(() => {
-                const toast = document.getElementById('toast-pop');
-                toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 1500);
-            }).catch(err => { alert("Failed to copy to clipboard."); });
+        // ================= SETTINGS MENU & GOAL & BACKUP =================
+        function openSettingsMenu() { 
+            const o = document.getElementById('settings-menu-overlay'); 
+            o.style.display = 'flex'; 
+            setTimeout(function() { o.classList.add('active'); }, 50); 
+        }
+        
+        function closeSettingsMenu() { 
+            const o = document.getElementById('settings-menu-overlay'); 
+            o.classList.remove('active'); 
+            setTimeout(function() { o.style.display = 'none'; }, 400); 
         }
 
-        function showRestoreScreen() { closeSettingsMenu(); setTimeout(() => { const o = document.getElementById('restore-overlay'); o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 50); }, 450); }
-        function closeRestoreScreen() { const o = document.getElementById('restore-overlay'); o.classList.remove('active'); setTimeout(() => o.style.display = 'none', 300); }
+        // 🛡️ 安全なBase64エンコード/デコード処理 (Unicode対応)
+        function encodeBase64Unicode(str) {
+            return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+                return String.fromCharCode('0x' + p1);
+            }));
+        }
+
+        function decodeBase64Unicode(str) {
+            return decodeURIComponent(atob(str).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+        }
+
+        function handleBackup() {
+            const backupObj = { configs: configs, logs: logs, salaryData: salaryData, goals: goals };
+            const jsonStr = JSON.stringify(backupObj);
+            const base64Str = encodeBase64Unicode(jsonStr);
+            
+            navigator.clipboard.writeText(base64Str).then(function() {
+                const toast = document.getElementById('toast-pop');
+                toast.classList.add('show');
+                setTimeout(function() { toast.classList.remove('show'); }, 1500);
+            }).catch(function(err) {
+                alert("Failed to copy backup code to clipboard.");
+            });
+        }
+
+        function showRestoreScreen() { 
+            closeSettingsMenu(); 
+            setTimeout(function() { 
+                const o = document.getElementById('restore-overlay'); 
+                o.style.display = 'flex'; 
+                setTimeout(function() { o.classList.add('active'); }, 50); 
+            }, 450); 
+        }
+
+        function closeRestoreScreen() { 
+            const o = document.getElementById('restore-overlay'); 
+            o.classList.remove('active'); 
+            setTimeout(function() { o.style.display = 'none'; }, 300); 
+        }
         
         function handleRestoreAction() {
             const input = document.getElementById('restore-input').value.trim();
-            if(!input) return;
+            if (!input) return;
             try {
-                const decoded = JSON.parse(decodeURIComponent(escape(atob(input))));
-                if(decoded.configs && decoded.logs && decoded.salaryData) {
+                const jsonStr = decodeBase64Unicode(input.replace(/\s+/g, ''));
+                const decoded = JSON.parse(jsonStr);
+                if (decoded && decoded.configs && decoded.logs && decoded.salaryData) {
                     localStorage.setItem('workConfigsListV34', JSON.stringify(decoded.configs));
                     localStorage.setItem('workLogsV34', JSON.stringify(decoded.logs));
                     localStorage.setItem('myTenYearSalaryData', JSON.stringify(decoded.salaryData));
                     localStorage.setItem('workGoalsListV34', JSON.stringify(decoded.goals || []));
+                    alert("Restore successful! Reloading application...");
                     location.reload(); 
-                } else { throw new Error("Invalid Format"); }
-            } catch(e) { showInvalidModal(); }
+                } else { 
+                    throw new Error("Invalid Format"); 
+                }
+            } catch(e) { 
+                showInvalidModal();
+            }
         }
 
         function showEditScreen() { 
-            if(configs.length === 0) return;
+            if (configs.length === 0) return;
             const currentConf = configs[currentWorkIndex];
-            document.getElementById('edit-shop').value = currentConf.name;
-            document.getElementById('edit-wage').value = currentConf.wage;
+            document.getElementById('edit-shop').value = currentConf.name || "";
+            document.getElementById('edit-wage').value = currentConf.wage || "";
             document.getElementById('edit-night-rate').value = (currentConf.nightRate === 0) ? "" : currentConf.nightRate;
             document.getElementById('edit-transport').value = (currentConf.transport === 0) ? "" : currentConf.transport;
             closeSettingsMenu(); 
-            setTimeout(() => { const o = document.getElementById('edit-setup-overlay'); o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 50); }, 450); 
+            setTimeout(function() { 
+                const o = document.getElementById('edit-setup-overlay'); 
+                o.style.display = 'flex'; 
+                setTimeout(function() { o.classList.add('active'); }, 50); 
+            }, 450); 
         }
         
         function showAddWorkplaceScreen() {
-            if (configs.filter(c => !c.deleted).length >= 5) {
-                closeSettingsMenu(); setTimeout(() => { const m = document.getElementById('limit-modal-overlay'); m.style.display = 'flex'; setTimeout(() => m.classList.add('active'), 10); }, 450); return;
+            let activeCount = 0;
+            for (let i = 0; i < configs.length; i++) {
+                if (!configs[i].deleted) activeCount++;
             }
-            document.getElementById('add-shop').value = ''; document.getElementById('add-wage').value = ''; document.getElementById('add-night-rate').value = ''; document.getElementById('add-transport').value = '';
-            closeSettingsMenu(); setTimeout(() => { const o = document.getElementById('add-work-overlay'); o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 50); }, 450);
+            if (activeCount >= 5) {
+                closeSettingsMenu(); 
+                setTimeout(function() { 
+                    const m = document.getElementById('limit-modal-overlay'); 
+                    m.style.display = 'flex'; 
+                    setTimeout(function() { m.classList.add('active'); }, 10); 
+                }, 450); 
+                return;
+            }
+            document.getElementById('add-shop').value = ''; 
+            document.getElementById('add-wage').value = ''; 
+            document.getElementById('add-night-rate').value = ''; 
+            document.getElementById('add-transport').value = '';
+            closeSettingsMenu(); 
+            setTimeout(function() { 
+                const o = document.getElementById('add-work-overlay'); 
+                o.style.display = 'flex'; 
+                setTimeout(function() { o.classList.add('active'); }, 50); 
+            }, 450);
         }
         
         function showGoalScreen() { 
             if (goals.length >= 6) {
-                closeSettingsMenu(); setTimeout(() => { const m = document.getElementById('limit-modal-overlay'); m.style.display = 'flex'; setTimeout(() => m.classList.add('active'), 10); }, 450); return;
+                closeSettingsMenu(); 
+                setTimeout(function() { 
+                    const m = document.getElementById('limit-modal-overlay'); 
+                    m.style.display = 'flex'; 
+                    setTimeout(function() { m.classList.add('active'); }, 10); 
+                }, 450); 
+                return;
             }
-            closeSettingsMenu(); setTimeout(() => { const o = document.getElementById('goal-setup-overlay'); o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 50); }, 450); 
+            closeSettingsMenu(); 
+            setTimeout(function() { 
+                const o = document.getElementById('goal-setup-overlay'); 
+                o.style.display = 'flex'; 
+                setTimeout(function() { o.classList.add('active'); }, 50); 
+            }, 450); 
         }
 
-        function closeLimitModal() { const m = document.getElementById('limit-modal-overlay'); m.classList.remove('active'); setTimeout(() => m.style.display = 'none', 300); }
-        function backToSettingsMenu(currentId) { const current = document.getElementById(currentId); current.classList.remove('active'); setTimeout(() => { current.style.display = 'none'; openSettingsMenu(); }, 400); }
+        function closeLimitModal() { 
+            const m = document.getElementById('limit-modal-overlay'); 
+            m.classList.remove('active'); 
+            setTimeout(function() { m.style.display = 'none'; }, 300); 
+        }
+
+        function backToSettingsMenu(currentId) { 
+            const current = document.getElementById(currentId); 
+            current.classList.remove('active'); 
+            setTimeout(function() { 
+                current.style.display = 'none'; 
+                openSettingsMenu(); 
+            }, 400); 
+        }
 
         function saveGoalSetup() {
-            const name = document.getElementById('goal-name').value.trim(), limit = document.getElementById('goal-limit').value.trim(), start = document.getElementById('goal-start').value, end = document.getElementById('goal-end').value;
-            if(!name || !limit || !start || !end) { showValidationModal(["Goal Name", "Limited", "Period"], true, false); return; }
-            goals.push({ name, limit: parseInt(limit), start, end }); localStorage.setItem('workGoalsListV34', JSON.stringify(goals));
-            document.getElementById('goal-name').value = ''; document.getElementById('goal-limit').value = ''; document.getElementById('goal-start').value = ''; document.getElementById('goal-end').value = '';
-            const o = document.getElementById('goal-setup-overlay'); o.classList.remove('active'); setTimeout(() => { o.style.display = 'none'; updateDash(); }, 400);
+            const name = document.getElementById('goal-name').value.trim();
+            const limitVal = document.getElementById('goal-limit').value.trim();
+            const start = document.getElementById('goal-start').value;
+            const end = document.getElementById('goal-end').value;
+            const numLimit = parseInt(limitVal, 10);
+
+            if (!name || isNaN(numLimit) || !start || !end) { 
+                showValidationModal(["Goal Name", "Limited", "Period"], true, false); 
+                return; 
+            }
+            
+            goals.push({ name: name, limit: numLimit, start: start, end: end }); 
+            localStorage.setItem('workGoalsListV34', JSON.stringify(goals));
+            
+            document.getElementById('goal-name').value = ''; 
+            document.getElementById('goal-limit').value = ''; 
+            document.getElementById('goal-start').value = ''; 
+            document.getElementById('goal-end').value = '';
+            
+            const o = document.getElementById('goal-setup-overlay'); 
+            o.classList.remove('active'); 
+            setTimeout(function() { o.style.display = 'none'; updateDash(); }, 400);
         }
 
         function openEditGoalModal(index) {
             currentEditingGoalIndex = index;
             const goal = goals[index];
-            document.getElementById('edit-goal-name').value = goal.name;
-            document.getElementById('edit-goal-limit').value = goal.limit;
-            document.getElementById('edit-goal-start').value = goal.start;
-            document.getElementById('edit-goal-end').value = goal.end;
+            document.getElementById('edit-goal-name').value = goal.name || "";
+            document.getElementById('edit-goal-limit').value = goal.limit || "";
+            document.getElementById('edit-goal-start').value = goal.start || "";
+            document.getElementById('edit-goal-end').value = goal.end || "";
+            
             const o = document.getElementById('edit-goal-overlay');
-            o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 50);
+            o.style.display = 'flex'; 
+            setTimeout(function() { o.classList.add('active'); }, 50);
         }
 
-        function closeEditGoalModal() { const o = document.getElementById('edit-goal-overlay'); o.classList.remove('active'); setTimeout(() => o.style.display = 'none', 300); }
+        function closeEditGoalModal() { 
+            const o = document.getElementById('edit-goal-overlay'); 
+            o.classList.remove('active'); 
+            setTimeout(function() { o.style.display = 'none'; }, 300); 
+        }
 
         function saveEditGoal() {
-            const name = document.getElementById('edit-goal-name').value.trim(), limit = document.getElementById('edit-goal-limit').value.trim(), start = document.getElementById('edit-goal-start').value, end = document.getElementById('edit-goal-end').value;
-            if(!name || !limit || !start || !end) { showValidationModal(["Goal Name", "Limited", "Period"], true, 'edit-goal'); return; }
-            goals[currentEditingGoalIndex] = { name, limit: parseInt(limit), start, end };
+            const name = document.getElementById('edit-goal-name').value.trim();
+            const limitVal = document.getElementById('edit-goal-limit').value.trim();
+            const start = document.getElementById('edit-goal-start').value;
+            const end = document.getElementById('edit-goal-end').value;
+            const numLimit = parseInt(limitVal, 10);
+
+            if (!name || isNaN(numLimit) || !start || !end) { 
+                showValidationModal(["Goal Name", "Limited", "Period"], true, 'edit-goal'); 
+                return; 
+            }
+            
+            goals[currentEditingGoalIndex] = { name: name, limit: numLimit, start: start, end: end };
             localStorage.setItem('workGoalsListV34', JSON.stringify(goals));
-            closeEditGoalModal(); updateDash();
+            
+            closeEditGoalModal(); 
+            updateDash();
         }
 
-        function deleteGoal(index) { openConfirmModal("Delete Goal?", "This will permanently remove this goal.", "Delete", "red", () => { goals.splice(index, 1); localStorage.setItem('workGoalsListV34', JSON.stringify(goals)); updateDash(); }); }
+        function deleteGoal(index) {
+            openConfirmModal("Delete Goal?", "This will permanently remove this goal.", "Delete", "red", function() { 
+                goals.splice(index, 1); 
+                localStorage.setItem('workGoalsListV34', JSON.stringify(goals)); 
+                updateDash(); 
+            });
+        }
 
-        // 🌟 鉄壁のガード付きゲージ描画
         function renderGoalGauges() {
-            const container = document.getElementById('goal-container'); container.innerHTML = '';
+            const container = document.getElementById('goal-container'); 
+            container.innerHTML = '';
+            
             if (goals.length === 0) return;
-            goals.forEach((goal, index) => {
-                const sTime = new Date(goal.start.replace(/-/g,'/')).getTime(), eTime = new Date(goal.end.replace(/-/g,'/')).getTime() + 86400000;
-                let logsTotal = logs.filter(l => { let t = new Date(l.fullDate.replace(/-/g,'/')).getTime(); return t >= sTime && t < eTime; }).reduce((sum, l) => sum + (Number(l.amt) || 0), 0);
+            
+            for (let index = 0; index < goals.length; index++) {
+                const goal = goals[index];
+                const startStr = (goal.start || "").replace(/-/g, '/');
+                const endStr = (goal.end || "").replace(/-/g, '/');
                 
-                let salaryTotal = Object.keys(salaryData).filter(k => { let [y, m] = k.split('/'); let t = new Date(`20${y}/${m}/01`).getTime(); return t >= sTime && t < eTime; }).reduce((sum, k) => {
-                    let d = salaryData[k];
-                    let amt = typeof d === 'number' ? d : (d.amount || 0); // Guard
-                    return sum + amt;
-                }, 0);
+                const sTime = new Date(startStr).getTime();
+                const eTime = new Date(endStr).getTime() + 86400000;
+                
+                let logsTotal = 0;
+                for (let i = 0; i < logs.length; i++) {
+                    const l = logs[i];
+                    const t = new Date((l.fullDate || "").replace(/-/g, '/')).getTime();
+                    if (t >= sTime && t < eTime) {
+                        logsTotal += (l.amt || 0);
+                    }
+                }
+                
+                let salaryTotal = 0;
+                const salKeys = Object.keys(salaryData);
+                for (let i = 0; i < salKeys.length; i++) {
+                    const k = salKeys[i];
+                    const parts = k.split('/');
+                    if (parts.length === 2) {
+                        const t = new Date(`20${parts[0]}/${parts[1]}/01`).getTime();
+                        if (t >= sTime && t < eTime) {
+                            salaryTotal += (salaryData[k].amount || 0);
+                        }
+                    }
+                }
+                
                 const combinedTotal = logsTotal + salaryTotal;
-                
-                let rawPercent = Math.floor((combinedTotal / goal.limit) * 100);
-                if(isNaN(rawPercent)) rawPercent = 0; // 鉄壁ガード
-                
+                let goalLimitSafe = goal.limit;
+                if (isNaN(goalLimitSafe) || goalLimitSafe <= 0) goalLimitSafe = 1; // ゼロ割防止
+
+                let rawPercent = Math.floor((combinedTotal / goalLimitSafe) * 100);
                 let lap = Math.floor(rawPercent / 100);
-                if(isNaN(lap)) lap = 0;
-                
                 let gaugeVal = rawPercent % 100;
-                if(isNaN(gaugeVal)) gaugeVal = 0;
                 
-                if (rawPercent > 0 && gaugeVal === 0) { gaugeVal = 100; lap -= 1; }
+                if (rawPercent > 0 && gaugeVal === 0) { 
+                    gaugeVal = 100; 
+                    lap -= 1; 
+                }
                 
-                let bgLap = lap > 0 ? lap - 1 : 0; let fgLap = lap;
+                let bgLap = lap > 0 ? lap - 1 : 0; 
+                let fgLap = lap;
+                
                 if (bgLap >= lapGradients.length) bgLap = lapGradients.length - 1;
                 if (fgLap >= lapGradients.length) fgLap = lapGradients.length - 1;
 
-                const wrapper = document.createElement('div'); wrapper.className = 'goal-item';
-                const startStr = goal.start.replace(/-/g, '/'), endStr = goal.end.replace(/-/g, '/');
+                const wrapper = document.createElement('div'); 
+                wrapper.className = 'goal-item';
+
+                let bgGradientTag = '';
+                if (lap > 0) {
+                    bgGradientTag = `<linearGradient id="bgGrad${index}" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="${lapGradients[bgLap][0]}" />
+                        <stop offset="100%" stop-color="${lapGradients[bgLap][1]}" />
+                    </linearGradient>`;
+                }
 
                 wrapper.innerHTML = `
                     <div class="goal-del-btn" onclick="deleteGoal(${index})">✕</div>
@@ -625,36 +830,42 @@
                                     <stop offset="0%" stop-color="${lapGradients[fgLap][0]}" />
                                     <stop offset="100%" stop-color="${lapGradients[fgLap][1]}" />
                                 </linearGradient>
-                                ${lap > 0 ? `<linearGradient id="bgGrad${index}" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="${lapGradients[bgLap][0]}" />
-                                    <stop offset="100%" stop-color="${lapGradients[bgLap][1]}" />
-                                </linearGradient>` : ''}
+                                ${bgGradientTag}
                             </defs>
                             <path class="circle-bg" stroke="${lap === 0 ? '#e6e6e6' : `url(#bgGrad${index})`}" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                             <path class="circle" id="goal-path-${index}" stroke="url(#fgGrad${index})" stroke-dasharray="0, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                         </svg>
                         <div class="gauge-info">
                             <div class="gauge-percent">${rawPercent}%</div>
-                            <div class="gauge-amount">¥${combinedTotal.toLocaleString()} / ¥${goal.limit.toLocaleString()}</div>
+                            <div class="gauge-amount">¥${combinedTotal.toLocaleString()} / ¥${goalLimitSafe.toLocaleString()}</div>
                         </div>
                     </div>
                     <button class="goal-edit-btn" onclick="openEditGoalModal(${index})">Edit Setting</button>
                 `;
+                
                 container.appendChild(wrapper);
 
-                setTimeout(() => { 
-                    const path = document.getElementById(`goal-path-${index}`); 
-                    if(path) path.setAttribute('stroke-dasharray', `${gaugeVal}, 100`); 
-                }, 50);
-            });
+                (function(idx, gVal) {
+                    setTimeout(function() { 
+                        const path = document.getElementById(`goal-path-${idx}`); 
+                        if (path) path.setAttribute('stroke-dasharray', `${gVal}, 100`); 
+                    }, 50);
+                })(index, gaugeVal);
+            }
         }
 
-        // ================= SETUP FUNCTIONS =================
+        // ================= PAGE 1 SETUP FUNCTIONS =================
         function showValidationModal(emptyFields, isRequiredMissing, isEditMode) {
-            const title = document.getElementById('val-modal-title'), list = document.getElementById('missing-fields-list'), btnArea = document.getElementById('val-modal-btns');
-            list.innerHTML = emptyFields.map(f => `<li>${f}</li>`).join('');
-            if (isRequiredMissing) { title.innerText = "Required fields are missing."; btnArea.innerHTML = `<button style="background:none; border:none; color:#a1a1aa; font-weight:700; padding:10px; cursor:pointer;" onclick="closeValidationModal()">Back</button>`; }
-            else { 
+            const title = document.getElementById('val-modal-title');
+            const list = document.getElementById('missing-fields-list');
+            const btnArea = document.getElementById('val-modal-btns');
+            
+            list.innerHTML = emptyFields.map(function(f) { return `<li>${f}</li>`; }).join('');
+            
+            if (isRequiredMissing) { 
+                title.innerText = "Required fields are missing."; 
+                btnArea.innerHTML = `<button style="background:none; border:none; color:#a1a1aa; font-weight:700; padding:10px; cursor:pointer;" onclick="closeValidationModal()">Back</button>`; 
+            } else { 
                 title.innerText = "Some items are not filled out."; 
                 let targetFunc = "finalizeInitialSetup()";
                 if (isEditMode === 'add') targetFunc = "finalizeAddWorkplace()";
@@ -663,148 +874,315 @@
 
                 btnArea.innerHTML = `<button style="background:var(--black-grad); width:100%; border-radius:18px; color:white; padding:16px; border:none; font-weight:800; cursor:pointer;" onclick="${targetFunc}">Setting</button><button style="background:none; border:none; color:#a1a1aa; font-weight:700; padding:10px; cursor:pointer;" onclick="closeValidationModal()">Back</button>`; 
             }
-            const m = document.getElementById('validation-modal-overlay'); m.style.display = 'flex'; setTimeout(() => m.classList.add('active'), 10);
+            
+            const m = document.getElementById('validation-modal-overlay'); 
+            m.style.display = 'flex'; 
+            setTimeout(function() { m.classList.add('active'); }, 10);
         }
-        function closeValidationModal() { const m = document.getElementById('validation-modal-overlay'); m.classList.remove('active'); setTimeout(() => m.style.display = 'none', 300); }
+
+        function closeValidationModal() { 
+            const m = document.getElementById('validation-modal-overlay'); 
+            m.classList.remove('active'); 
+            setTimeout(function() { m.style.display = 'none'; }, 300); 
+        }
 
         function saveInitialSetup() {
-            const n = document.getElementById('setup-shop').value.trim(), w = document.getElementById('setup-wage').value.trim(), r = document.getElementById('setup-night-rate').value.trim(), t = document.getElementById('setup-transport').value.trim();
-            let req = []; if (!n) req.push("Name"); if (!w || parseInt(w) === 0) req.push("Hourly Wage"); if (req.length > 0) { showValidationModal(req, true, false); return; }
-            let opt = []; if (!r || parseInt(r) === 0) opt.push("Night Rate"); if (!t || parseInt(t) === 0) opt.push("Commuting Allowance"); if (opt.length > 0) { showValidationModal(opt, false, false); return; }
+            const n = document.getElementById('setup-shop').value.trim();
+            const w = parseInt(document.getElementById('setup-wage').value.trim(), 10);
+            const r = parseInt(document.getElementById('setup-night-rate').value.trim(), 10);
+            const t = parseInt(document.getElementById('setup-transport').value.trim(), 10);
+            
+            let req = []; 
+            if (!n) req.push("Name"); 
+            if (isNaN(w) || w === 0) req.push("Hourly Wage"); 
+            if (req.length > 0) { showValidationModal(req, true, false); return; }
+            
+            let opt = []; 
+            if (isNaN(r) || r === 0) opt.push("Night Rate"); 
+            if (isNaN(t) || t === 0) opt.push("Commuting Allowance"); 
+            if (opt.length > 0) { showValidationModal(opt, false, false); return; }
+            
             finalizeInitialSetup();
         }
+
         function finalizeInitialSetup() {
             closeValidationModal();
-            const n = document.getElementById('setup-shop').value.trim(), w = document.getElementById('setup-wage').value.trim(), r = document.getElementById('setup-night-rate').value.trim(), t = document.getElementById('setup-transport').value.trim();
-            configs.push({ name: n, wage: parseInt(w), nightRate: parseInt(r) || 0, transport: parseInt(t) || 0 }); localStorage.setItem('workConfigsListV34', JSON.stringify(configs));
-            currentWorkIndex = 0; const o = document.getElementById('initial-setup-overlay'); o.classList.remove('active'); setTimeout(() => { o.style.display = 'none'; updateDash(); initSalaryCalendar(new Date().getFullYear() % 100); }, 400);
+            const n = document.getElementById('setup-shop').value.trim();
+            const w = parseInt(document.getElementById('setup-wage').value.trim(), 10);
+            const r = parseInt(document.getElementById('setup-night-rate').value.trim(), 10);
+            const t = parseInt(document.getElementById('setup-transport').value.trim(), 10);
+            
+            configs.push({ name: n, wage: w, nightRate: isNaN(r) ? 0 : r, transport: isNaN(t) ? 0 : t, deleted: false }); 
+            localStorage.setItem('workConfigsListV34', JSON.stringify(configs));
+            currentWorkIndex = configs.length - 1; 
+            
+            const o = document.getElementById('initial-setup-overlay'); 
+            o.classList.remove('active'); 
+            
+            if (!selectedDateStr) {
+                const today = new Date();
+                selectedDateStr = `${today.getFullYear()}-${(today.getMonth()+1).toString().padStart(2,'0')}-${today.getDate().toString().padStart(2,'0')}`;
+            }
+
+            setTimeout(function() { 
+                o.style.display = 'none'; 
+                updateDash(); 
+                initSalaryCalendar(new Date().getFullYear() % 100); 
+            }, 400);
         }
 
         function saveAddWorkplace() {
-            const n = document.getElementById('add-shop').value.trim(), w = document.getElementById('add-wage').value.trim(), r = document.getElementById('add-night-rate').value.trim(), t = document.getElementById('add-transport').value.trim();
-            let req = []; if (!n) req.push("Name"); if (!w || parseInt(w) === 0) req.push("Hourly Wage"); if (req.length > 0) { showValidationModal(req, true, 'add'); return; }
-            let opt = []; if (!r || parseInt(r) === 0) opt.push("Night Rate"); if (!t || parseInt(t) === 0) opt.push("Commuting Allowance"); if (opt.length > 0) { showValidationModal(opt, false, 'add'); return; }
+            const n = document.getElementById('add-shop').value.trim();
+            const w = parseInt(document.getElementById('add-wage').value.trim(), 10);
+            const r = parseInt(document.getElementById('add-night-rate').value.trim(), 10);
+            const t = parseInt(document.getElementById('add-transport').value.trim(), 10);
+            
+            let req = []; 
+            if (!n) req.push("Name"); 
+            if (isNaN(w) || w === 0) req.push("Hourly Wage"); 
+            if (req.length > 0) { showValidationModal(req, true, 'add'); return; }
+            
+            let opt = []; 
+            if (isNaN(r) || r === 0) opt.push("Night Rate"); 
+            if (isNaN(t) || t === 0) opt.push("Commuting Allowance"); 
+            if (opt.length > 0) { showValidationModal(opt, false, 'add'); return; }
+            
             finalizeAddWorkplace();
         }
+
         function finalizeAddWorkplace() {
             closeValidationModal();
-            const n = document.getElementById('add-shop').value.trim(), w = document.getElementById('add-wage').value.trim(), r = document.getElementById('add-night-rate').value.trim(), t = document.getElementById('add-transport').value.trim();
-            configs.push({ name: n, wage: parseInt(w), nightRate: parseInt(r) || 0, transport: parseInt(t) || 0 }); localStorage.setItem('workConfigsListV34', JSON.stringify(configs));
-            currentWorkIndex = configs.length - 1; const o = document.getElementById('add-work-overlay'); o.classList.remove('active'); setTimeout(() => { o.style.display = 'none'; updateDash(); }, 400);
+            const n = document.getElementById('add-shop').value.trim();
+            const w = parseInt(document.getElementById('add-wage').value.trim(), 10);
+            const r = parseInt(document.getElementById('add-night-rate').value.trim(), 10);
+            const t = parseInt(document.getElementById('add-transport').value.trim(), 10);
+            
+            configs.push({ name: n, wage: w, nightRate: isNaN(r) ? 0 : r, transport: isNaN(t) ? 0 : t, deleted: false }); 
+            localStorage.setItem('workConfigsListV34', JSON.stringify(configs));
+            currentWorkIndex = configs.length - 1; 
+            
+            const o = document.getElementById('add-work-overlay'); 
+            o.classList.remove('active'); 
+            setTimeout(function() { o.style.display = 'none'; updateDash(); }, 400);
         }
 
         function saveEditSetup() {
-            const n = document.getElementById('edit-shop').value.trim(), w = document.getElementById('edit-wage').value.trim(), r = document.getElementById('edit-night-rate').value.trim(), t = document.getElementById('edit-transport').value.trim();
-            let req = []; if (!n) req.push("Name"); if (!w || parseInt(w) === 0) req.push("Hourly Wage"); if (req.length > 0) { showValidationModal(req, true, true); return; }
-            let opt = []; if (!r || parseInt(r) === 0) opt.push("Night Rate"); if (!t || parseInt(t) === 0) opt.push("Commuting Allowance"); if (opt.length > 0) { showValidationModal(opt, false, true); return; }
+            const n = document.getElementById('edit-shop').value.trim();
+            const w = parseInt(document.getElementById('edit-wage').value.trim(), 10);
+            const r = parseInt(document.getElementById('edit-night-rate').value.trim(), 10);
+            const t = parseInt(document.getElementById('edit-transport').value.trim(), 10);
+            
+            let req = []; 
+            if (!n) req.push("Name"); 
+            if (isNaN(w) || w === 0) req.push("Hourly Wage"); 
+            if (req.length > 0) { showValidationModal(req, true, true); return; }
+            
+            let opt = []; 
+            if (isNaN(r) || r === 0) opt.push("Night Rate"); 
+            if (isNaN(t) || t === 0) opt.push("Commuting Allowance"); 
+            if (opt.length > 0) { showValidationModal(opt, false, true); return; }
+            
             finalizeEditSetup();
         }
+
         function finalizeEditSetup() {
             closeValidationModal();
-            const n = document.getElementById('edit-shop').value.trim(), w = document.getElementById('edit-wage').value.trim(), r = document.getElementById('edit-night-rate').value.trim(), t = document.getElementById('edit-transport').value.trim();
-            configs[currentWorkIndex] = { name: n, wage: parseInt(w), nightRate: parseInt(r) || 0, transport: parseInt(t) || 0 }; localStorage.setItem('workConfigsListV34', JSON.stringify(configs));
-            const o = document.getElementById('edit-setup-overlay'); o.classList.remove('active'); setTimeout(() => { o.style.display = 'none'; updateDash(); }, 400);
+            const n = document.getElementById('edit-shop').value.trim();
+            const w = parseInt(document.getElementById('edit-wage').value.trim(), 10);
+            const r = parseInt(document.getElementById('edit-night-rate').value.trim(), 10);
+            const t = parseInt(document.getElementById('edit-transport').value.trim(), 10);
+            
+            configs[currentWorkIndex] = { name: n, wage: w, nightRate: isNaN(r) ? 0 : r, transport: isNaN(t) ? 0 : t, deleted: false }; 
+            localStorage.setItem('workConfigsListV34', JSON.stringify(configs));
+            
+            const o = document.getElementById('edit-setup-overlay'); 
+            o.classList.remove('active'); 
+            setTimeout(function() { o.style.display = 'none'; updateDash(); }, 400);
         }
 
-        // ================= DASHBOARD & LOGIC =================
+        // ================= PAGE 1 DASHBOARD & LOGIC =================
         function changeWorkplace(dir) {
-            const activeCount = configs.filter(c => !c.deleted).length;
+            let activeCount = 0;
+            for (let i = 0; i < configs.length; i++) {
+                if (!configs[i].deleted) activeCount++;
+            }
             if (activeCount <= 1) return;
+            
             const cardBg = document.getElementById('work-card-bg');
             cardBg.style.opacity = '0';
-            setTimeout(() => { 
+            
+            setTimeout(function() { 
                 let nextIndex = currentWorkIndex;
-                for(let i=0; i<configs.length; i++) {
+                for (let i = 0; i < configs.length; i++) {
                     nextIndex = (nextIndex + dir + configs.length) % configs.length;
                     if (!configs[nextIndex].deleted) {
                         currentWorkIndex = nextIndex;
                         break;
                     }
                 }
-                
-                // 🌟 エラーが起きても絶対にカードを再表示させる安全装置
-                try {
-                    updateDash(); 
-                } catch(e) {
-                    console.error("Dashboard Update Error:", e);
-                } finally {
-                    cardBg.style.opacity = '1'; 
-                }
+                updateDash(); 
+                cardBg.style.opacity = '1'; 
             }, 300);
         }
 
         function updateDash() {
-            if(configs.filter(c=>!c.deleted).length === 0) return;
+            let hasActive = false;
+            for (let i = 0; i < configs.length; i++) {
+                if (!configs[i].deleted) hasActive = true;
+            }
+            if (!hasActive) return;
+            
             const currentConf = configs[currentWorkIndex];
             
             document.getElementById('work-card-bg').style.background = wpGradients[currentWorkIndex % 4];
-            document.getElementById('display-shop').innerText = currentConf.name.toUpperCase();
+            document.getElementById('display-shop').innerText = (currentConf.name || "---").toUpperCase();
             document.getElementById('display-month').innerText = viewDate.toLocaleString('en', {month:'long'}).toUpperCase();
             
             const monthKey = `${viewDate.getFullYear()%100}/${viewDate.getMonth()+1}`;
-            const mLogs = logs.filter(l => l.monthKey === monthKey && (l.workIndex || 0) === currentWorkIndex);
-            const total = mLogs.reduce((s, l) => s + (Number(l.amt) || 0), 0);
+            
+            let total = 0;
+            for (let i = 0; i < logs.length; i++) {
+                const l = logs[i];
+                if (l.monthKey === monthKey && (l.workIndex || 0) === currentWorkIndex) {
+                    total += (l.amt || 0);
+                }
+            }
             document.getElementById('display-total').innerText = `¥${total.toLocaleString()}`;
             
             renderCalendar();
-            const allMLogs = logs.filter(l => l.monthKey === monthKey).sort((a,b) => parseInt(a.date) - parseInt(b.date));
+            
+            const allMLogs = logs.filter(function(l) { return l.monthKey === monthKey; }).sort(function(a, b) { 
+                return parseInt(a.date) - parseInt(b.date); 
+            });
             renderLogs(allMLogs);
             renderGoalGauges(); 
         }
 
         function changeMonth(dir) {
             lastSavedDate = null;
-            const cal = document.getElementById('cal-body'), total = document.getElementById('display-total');
-            cal.style.opacity = '0'; total.style.opacity = '0';
-            setTimeout(() => { viewDate.setMonth(viewDate.getMonth() + dir); updateDash(); cal.style.opacity = '1'; total.style.opacity = '1'; }, 300);
+            const cal = document.getElementById('cal-body');
+            const total = document.getElementById('display-total');
+            cal.style.opacity = '0'; 
+            total.style.opacity = '0';
+            setTimeout(function() { 
+                viewDate.setMonth(viewDate.getMonth() + dir); 
+                updateDash(); 
+                cal.style.opacity = '1'; 
+                total.style.opacity = '1'; 
+            }, 300);
         }
 
         function renderCalendar() {
-            const body = document.getElementById('cal-body'); body.innerHTML = '';
+            const body = document.getElementById('cal-body'); 
+            body.innerHTML = '';
             const now = new Date();
-            ["S","M","T","W","T","F","S"].forEach((d, i) => { const l = document.createElement('div'); l.className="cal-day-label"; if(i === 0) l.classList.add('cal-day-sun'); if(i === 6) l.classList.add('cal-day-sat'); l.innerText=d; body.appendChild(l); });
-            const y = viewDate.getFullYear(), m = viewDate.getMonth(), first = new Date(y, m, 1).getDay(), last = new Date(y, m+1, 0).getDate();
-            for(let i=0; i<first; i++) body.appendChild(document.createElement('div'));
-            for(let d=1; d<=last; d++) {
+            
+            const days = ["S","M","T","W","T","F","S"];
+            for (let i = 0; i < days.length; i++) {
+                const l = document.createElement('div'); 
+                l.className="cal-day-label"; 
+                if (i === 0) l.classList.add('cal-day-sun'); 
+                if (i === 6) l.classList.add('cal-day-sat'); 
+                l.innerText = days[i]; 
+                body.appendChild(l); 
+            }
+            
+            const y = viewDate.getFullYear();
+            const m = viewDate.getMonth();
+            const first = new Date(y, m, 1).getDay();
+            const last = new Date(y, m+1, 0).getDate();
+            
+            for (let i = 0; i < first; i++) {
+                body.appendChild(document.createElement('div'));
+            }
+            
+            for (let d = 1; d <= last; d++) {
                 const f = `${y}-${(m+1).toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
                 const cell = document.createElement('div');
                 cell.className = `cal-cell ${selectedDateStr === f ? 'selected' : ''}`;
-                if (y === now.getFullYear() && m === now.getMonth() && d === now.getDate()) cell.classList.add('is-today');
+                if (y === now.getFullYear() && m === now.getMonth() && d === now.getDate()) {
+                    cell.classList.add('is-today');
+                }
                 
-                const dayLogs = logs.filter(l => l.fullDate === f);
+                const dayLogs = [];
+                for (let k = 0; k < logs.length; k++) {
+                    if (logs[k].fullDate === f) dayLogs.push(logs[k]);
+                }
+                
                 let dotsHtml = '';
                 
                 if (dayLogs.length > 0) {
                     const animClass = (f === lastSavedDate) ? 'anim-slide-up' : '';
-                    const uniqueWorkIndices = [...new Set(dayLogs.map(l => l.workIndex || 0))].sort();
-                    const N = uniqueWorkIndices.length;
-                    let topDots = [], bottomDots = [];
+                    const uniqueWorkIndicesArray = [];
+                    for (let k = 0; k < dayLogs.length; k++) {
+                        const wIdx = dayLogs[k].workIndex || 0;
+                        if (uniqueWorkIndicesArray.indexOf(wIdx) === -1) {
+                            uniqueWorkIndicesArray.push(wIdx);
+                        }
+                    }
+                    uniqueWorkIndicesArray.sort(function(a,b) { return a - b; });
                     
-                    if (N === 5) { topDots = uniqueWorkIndices.slice(0,3); bottomDots = uniqueWorkIndices.slice(3); }
-                    else if (N === 4) { topDots = uniqueWorkIndices.slice(0,2); bottomDots = uniqueWorkIndices.slice(2); }
-                    else if (N === 3) { topDots = uniqueWorkIndices.slice(0,2); bottomDots = uniqueWorkIndices.slice(2); }
-                    else { topDots = uniqueWorkIndices; }
+                    const N = uniqueWorkIndicesArray.length;
+                    let topDots = [];
+                    let bottomDots = [];
+                    
+                    if (N === 5) { 
+                        topDots = uniqueWorkIndicesArray.slice(0,3); 
+                        bottomDots = uniqueWorkIndicesArray.slice(3); 
+                    } else if (N === 4) { 
+                        topDots = uniqueWorkIndicesArray.slice(0,2); 
+                        bottomDots = uniqueWorkIndicesArray.slice(2); 
+                    } else if (N === 3) { 
+                        topDots = uniqueWorkIndicesArray.slice(0,2); 
+                        bottomDots = uniqueWorkIndicesArray.slice(2); 
+                    } else { 
+                        topDots = uniqueWorkIndicesArray; 
+                    }
 
                     dotsHtml = `<div class="cal-dots-wrapper ${animClass}">`;
-                    dotsHtml += '<div class="cal-dots-row">' + topDots.map(idx => {
-                        const isDel = configs[idx]?.deleted;
-                        return `<span class="dot ${isDel ? 'dot-deleted' : ''}" style="${isDel ? '' : `background:${wpColors[idx % 4]}`}"></span>`;
-                    }).join('') + '</div>';
+                    
+                    let topHtml = '<div class="cal-dots-row">';
+                    for (let k = 0; k < topDots.length; k++) {
+                        const idx = topDots[k];
+                        const conf = configs[idx];
+                        const isDel = conf && conf.deleted;
+                        const dotClass = isDel ? 'dot-deleted' : '';
+                        const inlineStyle = isDel ? '' : `background:${wpColors[idx % 4]}`;
+                        topHtml += `<span class="dot ${dotClass}" style="${inlineStyle}"></span>`;
+                    }
+                    topHtml += '</div>';
+                    dotsHtml += topHtml;
+
                     if (bottomDots.length > 0) {
-                        dotsHtml += '<div class="cal-dots-row">' + bottomDots.map(idx => {
-                            const isDel = configs[idx]?.deleted;
-                            return `<span class="dot ${isDel ? 'dot-deleted' : ''}" style="${isDel ? '' : `background:${wpColors[idx % 4]}`}"></span>`;
-                        }).join('') + '</div>';
+                        let botHtml = '<div class="cal-dots-row">';
+                        for (let k = 0; k < bottomDots.length; k++) {
+                            const idx = bottomDots[k];
+                            const conf = configs[idx];
+                            const isDel = conf && conf.deleted;
+                            const dotClass = isDel ? 'dot-deleted' : '';
+                            const inlineStyle = isDel ? '' : `background:${wpColors[idx % 4]}`;
+                            botHtml += `<span class="dot ${dotClass}" style="${inlineStyle}"></span>`;
+                        }
+                        botHtml += '</div>';
+                        dotsHtml += botHtml;
                     }
                     dotsHtml += '</div>';
                 }
                 
                 cell.innerHTML = `<div class="cal-date-num">${d}</div>${dotsHtml}`;
                 
-                cell.onclick = (e) => {
-                    const ct = new Date().getTime(), tl = ct - lastClickTime;
-                    if (tl < 300 && tl > 0) { if(dayLogs.length > 0) openDailyReport(f, dayLogs); e.preventDefault(); } 
-                    else { selectedDateStr = f; updateDash(); }
+                cell.onclick = function(e) {
+                    const ct = new Date().getTime();
+                    const tl = ct - lastClickTime;
+                    if (tl < 300 && tl > 0) { 
+                        if (dayLogs.length > 0) {
+                            openDailyReport(f, dayLogs); 
+                        }
+                        e.preventDefault(); 
+                    } else { 
+                        selectedDateStr = f; 
+                        updateDash(); 
+                    }
                     lastClickTime = ct;
                 };
                 body.appendChild(cell);
@@ -813,55 +1191,213 @@
         }
 
         function handleLogShift() {
-            if(!selectedDateStr || configs.filter(c=>!c.deleted).length === 0) return;
-            const existing = logs.find(l => l.fullDate === selectedDateStr && (l.workIndex || 0) === currentWorkIndex);
-            if (existing) openConfirmModal("Overwrite?", "Existing record found for this day.", "Overwrite", "blue", () => executeLog());
-            else executeLog();
+            if (!selectedDateStr) {
+                alert("Please select a date on the calendar first.");
+                return;
+            }
+            
+            let activeExists = false;
+            for (let i = 0; i < configs.length; i++) {
+                if (!configs[i].deleted) activeExists = true;
+            }
+            if (!activeExists) return;
+
+            const s = document.getElementById('work-start').value;
+            const e = document.getElementById('work-end').value;
+            if (!s || !e) {
+                alert("Please input IN TIME and OUT TIME.");
+                return;
+            }
+
+            let existing = null;
+            for (let i = 0; i < logs.length; i++) {
+                if (logs[i].fullDate === selectedDateStr && (logs[i].workIndex || 0) === currentWorkIndex) {
+                    existing = logs[i];
+                    break;
+                }
+            }
+            
+            if (existing) {
+                openConfirmModal("Overwrite?", "Existing record found for this day.", "Overwrite", "blue", function() { executeLog(); });
+            } else {
+                executeLog();
+            }
         }
 
         function executeLog() {
             lastSavedDate = selectedDateStr;
             const currentConf = configs[currentWorkIndex];
-            const s = document.getElementById('work-start').value, e = document.getElementById('work-end').value, res = calculatePay(s, e, currentConf);
-            logs = logs.filter(l => !(l.fullDate === selectedDateStr && (l.workIndex || 0) === currentWorkIndex));
-            logs.push({ id: Date.now(), fullDate: selectedDateStr, monthKey: `${new Date(selectedDateStr.replace(/-/g,'/')).getFullYear()%100}/${new Date(selectedDateStr.replace(/-/g,'/')).getMonth()+1}`, amt: res.total, date: selectedDateStr.split('-')[2], start: s, end: e, dur: res.dur, wage: currentConf.wage, nr: currentConf.nightRate, ca: currentConf.transport, shopName: currentConf.name, workIndex: currentWorkIndex });
+            const s = document.getElementById('work-start').value;
+            const e = document.getElementById('work-end').value;
+            
+            const res = calculatePay(s, e, currentConf);
+            if (res === null) return;
+
+            const newLogs = [];
+            for (let i = 0; i < logs.length; i++) {
+                if (!(logs[i].fullDate === selectedDateStr && (logs[i].workIndex || 0) === currentWorkIndex)) {
+                    newLogs.push(logs[i]);
+                }
+            }
+            logs = newLogs;
+
+            const dStr = (selectedDateStr || "").replace(/-/g, '/');
+            const dObj = new Date(dStr);
+            const mKey = `${dObj.getFullYear() % 100}/${dObj.getMonth() + 1}`;
+            
+            logs.push({ 
+                id: Date.now(), 
+                fullDate: selectedDateStr, 
+                monthKey: mKey, 
+                amt: res.total, 
+                date: selectedDateStr.split('-')[2], 
+                start: s, 
+                end: e, 
+                dur: res.dur, 
+                wage: currentConf.wage, 
+                nr: currentConf.nightRate, 
+                ca: currentConf.transport, 
+                shopName: currentConf.name, 
+                workIndex: currentWorkIndex 
+            });
+            
             localStorage.setItem('workLogsV34', JSON.stringify(logs));
             updateDash();
         }
 
         function calculatePay(s, e, conf) {
-            const toM = (t) => { const [h,m] = t.split(':').map(Number); return h*60+m; };
-            let sM = toM(s), eM = toM(e); if(eM <= sM) eM += 1440;
-            let nMin = 0; for(let i=sM; i<eM; i++) { if((i%1440) >= 1320 || (i%1440) < 300) nMin++; }
-            const dur = (eM - sM) / 60; return { total: Math.floor((dur * conf.wage) + (nMin/60)*(conf.wage*(conf.nightRate/100)) + conf.transport), dur: dur.toFixed(1) };
+            try {
+                const sParts = s.split(':');
+                const eParts = e.split(':');
+                if (sParts.length !== 2 || eParts.length !== 2) return null;
+                
+                let sM = parseInt(sParts[0], 10) * 60 + parseInt(sParts[1], 10);
+                let eM = parseInt(eParts[0], 10) * 60 + parseInt(eParts[1], 10);
+                
+                if (eM <= sM) eM += 1440;
+                
+                let nMin = 0; 
+                for (let i = sM; i < eM; i++) { 
+                    if ((i % 1440) >= 1320 || (i % 1440) < 300) nMin++; 
+                }
+                
+                const dur = (eM - sM) / 60; 
+                const safeWage = isNaN(conf.wage) ? 0 : conf.wage;
+                const safeNr = isNaN(conf.nightRate) ? 0 : conf.nightRate;
+                const safeCa = isNaN(conf.transport) ? 0 : conf.transport;
+
+                const total = Math.floor((dur * safeWage) + (nMin / 60) * (safeWage * (safeNr / 100)) + safeCa);
+                return { total: total, dur: dur.toFixed(1) };
+            } catch (error) {
+                return null;
+            }
         }
-        function deleteLog(id) { openConfirmModal("Delete Record?", "This will permanently remove this shift.", "Delete", "red", () => { logs = logs.filter(l => l.id !== id); localStorage.setItem('workLogsV34', JSON.stringify(logs)); updateDash(); }); }
+
+        function deleteLog(id) { 
+            openConfirmModal("Delete Record?", "This will permanently remove this shift.", "Delete", "red", function() { 
+                const newLogs = [];
+                for (let i = 0; i < logs.length; i++) {
+                    if (logs[i].id !== id) newLogs.push(logs[i]);
+                }
+                logs = newLogs;
+                localStorage.setItem('workLogsV34', JSON.stringify(logs)); 
+                updateDash(); 
+            }); 
+        }
         
-        function openConfirmModal(t, m, bt, g, onC) { document.getElementById('confirm-title').innerText = t; document.getElementById('confirm-msg').innerText = m; const b = document.getElementById('confirm-action-btn'); b.innerText = bt; b.style.background = (g === 'red') ? 'var(--red-grad)' : 'var(--blue-grad)'; b.onclick = () => { onC(); closeConfirmModal(); }; const o = document.getElementById('confirm-modal-overlay'); o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 10); }
-        function closeConfirmModal() { const o = document.getElementById('confirm-modal-overlay'); o.classList.remove('active'); setTimeout(() => o.style.display = 'none', 300); }
+        function openConfirmModal(t, m, bt, g, onC) { 
+            document.getElementById('confirm-title').innerText = t; 
+            document.getElementById('confirm-msg').innerText = m; 
+            const b = document.getElementById('confirm-action-btn'); 
+            b.innerText = bt; 
+            b.style.background = (g === 'red') ? 'var(--red-grad)' : 'var(--blue-grad)'; 
+            b.onclick = function() { onC(); closeConfirmModal(); }; 
+            const o = document.getElementById('confirm-modal-overlay'); 
+            o.style.display = 'flex'; 
+            setTimeout(function() { o.classList.add('active'); }, 10); 
+        }
+        
+        function closeConfirmModal() { 
+            const o = document.getElementById('confirm-modal-overlay'); 
+            o.classList.remove('active'); 
+            setTimeout(function() { o.style.display = 'none'; }, 300); 
+        }
 
         // --- 🎯 DAILY REPORT ---
         let dailyOverlayLastTap = 0;
-        document.getElementById('daily-report-overlay').addEventListener('touchend', (e) => {
+        document.getElementById('daily-report-overlay').addEventListener('touchend', function(e) {
             if (e.target.closest('.modal-content')) return;
             const ct = Date.now();
-            if (ct - dailyOverlayLastTap < 300 && ct - dailyOverlayLastTap > 0) { closeDailyReport(); e.preventDefault(); }
+            if (ct - dailyOverlayLastTap < 300 && ct - dailyOverlayLastTap > 0) { 
+                closeDailyReport(); 
+                e.preventDefault(); 
+            }
             dailyOverlayLastTap = ct;
         }, {passive: false});
 
         function openDailyReport(dateStr, dayLogs) {
             const o = document.getElementById('daily-report-overlay');
-            document.getElementById('daily-title-text').innerText = dateStr.replace(/-/g, '/');
+            document.getElementById('daily-title-text').innerText = (dateStr || "").replace(/-/g, '/');
             const container = document.getElementById('daily-container');
-            container.innerHTML = dayLogs.map(l => {
-                const isDel = configs[l.workIndex || 0]?.deleted;
-                const dotStyle = isDel ? 'background:transparent; border:1.5px solid #1c1c1e; box-sizing:border-box;' : `background:${wpColors[(l.workIndex || 0) % 4]};`;
-                return `<div class="daily-item"><div style="font-weight: 800; font-size:1.1rem; color:var(--text-main); margin-bottom:2px; display:flex; align-items:center; justify-content:center;"><span style="display:inline-block; width:10px; height:10px; border-radius:50%; ${dotStyle} margin-right:8px;"></span>${l.shopName}</div><div style="font-size:0.8rem; color:var(--text-sub);">${l.start} - ${l.end} (${l.dur}h)</div><div style="font-weight: 900; font-size:1.2rem; color:var(--color-1); margin-top:6px;">¥${l.amt.toLocaleString()}</div><div class="goal-del-btn" style="top:10px; right:10px;" onclick="deleteLogAndRefreshDaily(${l.id}, '${dateStr}')">✕</div></div>`;
-            }).join('');
-            o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 10);
+            
+            let htmlStr = '';
+            for (let i = 0; i < dayLogs.length; i++) {
+                const l = dayLogs[i];
+                const wIdx = l.workIndex || 0;
+                const conf = configs[wIdx];
+                const isDel = conf && conf.deleted;
+                
+                let dotStyle = '';
+                if (isDel) {
+                    dotStyle = 'background:transparent; border:1.5px solid #1c1c1e; box-sizing:border-box;';
+                } else {
+                    dotStyle = `background:${wpColors[wIdx % 4]};`;
+                }
+                
+                const safeAmt = isNaN(l.amt) ? 0 : l.amt;
+
+                htmlStr += `<div class="daily-item">
+                    <div style="font-weight: 800; font-size:1.1rem; color:var(--text-main); margin-bottom:2px; display:flex; align-items:center; justify-content:center;">
+                        <span style="display:inline-block; width:10px; height:10px; border-radius:50%; ${dotStyle} margin-right:8px;"></span>${l.shopName || ""}
+                    </div>
+                    <div style="font-size:0.8rem; color:var(--text-sub);">${l.start || ""} - ${l.end || ""} (${l.dur || "0"}h)</div>
+                    <div style="font-weight: 900; font-size:1.2rem; color:var(--color-1); margin-top:6px;">¥${safeAmt.toLocaleString()}</div>
+                    <div class="goal-del-btn" style="top:10px; right:10px;" onclick="deleteLogAndRefreshDaily(${l.id}, '${dateStr}')">✕</div>
+                </div>`;
+            }
+            container.innerHTML = htmlStr;
+            o.style.display = 'flex'; 
+            setTimeout(function() { o.classList.add('active'); }, 10);
         }
-        function closeDailyReport() { const o = document.getElementById('daily-report-overlay'); o.classList.remove('active'); setTimeout(() => o.style.display = 'none', 300); }
-        function deleteLogAndRefreshDaily(id, dateStr) { openConfirmModal("Delete Record?", "This will permanently remove this shift.", "Delete", "red", () => { logs = logs.filter(l => l.id !== id); localStorage.setItem('workLogsV34', JSON.stringify(logs)); updateDash(); const remainingLogs = logs.filter(l => l.fullDate === dateStr); if (remainingLogs.length > 0) openDailyReport(dateStr, remainingLogs); else closeDailyReport(); }); }
+        
+        function closeDailyReport() { 
+            const o = document.getElementById('daily-report-overlay'); 
+            o.classList.remove('active'); 
+            setTimeout(function() { o.style.display = 'none'; }, 300); 
+        }
+        
+        function deleteLogAndRefreshDaily(id, dateStr) { 
+            openConfirmModal("Delete Record?", "This will permanently remove this shift.", "Delete", "red", function() { 
+                const newLogs = [];
+                for (let i = 0; i < logs.length; i++) {
+                    if (logs[i].id !== id) newLogs.push(logs[i]);
+                }
+                logs = newLogs;
+                localStorage.setItem('workLogsV34', JSON.stringify(logs)); 
+                updateDash(); 
+                
+                const remainingLogs = [];
+                for (let i = 0; i < logs.length; i++) {
+                    if (logs[i].fullDate === dateStr) remainingLogs.push(logs[i]);
+                }
+                
+                if (remainingLogs.length > 0) {
+                    openDailyReport(dateStr, remainingLogs); 
+                } else {
+                    closeDailyReport();
+                }
+            }); 
+        }
 
         // --- 🚨 MONTHLY REPORT 🚨 ---
         function openReportModal() {
@@ -870,102 +1406,410 @@
             const y = viewDate.getFullYear();
             const mStr = viewDate.toLocaleString('en', {month:'long'}).toUpperCase();
             title.innerHTML = `<div style="font-size:0.8rem; color:var(--color-1); margin-bottom:4px;">${y}</div><div>${mStr} REPORT</div>`;
-            o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 10);
+            o.style.display = 'flex'; 
+            setTimeout(function() { o.classList.add('active'); }, 10);
             updateDash();
         }
-        function closeReportModal() { const o = document.getElementById('report-modal-overlay'); o.classList.remove('active'); setTimeout(() => o.style.display = 'none', 400); }
-
-        let reportTouchStartX = 0; let reportTouchEndX = 0; let isReportAnimating = false; 
-        const reportOverlay = document.getElementById('report-modal-overlay');
-        reportOverlay.addEventListener('touchstart', e => { reportTouchStartX = e.changedTouches[0].screenX; }, {passive: true});
-        reportOverlay.addEventListener('touchend', e => { reportTouchEndX = e.changedTouches[0].screenX; handleReportSwipe(); }, {passive: true});
         
-        function handleReportSwipe() { if (isReportAnimating) return; const diff = reportTouchStartX - reportTouchEndX; if (Math.abs(diff) > 50) { if (diff > 0) changeReportMonth(1); else changeReportMonth(-1); } }
+        function closeReportModal() { 
+            const o = document.getElementById('report-modal-overlay'); 
+            o.classList.remove('active'); 
+            setTimeout(function() { o.style.display = 'none'; }, 400); 
+        }
+
+        let reportTouchStartX = 0; 
+        let reportTouchEndX = 0; 
+        let isReportAnimating = false; 
+        
+        const reportOverlay = document.getElementById('report-modal-overlay');
+        reportOverlay.addEventListener('touchstart', function(e) { 
+            reportTouchStartX = e.changedTouches[0].screenX; 
+        }, {passive: true});
+        
+        reportOverlay.addEventListener('touchend', function(e) { 
+            reportTouchEndX = e.changedTouches[0].screenX; 
+            handleReportSwipe(); 
+        }, {passive: true});
+        
+        function handleReportSwipe() { 
+            if (isReportAnimating) return; 
+            const diff = reportTouchStartX - reportTouchEndX; 
+            if (Math.abs(diff) > 50) { 
+                if (diff > 0) changeReportMonth(1); 
+                else changeReportMonth(-1); 
+            } 
+        }
 
         function changeReportMonth(dir) {
             if (isReportAnimating) return;
             isReportAnimating = true;
-            const container = document.getElementById('log-container'), title = document.getElementById('modal-month-name');
-            container.style.opacity = '0'; title.style.opacity = '0';
-            setTimeout(() => {
+            
+            const container = document.getElementById('log-container');
+            const title = document.getElementById('modal-month-name');
+            container.style.opacity = '0'; 
+            title.style.opacity = '0';
+            
+            setTimeout(function() {
                 viewDate.setMonth(viewDate.getMonth() + dir);
-                const y = viewDate.getFullYear(), mStr = viewDate.toLocaleString('en', {month:'long'}).toUpperCase();
+                const y = viewDate.getFullYear();
+                const mStr = viewDate.toLocaleString('en', {month:'long'}).toUpperCase();
                 title.innerHTML = `<div style="font-size:0.8rem; color:var(--color-1); margin-bottom:4px;">${y}</div><div>${mStr} REPORT</div>`;
                 updateDash();
-                container.style.opacity = '1'; title.style.opacity = '1';
-                setTimeout(() => { isReportAnimating = false; }, 350); 
+                
+                container.style.opacity = '1'; 
+                title.style.opacity = '1';
+                
+                setTimeout(function() { isReportAnimating = false; }, 350); 
             }, 350); 
         }
 
         function renderLogs(mLogs) {
             const container = document.getElementById('log-container');
-            if (mLogs.length === 0) { container.innerHTML = '<div style="text-align:center; color:#ccc; margin-top:50px; font-weight:700;">No records found.</div>'; return; }
-            container.innerHTML = mLogs.map(l => {
-                const dO = new Date(l.fullDate.replace(/-/g,'/'));
-                const isDel = configs[l.workIndex || 0]?.deleted;
-                const dotStyle = isDel ? 'background:transparent; border:1.5px solid #1c1c1e; box-sizing:border-box;' : `background:${wpColors[(l.workIndex || 0) % 4]};`;
-                return `<div class="history-item"><div class="log-row-top"><div class="log-date">${dO.getMonth()+1}/${dO.getDate()}</div><div class="log-sub-text">(${l.start}-${l.end})</div></div><div class="log-row-mid"><div class="log-shop-name log-sub-text" style="display:flex; align-items:center;"><span class="log-shop-dot" style="${dotStyle}"></span>${l.shopName || configs[0].name}</div><div class="log-right-group"><div class="log-amt">+¥${l.amt.toLocaleString()}</div><div class="log-del" onclick="deleteLog(${l.id})">✕</div></div></div><div class="log-row-bottom"><div class="log-details-small">${l.dur}h / ¥${l.wage.toLocaleString()} / N.R-${l.nr}% / C.A-¥${l.ca.toLocaleString()}</div></div></div>`;
-            }).join('');
+            if (mLogs.length === 0) { 
+                container.innerHTML = '<div style="text-align:center; color:#ccc; margin-top:50px; font-weight:700;">No records found.</div>'; 
+                return; 
+            }
+            
+            let htmlStr = '';
+            for (let i = 0; i < mLogs.length; i++) {
+                const l = mLogs[i];
+                const dO = new Date((l.fullDate || "").replace(/-/g, '/'));
+                const wIdx = l.workIndex || 0;
+                const conf = configs[wIdx];
+                const isDel = conf && conf.deleted;
+                
+                let dotStyle = '';
+                if (isDel) {
+                    dotStyle = 'background:transparent; border:1.5px solid #1c1c1e; box-sizing:border-box;';
+                } else {
+                    dotStyle = `background:${wpColors[wIdx % 4]};`;
+                }
+                
+                const safeAmt = isNaN(l.amt) ? 0 : l.amt;
+                const safeWage = isNaN(l.wage) ? 0 : l.wage;
+                const safeCa = isNaN(l.ca) ? 0 : l.ca;
+                
+                htmlStr += `<div class="history-item">
+                    <div class="log-row-top">
+                        <div class="log-date">${dO.getMonth()+1}/${dO.getDate()}</div>
+                        <div class="log-sub-text">(${l.start || ""} - ${l.end || ""})</div>
+                    </div>
+                    <div class="log-row-mid">
+                        <div class="log-shop-name log-sub-text" style="display:flex; align-items:center;">
+                            <span class="log-shop-dot" style="${dotStyle}"></span>${l.shopName || ""}
+                        </div>
+                        <div class="log-right-group">
+                            <div class="log-amt">+¥${safeAmt.toLocaleString()}</div>
+                            <div class="log-del" onclick="deleteLog(${l.id})">✕</div>
+                        </div>
+                    </div>
+                    <div class="log-row-bottom">
+                        <div class="log-details-small">${l.dur || 0}h / ¥${safeWage.toLocaleString()} / N.R-${l.nr || 0}% / C.A-¥${safeCa.toLocaleString()}</div>
+                    </div>
+                </div>`;
+            }
+            container.innerHTML = htmlStr;
         }
 
         // ================= PAGE 2 =================
-        function initSalaryCalendar(openYear = new Date().getFullYear() % 100) {
-            try {
-                const container = document.getElementById('salary-manager-container');
-                container.innerHTML = '';
-                for (let y = startYear; y <= endYear; y++) {
-                    let yearlyTotal = 0;
-                    for (let m = 1; m <= 12; m++) {
-                        let d = salaryData[`${y}/${m}`];
-                        let amt = d ? (typeof d === 'number' ? d : (d.amount || 0)) : 0;
-                        yearlyTotal += amt;
-                    }
-                    const section = document.createElement('div');
-                    section.className = 'year-section' + (y === openYear ? ' active' : '');
-                    section.id = `salary-year-${y}`;
-                    section.innerHTML = `<div class="year-header" onclick="toggleSalaryYear(${y})"><div class="year-title">20${y}</div><div class="year-total">¥${yearlyTotal.toLocaleString()}</div></div><div class="month-content"></div>`;
-                    const grid = section.querySelector('.month-content');
-                    for (let m = 1; m <= 12; m++) {
-                        const key = `${y}/${m}`;
-                        let d = salaryData[key] || { amount: 0, memo: '' };
-                        if (typeof d === 'number') d = { amount: d, memo: '' }; // Safety check
-                        const amt = d.amount || 0;
-
-                        const card = document.createElement('div');
-                        card.className = `month-card ${amt > 0 ? 'has-data' : ''}`;
-                        let lastTap = 0;
-                        card.onclick = (e) => {
-                            let n = Date.now();
-                            if (n - lastTap < 300 && n - lastTap > 0) { if (amt > 0) openSalaryEditModal(y, m, d); e.preventDefault(); }
-                            lastTap = n;
-                        };
-                        const animClass = (key === lastSavedSalaryKey) ? 'anim-slide-up' : '';
-                        card.innerHTML = `<div class="month-name-text">${monthNames[m-1]}</div><div class="salary-value-text ${animClass}">¥${amt.toLocaleString()}</div>${d.memo ? `<div style="font-size:0.6rem; color:var(--color-4); margin-top:3px; font-weight:700;">📄 ${d.memo}</div>` : ''}`;
-                        grid.appendChild(card);
-                    }
-                    container.appendChild(section);
-                }
-                lastSavedSalaryKey = null;
-                renderGoalGauges();
-            } catch(e) {
-                console.error("Salary Calendar Init Error:", e);
+        function initSalaryCalendar(openYear) {
+            if (openYear === undefined) {
+                openYear = new Date().getFullYear() % 100;
             }
+            const container = document.getElementById('salary-manager-container');
+            container.innerHTML = '';
+            
+            for (let y = startYear; y <= endYear; y++) {
+                let yearlyTotal = 0;
+                for (let m = 1; m <= 12; m++) {
+                    const k = `${y}/${m}`;
+                    if (salaryData[k] && !isNaN(salaryData[k].amount)) {
+                        yearlyTotal += salaryData[k].amount;
+                    }
+                }
+                
+                const section = document.createElement('div');
+                section.className = 'year-section' + (y === openYear ? ' active' : '');
+                section.id = `salary-year-${y}`;
+                section.innerHTML = `<div class="year-header" onclick="toggleSalaryYear(${y})"><div class="year-title">20${y}</div><div class="year-total">¥${yearlyTotal.toLocaleString()}</div></div><div class="month-content"></div>`;
+                
+                const grid = section.querySelector('.month-content');
+                for (let m = 1; m <= 12; m++) {
+                    const key = `${y}/${m}`;
+                    const d = salaryData[key] || { amount: 0, memo: '' };
+                    const card = document.createElement('div');
+                    
+                    const safeAmt = isNaN(d.amount) ? 0 : d.amount;
+                    card.className = `month-card ${safeAmt > 0 ? 'has-data' : ''}`;
+                    
+                    let lastTap = 0;
+                    card.onclick = function(e) {
+                        let n = Date.now();
+                        if (n - lastTap < 300 && n - lastTap > 0) { 
+                            if (safeAmt > 0) openSalaryEditModal(y, m, d); 
+                            e.preventDefault(); 
+                        }
+                        lastTap = n;
+                    };
+                    
+                    const animClass = (key === lastSavedSalaryKey) ? 'anim-slide-up' : '';
+                    card.innerHTML = `<div class="month-name-text">${monthNames[m-1]}</div><div class="salary-value-text ${animClass}">¥${safeAmt.toLocaleString()}</div>${d.memo ? `<div style="font-size:0.6rem; color:var(--color-4); margin-top:3px; font-weight:700;">📄 ${d.memo}</div>` : ''}`;
+                    grid.appendChild(card);
+                }
+                container.appendChild(section);
+            }
+            lastSavedSalaryKey = null;
+            renderGoalGauges();
         }
 
-        function toggleSalaryYear(y) { document.getElementById(`salary-year-${y}`).classList.toggle('active'); }
-        function showInvalidModal() { const m = document.getElementById('invalid-input-modal'); m.style.display = 'flex'; setTimeout(() => m.classList.add('active'), 10); }
-        function closeInvalidModal() { const m = document.getElementById('invalid-input-modal'); m.classList.remove('active'); setTimeout(() => m.style.display = 'none', 300); }
+        function toggleSalaryYear(y) { 
+            const el = document.getElementById(`salary-year-${y}`);
+            if (el) el.classList.toggle('active'); 
+        }
+
+        function showInvalidModal() { 
+            const m = document.getElementById('invalid-input-modal'); 
+            m.style.display = 'flex'; 
+            setTimeout(function() { m.classList.add('active'); }, 10); 
+        }
+        
+        function closeInvalidModal() { 
+            const m = document.getElementById('invalid-input-modal'); 
+            m.classList.remove('active'); 
+            setTimeout(function() { m.style.display = 'none'; }, 300); 
+        }
 
         function handleSalaryInput() { 
-            const el = document.getElementById('salaryInput'), val = el.value.trim().toLowerCase(); 
+            const el = document.getElementById('salaryInput');
+            const val = el.value.trim().toLowerCase(); 
+            
             if (!val) return; 
-            if (val === 'a') { showAllTotal(); el.value = ''; el.blur(); } 
-            else if (val.startsWith('g')) { if(!showGraph(val)) showInvalidModal(); el.value = ''; el.blur(); } 
+            
+            if (val === 'a') { 
+                showAllTotal(); 
+                el.value = ''; 
+                el.blur(); 
+            } 
+            else if (val.startsWith('g')) { 
+                if(!showGraph(val)) showInvalidModal(); 
+                el.value = ''; 
+                el.blur(); 
+            } 
             else { 
-                const m = el.value.trim().match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/);
-                if (!m) { showInvalidModal(); el.value = ''; el.blur(); return; }
-                const y = parseInt(m[1]), mo = parseInt(m[2]);
-                if (mo < 1 || mo > 12 || y < startYear || y > endYear) { showInvalidModal(); el.value = ''; el.blur(); return; }
-                const key = `${y}/${mo}`, rawInput = el.value.trim();
-                if (salaryData[key] && !isSalaryEditMode) { openConfirmModal("Overwrite?", "Existing record found for this month.", "Overwrite", "blue", () => { saveSalaryRecord(rawInput); }); el.value = ''; el.blur(); } 
-                else { if(!saveSalaryRecord(rawInput)) showInvalidModal(); el.value = ''; el.
+                // 少し柔軟な正規表現 (スペースを許容)
+                const m = el.value.trim().match(/^(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)(?:\s*\/\s*(.*))?$/);
+                if (!m) { 
+                    showInvalidModal(); 
+                    el.value = ''; 
+                    el.blur(); 
+                    return; 
+                }
+                const y = parseInt(m[1], 10);
+                const mo = parseInt(m[2], 10);
+                
+                if (isNaN(y) || isNaN(mo) || mo < 1 || mo > 12 || y < startYear || y > endYear) { 
+                    showInvalidModal(); 
+                    el.value = ''; 
+                    el.blur(); 
+                    return; 
+                }
+                
+                const key = `${y}/${mo}`;
+                const rawInput = el.value.trim();
+                
+                if (salaryData[key] && !isSalaryEditMode) { 
+                    openConfirmModal("Overwrite?", "Existing record found for this month.", "Overwrite", "blue", function() { 
+                        saveSalaryRecord(rawInput); 
+                    }); 
+                    el.value = ''; 
+                    el.blur(); 
+                } else { 
+                    if(!saveSalaryRecord(rawInput)) showInvalidModal(); 
+                    el.value = ''; 
+                    el.blur(); 
+                }
+            } 
+        }
+
+        function saveSalaryRecord(input) {
+            const m = input.match(/^(\d+)\s*\/\s*(\d+)\s*\/\s*(\d+)(?:\s*\/\s*(.*))?$/);
+            if (!m) return false;
+            
+            const y = parseInt(m[1], 10);
+            const mo = parseInt(m[2], 10);
+            const amt = parseInt(m[3], 10);
+            const memo = m[4] || '';
+            
+            if (isNaN(y) || isNaN(mo) || isNaN(amt) || mo < 1 || mo > 12 || y < startYear || y > endYear) return false;
+            
+            lastSavedSalaryKey = `${y}/${mo}`;
+            salaryData[lastSavedSalaryKey] = { amount: amt, memo: memo };
+            localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData));
+            
+            initSalaryCalendar(y);
+            isSalaryEditMode = false;
+            return true;
+        }
+
+        function openSalaryEditModal(y, m, d) { 
+            document.getElementById('modalDate').innerText = `${monthNames[m-1]} 20${y}`; 
+            
+            const mo = document.getElementById('salaryEditModal'); 
+            mo.style.display = 'flex'; 
+            setTimeout(function() { mo.classList.add('active'); }, 10); 
+            
+            document.getElementById('confirmSalaryEdit').onclick = function() { 
+                const i = document.getElementById('salaryInput'); 
+                const safeAmt = isNaN(d.amount) ? 0 : d.amount;
+                i.value = `${y}/${m}/${safeAmt}${d.memo ? '/' + d.memo : ''}`; 
+                isSalaryEditMode = true; 
+                closeSalaryModal(); 
+                setTimeout(function() { i.focus(); }, 150); 
+            }; 
+            
+            document.getElementById('confirmSalaryReset').onclick = function() { 
+                delete salaryData[`${y}/${m}`]; 
+                localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData)); 
+                initSalaryCalendar(y); 
+                closeSalaryModal(); 
+            }; 
+        }
+
+        function showAllTotal() { 
+            let total = 0; 
+            const keys = Object.keys(salaryData);
+            for (let i = 0; i < keys.length; i++) {
+                const amt = salaryData[keys[i]].amount;
+                if (!isNaN(amt)) total += amt;
+            }
+            
+            const overlay = document.getElementById('allTotalOverlay'); 
+            overlay.innerText = `GRAND TOTAL: ¥${total.toLocaleString()}`; 
+            overlay.classList.add('active'); 
+            
+            if (allTotalTimer) clearTimeout(allTotalTimer);
+            allTotalTimer = setTimeout(closeAllTotal, 5000); 
+        }
+
+        function closeAllTotal() { 
+            const overlay = document.getElementById('allTotalOverlay');
+            if (overlay) overlay.classList.remove('active'); 
+        }
+        
+        function showGraph(cmd) { 
+            const parts = cmd.replace('g', '').split('/'); 
+            const years = [];
+            for (let i = 0; i < parts.length; i++) {
+                const p = parseInt(parts[i], 10);
+                if (!isNaN(p) && p >= startYear && p <= endYear) {
+                    years.push(p);
+                }
+            }
+            const activeYears = years.slice(0, 4);
+            
+            if (activeYears.length === 0) return false; 
+            
+            const overlay = document.getElementById('graphOverlay');
+            const svg = document.getElementById('graphSvgContainer'); 
+            svg.innerHTML = ''; 
+            
+            overlay.style.display = 'flex'; 
+            setTimeout(function() { overlay.classList.add('active'); }, 20);
+            
+            let gTap = 0; 
+            overlay.ontouchend = function(e) { 
+                let now = Date.now(); 
+                if (now - gTap < 300 && now - gTap > 0) { 
+                    closeGraph(); 
+                    e.preventDefault(); 
+                } 
+                gTap = now; 
+            }; 
+            
+            let titleHtml = '';
+            for (let i = 0; i < activeYears.length; i++) {
+                titleHtml += `<span style="color:${graphColors[i]}">20${activeYears[i]}</span>`;
+                if (i < activeYears.length - 1) titleHtml += ' vs ';
+            }
+            document.getElementById('graphTitle').innerHTML = titleHtml;
+            
+            let maxV = 1; 
+            for (let i = 0; i < activeYears.length; i++) {
+                const y = activeYears[i];
+                for (let m = 1; m <= 12; m++) {
+                    const d = salaryData[`${y}/${m}`];
+                    const amt = (d && !isNaN(d.amount)) ? d.amount : 0;
+                    if (amt > maxV) maxV = amt;
+                }
+            }
+            
+            const padX = 50, padY = 50, w = 380, h = 400; 
+            const getX = function(m) { return padX + (m - 1) * ((w - padX * 2) / 11); };
+            const getY = function(v) { return h - padY - (v / maxV) * (h - padY * 2); };
+            
+            const ratios = [0, 0.5, 1];
+            let gridHtml = '';
+            for (let i = 0; i < ratios.length; i++) {
+                const r = ratios[i];
+                const yPos = getY(maxV * r); 
+                gridHtml += `<line x1="${padX}" y1="${yPos}" x2="${w-10}" y2="${yPos}" stroke="#eee" />`; 
+                gridHtml += `<text x="5" y="${yPos+3}" class="axis-label">¥${Math.floor((maxV*r)/1000)}k</text>`;
+            }
+            svg.innerHTML += gridHtml;
+            
+            let linesHtml = '';
+            for (let idx = 0; idx < activeYears.length; idx++) {
+                const y = activeYears[idx];
+                let pts = ""; 
+                let pointsHtml = '';
+                let labelsHtml = '';
+                
+                for (let m = 1; m <= 12; m++) { 
+                    const d = salaryData[`${y}/${m}`];
+                    const val = (d && !isNaN(d.amount)) ? d.amount : 0; 
+                    const px = getX(m);
+                    const py = getY(val); 
+                    
+                    pts += `${px},${py} `; 
+                    
+                    if (val > 0) { 
+                        const offY = (idx * 10) - 15; 
+                        labelsHtml += `<text x="${px}" y="${py + offY}" class="data-label" text-anchor="middle" fill="${graphColors[idx]}">${(val/1000).toFixed(0)}k</text>`; 
+                    } 
+                    pointsHtml += `<circle cx="${px}" cy="${py}" r="4" fill="${graphColors[idx]}" stroke="#fff" stroke-width="1"/>`; 
+                } 
+                
+                linesHtml += `<polyline points="${pts.trim()}" fill="none" stroke="${graphColors[idx]}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />`;
+                linesHtml += labelsHtml + pointsHtml;
+            }
+            svg.innerHTML += linesHtml;
+            
+            return true; 
+        }
+
+        function closeGraph() { 
+            const o = document.getElementById('graphOverlay'); 
+            o.classList.remove('active'); 
+            setTimeout(function() { o.style.display = 'none'; }, 400); 
+        }
+
+        function openHint() { 
+            const m = document.getElementById('hintModal'); 
+            m.style.display = 'flex'; 
+            setTimeout(function() { m.classList.add('active'); }, 10); 
+        }
+
+        function closeHint() { 
+            const m = document.getElementById('hintModal'); 
+            m.classList.remove('active'); 
+            setTimeout(function() { m.style.display = 'none'; }, 200); 
+        }
+
+        function closeSalaryModal() { 
+            const m = document.getElementById('salaryEditModal'); 
+            m.classList.remove('active'); 
+            setTimeout(function() { m.style.display = 'none'; }, 200); 
+        }
+    </script>
+</body>
+</html>

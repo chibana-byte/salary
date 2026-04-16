@@ -56,12 +56,10 @@
         .cal-dots-wrapper { display: flex; flex-direction: column; gap: 2px; margin-top: 2px; align-items: center; justify-content: center; }
         .cal-dots-row { display: flex; gap: 3px; justify-content: center; }
         .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
-        .dot-deleted { background: transparent !important; border: 1.5px solid #1c1c1e; box-sizing: border-box; }
 
         #display-month { font-weight: 900; letter-spacing: 0.5px; color: #4f46e5; cursor: pointer; background: var(--btn-bg); padding: 6px 16px; border-radius: 12px; font-size: 0.85rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.2s; }
         .record-board { background: white; border-radius: 22px; padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 25px; }
         
-        /* 修正箇所：min-height: 28px; を追加し、ガタつきを防止 */
         #selected-date-title { font-weight: 900; margin-bottom: 15px; border-left: 5px solid var(--color-1); padding-left: 10px; color: #1e293b; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; min-height: 28px; }
         
         .status-guide { font-size: 0.8rem; font-weight: 800; color: var(--color-1); background: #eff6ff; padding: 4px 10px; border-radius: 12px; opacity: 0; transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.4s ease; display: none; align-items: center; gap: 8px; pointer-events: none; transform: scale(0.85) translateY(2px); filter: blur(4px); }
@@ -359,6 +357,14 @@
         </div>
     </div>
 
+    <div id="app-alert-modal-overlay" class="modal-overlay" onclick="closeAppAlertModal()">
+        <div class="modal-content dissolve-modal-content">
+            <div id="app-alert-title" style="font-weight:950; font-size:1.15rem; margin-bottom:10px; color:var(--text-main);">Notice</div>
+            <div id="app-alert-msg" style="font-size:0.85rem; font-weight:600; color:var(--text-sub); margin-bottom:20px;"></div>
+            <div style="font-size:0.65rem; color:var(--text-sub); font-weight:700;">Tap anywhere to close</div>
+        </div>
+    </div>
+
     <div id="validation-modal-overlay" class="modal-overlay">
         <div class="modal-content">
             <div id="val-modal-title" style="font-weight:950; font-size:1.1rem; color:var(--text-main); margin-bottom:10px; text-align:left;">Some items are not filled out.</div>
@@ -470,6 +476,20 @@
             }
         };
 
+        /* 修正箇所：専用アラートダイアログの表示・非表示関数 */
+        function showAppAlert(title, msg) {
+            document.getElementById('app-alert-title').innerText = title;
+            document.getElementById('app-alert-msg').innerText = msg;
+            const m = document.getElementById('app-alert-modal-overlay');
+            m.style.display = 'flex';
+            setTimeout(() => m.classList.add('active'), 10);
+        }
+        function closeAppAlertModal() {
+            const m = document.getElementById('app-alert-modal-overlay');
+            m.classList.remove('active');
+            setTimeout(() => m.style.display = 'none', 400);
+        }
+
         function openLockWarningModal() { const o = document.getElementById('lock-warning-modal-overlay'); o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 10); }
         function closeLockWarningModal() { const o = document.getElementById('lock-warning-modal-overlay'); o.classList.remove('active'); setTimeout(() => o.style.display = 'none', 400); }
 
@@ -491,7 +511,8 @@
         function handleClockOut() {
             const tempInStr = localStorage.getItem('tempClockInV34');
             if (!tempInStr) {
-                alert("Please Time In first.");
+                /* 修正箇所：ブラウザ標準alertから専用ダイアログへ変更 */
+                showAppAlert("Notice", "Please Time In first.");
                 return;
             }
             const tempIn = JSON.parse(tempInStr);
@@ -599,13 +620,28 @@
         function promptDeleteWorkplace() {
             const activeCount = configs.filter(c => !c.deleted).length;
             if (activeCount <= 1) {
-                alert("Cannot delete the last active workplace.");
+                /* 修正箇所：ブラウザ標準alertから専用ダイアログへ変更 */
+                showAppAlert("Notice", "Cannot delete the last active workplace.");
                 return;
             }
             openConfirmModal("Delete Workplace?", "Past records stay, but this workplace will be removed.", "Delete", "red", () => {
                 configs[currentWorkIndex].deleted = true;
                 localStorage.setItem('workConfigsListV34', JSON.stringify(configs));
-                changeWorkplace(1);
+                
+                const cardBg = document.getElementById('work-card-bg');
+                cardBg.style.opacity = '0';
+                setTimeout(() => {
+                    let nextIndex = currentWorkIndex;
+                    for(let i=0; i<configs.length; i++) {
+                        nextIndex = (nextIndex + 1) % configs.length;
+                        if (!configs[nextIndex].deleted) {
+                            currentWorkIndex = nextIndex;
+                            break;
+                        }
+                    }
+                    updateDash();
+                    cardBg.style.opacity = '1';
+                }, 300);
             });
         }
 
@@ -869,12 +905,14 @@
                     dotsHtml = `<div class="cal-dots-wrapper ${animClass}">`;
                     dotsHtml += '<div class="cal-dots-row">' + topDots.map(idx => {
                         const isDel = configs[idx]?.deleted;
-                        return `<span class="dot ${isDel ? 'dot-deleted' : ''}" style="${isDel ? '' : `background:${wpColors[idx % 4]}`}"></span>`;
+                        const c = wpColors[idx % 4];
+                        return `<span class="dot" style="box-sizing:border-box; ${isDel ? `background:transparent; border:1.5px solid ${c};` : `background:${c};`}"></span>`;
                     }).join('') + '</div>';
                     if (bottomDots.length > 0) {
                         dotsHtml += '<div class="cal-dots-row">' + bottomDots.map(idx => {
                             const isDel = configs[idx]?.deleted;
-                            return `<span class="dot ${isDel ? 'dot-deleted' : ''}" style="${isDel ? '' : `background:${wpColors[idx % 4]}`}"></span>`;
+                            const c = wpColors[idx % 4];
+                            return `<span class="dot" style="box-sizing:border-box; ${isDel ? `background:transparent; border:1.5px solid ${c};` : `background:${c};`}"></span>`;
                         }).join('') + '</div>';
                     }
                     dotsHtml += '</div>';
@@ -926,7 +964,8 @@
             const container = document.getElementById('daily-container');
             container.innerHTML = dayLogs.map(l => {
                 const isDel = configs[l.workIndex || 0]?.deleted;
-                const dotStyle = isDel ? 'background:transparent; border:1.5px solid #1c1c1e; box-sizing:border-box;' : `background:${wpColors[(l.workIndex || 0) % 4]};`;
+                const c = wpColors[(l.workIndex || 0) % 4];
+                const dotStyle = isDel ? `background:transparent; border:1.5px solid ${c}; box-sizing:border-box;` : `background:${c};`;
                 return `<div class="daily-item"><div style="font-weight: 800; font-size:1.1rem; color:var(--text-main); margin-bottom:2px; display:flex; align-items:center; justify-content:center;"><span style="display:inline-block; width:10px; height:10px; border-radius:50%; ${dotStyle} margin-right:8px;"></span>${l.shopName}</div><div style="font-size:0.8rem; color:var(--text-sub);">${l.start} - ${l.end} (${l.dur}h)</div><div style="font-weight: 900; font-size:1.2rem; color:var(--color-1); margin-top:6px;">¥${l.amt.toLocaleString()}</div><div class="goal-del-btn" style="top:10px; right:10px;" onclick="deleteLogAndRefreshDaily(${l.id}, '${dateStr}')">✕</div></div>`;
             }).join('');
             o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 10);
@@ -973,7 +1012,8 @@
             container.innerHTML = mLogs.map(l => {
                 const dO = new Date(l.fullDate.replace(/-/g,'/'));
                 const isDel = configs[l.workIndex || 0]?.deleted;
-                const dotStyle = isDel ? 'background:transparent; border:1.5px solid #1c1c1e; box-sizing:border-box;' : `background:${wpColors[(l.workIndex || 0) % 4]};`;
+                const c = wpColors[(l.workIndex || 0) % 4];
+                const dotStyle = isDel ? `background:transparent; border:1.5px solid ${c}; box-sizing:border-box;` : `background:${c};`;
                 return `<div class="history-item"><div class="log-row-top"><div class="log-date">${dO.getMonth()+1}/${dO.getDate()}</div><div class="log-sub-text">(${l.start}-${l.end})</div></div><div class="log-row-mid"><div class="log-shop-name log-sub-text" style="display:flex; align-items:center;"><span class="log-shop-dot" style="${dotStyle}"></span>${l.shopName || configs[0].name}</div><div class="log-right-group"><div class="log-amt">+¥${l.amt.toLocaleString()}</div><div class="log-del" onclick="deleteLog(${l.id})">✕</div></div></div><div class="log-row-bottom"><div class="log-details-small">${l.dur}h / ¥${l.wage.toLocaleString()} / N.R-${l.nr}% / C.A-¥${l.ca.toLocaleString()}</div></div></div>`;
             }).join('');
         }

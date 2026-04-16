@@ -74,7 +74,7 @@
         .in-btn { background: var(--blue-grad); color: white; }
         .out-btn { background: var(--black-grad); color: white; }
 
-        /* --- 🎯 目標ゲージ --- */
+        /* --- 目標ゲージ --- */
         #goal-container { display: flex; flex-direction: column; gap: 20px; margin-bottom: 25px; }
         .goal-item { background: white; border-radius: 22px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); position: relative; padding-bottom: 40px; }
         .goal-del-btn { position: absolute; top: 12px; right: 15px; color: var(--color-2); font-size: 1.1rem; font-weight: 800; cursor: pointer; padding: 5px; opacity: 0.4; transition: opacity 0.2s; }
@@ -184,20 +184,20 @@
             <div class="salary-history-title">Wage Calculator / Report</div>
             
             <div class="work-card" id="work-card-bg">
-                <button class="nav-arrow left" onclick="changeWorkplace(-1)">←</button>
+                <button class="nav-arrow left" onclick="changeWorkplace(-1)">&#x2190;</button>
                 <div id="work-card-content">
                     <div id="display-shop">---</div>
-                    <div id="display-total">¥0</div>
+                    <div id="display-total">&#x00A5;0</div>
                 </div>
-                <button class="nav-arrow right" onclick="changeWorkplace(1)">→</button>
-                <button class="edit-info-btn" onclick="openSettingsMenu()">⚙️</button>
+                <button class="nav-arrow right" onclick="changeWorkplace(1)">&#x2192;</button>
+                <button class="edit-info-btn" onclick="openSettingsMenu()">&#x2699;&#xFE0F;</button>
             </div>
 
             <div class="cal-container">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding:0 10px;">
-                    <button style="background:none; border:none; color:var(--color-1); font-weight:900; font-size:1.2rem;" onclick="changeMonth(-1)">←</button>
+                    <button style="background:none; border:none; color:var(--color-1); font-weight:900; font-size:1.2rem;" onclick="changeMonth(-1)">&#x2190;</button>
                     <div id="display-month" onclick="openReportModal()">---</div>
-                    <button style="background:none; border:none; color:var(--color-1); font-weight:900; font-size:1.2rem;" onclick="changeMonth(1)">→</button>
+                    <button style="background:none; border:none; color:var(--color-1); font-weight:900; font-size:1.2rem;" onclick="changeMonth(1)">&#x2192;</button>
                 </div>
                 <div id="cal-body" class="cal-grid"></div>
             </div>
@@ -253,12 +253,12 @@
         <div class="setup-panel">
             <h2 style="font-weight:950; margin-bottom:30px;">Goal Amount</h2>
             <div class="setup-group"><label>Goal Name</label><input type="text" id="goal-name" class="setup-input"></div>
-            <div class="setup-group"><label>Limited (¥)</label><input type="text" id="goal-limit" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="setup-group"><label>Limited (&#x00A5;)</label><input type="text" id="goal-limit" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
             <div class="setup-group">
                 <label>Select Period</label>
                 <div style="display:flex; gap:10px; align-items:center;">
                     <input type="date" id="goal-start" class="setup-input" style="padding:10px; font-size:0.9rem;">
-                    <span style="font-weight:900; color:var(--text-sub);">~</span>
+                    <span style="font-weight:900; color:var(--text-sub);">&#x7E;</span>
                     <input type="date" id="goal-end" class="setup-input" style="padding:10px; font-size:0.9rem;">
                 </div>
             </div>
@@ -271,12 +271,12 @@
         <div class="setup-panel">
             <h2 style="font-weight:950; margin-bottom:30px;">Edit Goal</h2>
             <div class="setup-group"><label>Goal Name</label><input type="text" id="edit-goal-name" class="setup-input"></div>
-            <div class="setup-group"><label>Limited (¥)</label><input type="text" id="edit-goal-limit" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="setup-group"><label>Limited (&#x00A5;)</label><input type="text" id="edit-goal-limit" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
             <div class="setup-group">
                 <label>Select Period</label>
                 <div style="display:flex; gap:10px; align-items:center;">
                     <input type="date" id="edit-goal-start" class="setup-input" style="padding:10px; font-size:0.9rem;">
-                    <span style="font-weight:900; color:var(--text-sub);">~</span>
+                    <span style="font-weight:900; color:var(--text-sub);">&#x7E;</span>
                     <input type="date" id="edit-goal-end" class="setup-input" style="padding:10px; font-size:0.9rem;">
                 </div>
             </div>
@@ -288,10 +288,10 @@
     <div id="initial-setup-overlay" class="setup-overlay">
         <div class="setup-panel">
             <h2 style="font-weight:950; margin-bottom:30px;">Initial Setting</h2>
-            <div class="setup-group"><label><span class="required-mark">※</span>Name</label><input type="text" id="setup-shop" class="setup-input"></div>
-            <div class="setup-group"><label><span class="required-mark">※</span>Hourly Wage (¥)</label><input type="text" id="setup-wage" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="setup-group"><label><span class="required-mark">&#x203B;</span>Name</label><input type="text" id="setup-shop" class="setup-input"></div>
+            <div class="setup-group"><label><span class="required-mark">&#x203B;</span>Hourly Wage (&#x00A5;)</label><input type="text" id="setup-wage" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
             <div class="setup-group"><label>Night Rate (%)</label><input type="text" id="setup-night-rate" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
-            <div class="setup-group"><label>Commuting Allowance (¥)</label><input type="text" id="setup-transport" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="setup-group"><label>Commuting Allowance (&#x00A5;)</label><input type="text" id="setup-transport" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
             <button class="black-save-btn" onclick="saveInitialSetup()">Start</button>
         </div>
     </div>
@@ -299,10 +299,10 @@
     <div id="edit-setup-overlay" class="setup-overlay">
         <div class="setup-panel">
             <h2 style="font-weight:950; margin-bottom:30px;">Edit Information</h2>
-            <div class="setup-group"><label><span class="required-mark">※</span>Name</label><input type="text" id="edit-shop" class="setup-input"></div>
-            <div class="setup-group"><label><span class="required-mark">※</span>Hourly Wage (¥)</label><input type="text" id="edit-wage" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="setup-group"><label><span class="required-mark">&#x203B;</span>Name</label><input type="text" id="edit-shop" class="setup-input"></div>
+            <div class="setup-group"><label><span class="required-mark">&#x203B;</span>Hourly Wage (&#x00A5;)</label><input type="text" id="edit-wage" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
             <div class="setup-group"><label>Night Rate (%)</label><input type="text" id="edit-night-rate" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
-            <div class="setup-group"><label>Commuting Allowance (¥)</label><input type="text" id="edit-transport" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="setup-group"><label>Commuting Allowance (&#x00A5;)</label><input type="text" id="edit-transport" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
             <button class="black-save-btn" onclick="saveEditSetup()">Update</button>
             <button style="background:none; border:none; color:#a1a1aa; font-weight:700; padding:10px; margin-top:10px; width:100%; cursor:pointer;" onclick="backToSettingsMenu('edit-setup-overlay')">Back</button>
         </div>
@@ -311,10 +311,10 @@
     <div id="add-work-overlay" class="setup-overlay">
         <div class="setup-panel">
             <h2 style="font-weight:950; margin-bottom:30px;">Add Workplace</h2>
-            <div class="setup-group"><label><span class="required-mark">※</span>Name</label><input type="text" id="add-shop" class="setup-input"></div>
-            <div class="setup-group"><label><span class="required-mark">※</span>Hourly Wage (¥)</label><input type="text" id="add-wage" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="setup-group"><label><span class="required-mark">&#x203B;</span>Name</label><input type="text" id="add-shop" class="setup-input"></div>
+            <div class="setup-group"><label><span class="required-mark">&#x203B;</span>Hourly Wage (&#x00A5;)</label><input type="text" id="add-wage" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
             <div class="setup-group"><label>Night Rate (%)</label><input type="text" id="add-night-rate" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
-            <div class="setup-group"><label>Commuting Allowance (¥)</label><input type="text" id="add-transport" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
+            <div class="setup-group"><label>Commuting Allowance (&#x00A5;)</label><input type="text" id="add-transport" class="setup-input" inputmode="numeric" pattern="[0-9]*"></div>
             <button class="black-save-btn" onclick="saveAddWorkplace()">Add</button>
             <button style="background:none; border:none; color:#a1a1aa; font-weight:700; padding:10px; margin-top:10px; width:100%; cursor:pointer;" onclick="backToSettingsMenu('add-work-overlay')">Back</button>
         </div>
@@ -476,7 +476,6 @@
             }
         };
 
-        /* 修正箇所：専用アラートダイアログの表示・非表示関数 */
         function showAppAlert(title, msg) {
             document.getElementById('app-alert-title').innerText = title;
             document.getElementById('app-alert-msg').innerText = msg;
@@ -511,7 +510,6 @@
         function handleClockOut() {
             const tempInStr = localStorage.getItem('tempClockInV34');
             if (!tempInStr) {
-                /* 修正箇所：ブラウザ標準alertから専用ダイアログへ変更 */
                 showAppAlert("Notice", "Please Time In first.");
                 return;
             }
@@ -569,7 +567,7 @@
             const tempInStr = localStorage.getItem('tempClockInV34');
             if (tempInStr) {
                 const tempIn = JSON.parse(tempInStr);
-                guide.innerHTML = `Timed in at ${tempIn.time} <span class="cancel-punch-btn" onclick="handleCancelPunch(event)">✕</span>`;
+                guide.innerHTML = `Timed in at ${tempIn.time} <span class="cancel-punch-btn" onclick="handleCancelPunch(event)">&#x2715;</span>`;
                 guide.style.display = 'flex';
                 setTimeout(() => { 
                     guide.style.opacity = '1'; 
@@ -620,7 +618,6 @@
         function promptDeleteWorkplace() {
             const activeCount = configs.filter(c => !c.deleted).length;
             if (activeCount <= 1) {
-                /* 修正箇所：ブラウザ標準alertから専用ダイアログへ変更 */
                 showAppAlert("Notice", "Cannot delete the last active workplace.");
                 return;
             }
@@ -732,7 +729,7 @@
                 const startStr = goal.start.replace(/-/g, '/'), endStr = goal.end.replace(/-/g, '/');
 
                 wrapper.innerHTML = `
-                    <div class="goal-del-btn" onclick="deleteGoal(${index})">✕</div>
+                    <div class="goal-del-btn" onclick="deleteGoal(${index})">&#x2715;</div>
                     <div class="goal-header">
                         <div class="goal-name-disp">${goal.name}</div>
                         <div class="goal-period-disp">${startStr} - ${endStr}</div>
@@ -754,7 +751,7 @@
                         </svg>
                         <div class="gauge-info">
                             <div class="gauge-percent">${rawPercent}%</div>
-                            <div class="gauge-amount">¥${combinedTotal.toLocaleString()} / ¥${goal.limit.toLocaleString()}</div>
+                            <div class="gauge-amount">&#x00A5;${combinedTotal.toLocaleString()} / &#x00A5;${goal.limit.toLocaleString()}</div>
                         </div>
                     </div>
                     <button class="goal-edit-btn" onclick="openEditGoalModal(${index})">Edit Setting</button>
@@ -856,7 +853,7 @@
             const monthKey = `${viewDate.getFullYear()%100}/${viewDate.getMonth()+1}`;
             const mLogs = logs.filter(l => l.monthKey === monthKey && (l.workIndex || 0) === currentWorkIndex);
             const total = mLogs.reduce((s, l) => s + l.amt, 0);
-            document.getElementById('display-total').innerText = `¥${total.toLocaleString()}`;
+            document.getElementById('display-total').innerText = `\u00A5${total.toLocaleString()}`;
             
             renderCalendar();
             const allMLogs = logs.filter(l => l.monthKey === monthKey).sort((a,b) => parseInt(a.date) - parseInt(b.date));
@@ -966,7 +963,7 @@
                 const isDel = configs[l.workIndex || 0]?.deleted;
                 const c = wpColors[(l.workIndex || 0) % 4];
                 const dotStyle = isDel ? `background:transparent; border:1.5px solid ${c}; box-sizing:border-box;` : `background:${c};`;
-                return `<div class="daily-item"><div style="font-weight: 800; font-size:1.1rem; color:var(--text-main); margin-bottom:2px; display:flex; align-items:center; justify-content:center;"><span style="display:inline-block; width:10px; height:10px; border-radius:50%; ${dotStyle} margin-right:8px;"></span>${l.shopName}</div><div style="font-size:0.8rem; color:var(--text-sub);">${l.start} - ${l.end} (${l.dur}h)</div><div style="font-weight: 900; font-size:1.2rem; color:var(--color-1); margin-top:6px;">¥${l.amt.toLocaleString()}</div><div class="goal-del-btn" style="top:10px; right:10px;" onclick="deleteLogAndRefreshDaily(${l.id}, '${dateStr}')">✕</div></div>`;
+                return `<div class="daily-item"><div style="font-weight: 800; font-size:1.1rem; color:var(--text-main); margin-bottom:2px; display:flex; align-items:center; justify-content:center;"><span style="display:inline-block; width:10px; height:10px; border-radius:50%; ${dotStyle} margin-right:8px;"></span>${l.shopName}</div><div style="font-size:0.8rem; color:var(--text-sub);">${l.start} - ${l.end} (${l.dur}h)</div><div style="font-weight: 900; font-size:1.2rem; color:var(--color-1); margin-top:6px;">\u00A5${l.amt.toLocaleString()}</div><div class="goal-del-btn" style="top:10px; right:10px;" onclick="deleteLogAndRefreshDaily(${l.id}, '${dateStr}')">&#x2715;</div></div>`;
             }).join('');
             o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 10);
         }
@@ -1014,7 +1011,7 @@
                 const isDel = configs[l.workIndex || 0]?.deleted;
                 const c = wpColors[(l.workIndex || 0) % 4];
                 const dotStyle = isDel ? `background:transparent; border:1.5px solid ${c}; box-sizing:border-box;` : `background:${c};`;
-                return `<div class="history-item"><div class="log-row-top"><div class="log-date">${dO.getMonth()+1}/${dO.getDate()}</div><div class="log-sub-text">(${l.start}-${l.end})</div></div><div class="log-row-mid"><div class="log-shop-name log-sub-text" style="display:flex; align-items:center;"><span class="log-shop-dot" style="${dotStyle}"></span>${l.shopName || configs[0].name}</div><div class="log-right-group"><div class="log-amt">+¥${l.amt.toLocaleString()}</div><div class="log-del" onclick="deleteLog(${l.id})">✕</div></div></div><div class="log-row-bottom"><div class="log-details-small">${l.dur}h / ¥${l.wage.toLocaleString()} / N.R-${l.nr}% / C.A-¥${l.ca.toLocaleString()}</div></div></div>`;
+                return `<div class="history-item"><div class="log-row-top"><div class="log-date">${dO.getMonth()+1}/${dO.getDate()}</div><div class="log-sub-text">(${l.start}-${l.end})</div></div><div class="log-row-mid"><div class="log-shop-name log-sub-text" style="display:flex; align-items:center;"><span class="log-shop-dot" style="${dotStyle}"></span>${l.shopName || configs[0].name}</div><div class="log-right-group"><div class="log-amt">+\u00A5${l.amt.toLocaleString()}</div><div class="log-del" onclick="deleteLog(${l.id})">&#x2715;</div></div></div><div class="log-row-bottom"><div class="log-details-small">${l.dur}h / \u00A5${l.wage.toLocaleString()} / N.R-${l.nr}% / C.A-\u00A5${l.ca.toLocaleString()}</div></div></div>`;
             }).join('');
         }
 
@@ -1027,7 +1024,7 @@
                 const section = document.createElement('div');
                 section.className = 'year-section' + (y === openYear ? ' active' : '');
                 section.id = `salary-year-${y}`;
-                section.innerHTML = `<div class="year-header" onclick="toggleSalaryYear(${y})"><div class="year-title">20${y}</div><div class="year-total">¥${yearlyTotal.toLocaleString()}</div></div><div class="month-content"></div>`;
+                section.innerHTML = `<div class="year-header" onclick="toggleSalaryYear(${y})"><div class="year-title">20${y}</div><div class="year-total">\u00A5${yearlyTotal.toLocaleString()}</div></div><div class="month-content"></div>`;
                 const grid = section.querySelector('.month-content');
                 for (let m = 1; m <= 12; m++) {
                     const key = `${y}/${m}`, d = salaryData[key] || { amount: 0, memo: '' }, card = document.createElement('div');
@@ -1039,7 +1036,7 @@
                         lastTap = n;
                     };
                     const animClass = (key === lastSavedSalaryKey) ? 'anim-slide-up' : '';
-                    card.innerHTML = `<div class="month-name-text">${monthNames[m-1]}</div><div class="salary-value-text ${animClass}">¥${d.amount.toLocaleString()}</div>${d.memo ? `<div style="font-size:0.6rem; color:var(--color-4); margin-top:3px; font-weight:700;">📄 ${d.memo}</div>` : ''}`;
+                    card.innerHTML = `<div class="month-name-text">${monthNames[m-1]}</div><div class="salary-value-text ${animClass}">\u00A5${d.amount.toLocaleString()}</div>${d.memo ? `<div style="font-size:0.6rem; color:var(--color-4); margin-top:3px; font-weight:700;">\uD83D\uDCC4 ${d.memo}</div>` : ''}`;
                     grid.appendChild(card);
                 }
                 container.appendChild(section);
@@ -1082,7 +1079,7 @@
         }
 
         function openSalaryEditModal(y, m, d) { document.getElementById('modalDate').innerText = `${monthNames[m-1]} 20${y}`; const mo = document.getElementById('salaryEditModal'); mo.style.display = 'flex'; setTimeout(() => mo.classList.add('active'), 10); document.getElementById('confirmSalaryEdit').onclick = () => { const i = document.getElementById('salaryInput'); i.value = `${y}/${m}/${d.amount}${d.memo ? '/' + d.memo : ''}`; isSalaryEditMode = true; closeSalaryModal(); setTimeout(() => { i.focus(); }, 150); }; document.getElementById('confirmSalaryReset').onclick = () => { delete salaryData[`${y}/${m}`]; localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData)); initSalaryCalendar(y); closeSalaryModal(); }; }
-        function showAllTotal() { let total = 0; Object.values(salaryData).forEach(d => total += d.amount); const overlay = document.getElementById('allTotalOverlay'); overlay.innerText = `GRAND TOTAL: ¥${total.toLocaleString()}`; overlay.classList.add('active'); setTimeout(closeAllTotal, 5000); }
+        function showAllTotal() { let total = 0; Object.values(salaryData).forEach(d => total += d.amount); const overlay = document.getElementById('allTotalOverlay'); overlay.innerText = `GRAND TOTAL: \u00A5${total.toLocaleString()}`; overlay.classList.add('active'); setTimeout(closeAllTotal, 5000); }
         function closeAllTotal() { document.getElementById('allTotalOverlay').classList.remove('active'); }
         
         function showGraph(cmd) { 
@@ -1093,7 +1090,7 @@
             let gTap = 0; overlay.ontouchend = (e) => { let now = Date.now(); if (now - gTap < 300 && now - gTap > 0) { closeGraph(); e.preventDefault(); } gTap = now; }; 
             document.getElementById('graphTitle').innerHTML = years.map((y, i) => `<span style="color:${graphColors[i]}">20${y}</span>`).join(' vs '); 
             let maxV = 1; years.forEach(y => { for(let m=1; m<=12; m++) maxV = Math.max(maxV, salaryData[`${y}/${m}`]?.amount || 0); }); 
-            const padX = 50, padY = 50, w = 380, h = 400, getX = (m) => padX + (m - 1) * ((w - padX * 2) / 11), getY = (v) => h - padY - (v / maxV) * (h - padY * 2); [0, 0.5, 1].forEach(r => { const yPos = getY(maxV * r); svg.innerHTML += `<line x1="${padX}" y1="${yPos}" x2="${w-10}" y2="${yPos}" stroke="#eee" />`; svg.innerHTML += `<text x="5" y="${yPos+3}" class="axis-label">¥${Math.floor(maxV*r/1000)}k</text>`; }); years.forEach((y, idx) => { let pts = ""; for(let m=1; m<=12; m++) { const val = salaryData[`${y}/${m}`]?.amount || 0, px = getX(m), py = getY(val); pts += `${px},${py} `; if(val > 0) { const offY = (idx * 10) - 15; svg.innerHTML += `<text x="${px}" y="${py + offY}" class="data-label" text-anchor="middle" fill="${graphColors[idx]}">${(val/1000).toFixed(0)}k</text>`; } svg.innerHTML += `<circle cx="${px}" cy="${py}" r="4" fill="${graphColors[idx]}" stroke="#fff" stroke-width="1"/>`; } svg.innerHTML += `<polyline points="${pts}" fill="none" stroke="${graphColors[idx]}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />`; }); return true; 
+            const padX = 50, padY = 50, w = 380, h = 400, getX = (m) => padX + (m - 1) * ((w - padX * 2) / 11), getY = (v) => h - padY - (v / maxV) * (h - padY * 2); [0, 0.5, 1].forEach(r => { const yPos = getY(maxV * r); svg.innerHTML += `<line x1="${padX}" y1="${yPos}" x2="${w-10}" y2="${yPos}" stroke="#eee" />`; svg.innerHTML += `<text x="5" y="${yPos+3}" class="axis-label">\u00A5${Math.floor(maxV*r/1000)}k</text>`; }); years.forEach((y, idx) => { let pts = ""; for(let m=1; m<=12; m++) { const val = salaryData[`${y}/${m}`]?.amount || 0, px = getX(m), py = getY(val); pts += `${px},${py} `; if(val > 0) { const offY = (idx * 10) - 15; svg.innerHTML += `<text x="${px}" y="${py + offY}" class="data-label" text-anchor="middle" fill="${graphColors[idx]}">${(val/1000).toFixed(0)}k</text>`; } svg.innerHTML += `<circle cx="${px}" cy="${py}" r="4" fill="${graphColors[idx]}" stroke="#fff" stroke-width="1"/>`; } svg.innerHTML += `<polyline points="${pts}" fill="none" stroke="${graphColors[idx]}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />`; }); return true; 
         }
         function closeGraph() { const o = document.getElementById('graphOverlay'); o.classList.remove('active'); setTimeout(() => { o.style.display = 'none'; }, 400); }
         function openHint() { const m = document.getElementById('hintModal'); m.style.display = 'flex'; setTimeout(() => m.classList.add('active'), 10); }

@@ -58,11 +58,16 @@
         .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
 
         #display-month { font-weight: 900; letter-spacing: 0.5px; color: #4f46e5; cursor: pointer; background: var(--btn-bg); padding: 6px 16px; border-radius: 12px; font-size: 0.85rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.2s; }
-        .record-board { background: white; border-radius: 22px; padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 25px; }
         
-        #selected-date-title { font-weight: 900; margin-bottom: 15px; border-left: 5px solid var(--color-1); padding-left: 10px; color: #1e293b; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; min-height: 28px; }
+        .record-board { background: white; border-radius: 22px; padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 15px; }
+        
+        #selected-date-title, #selected-break-title { font-weight: 900; margin-bottom: 15px; padding-left: 10px; color: #1e293b; font-size: 0.9rem; display: flex; justify-content: space-between; align-items: center; min-height: 28px; }
+        #selected-date-title { border-left: 5px solid var(--color-1); }
+        #selected-break-title { border-left: 5px solid var(--color-4); }
         
         .status-guide { font-size: 0.8rem; font-weight: 800; color: var(--color-1); background: #eff6ff; padding: 4px 10px; border-radius: 12px; opacity: 0; transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.4s ease; display: none; align-items: center; gap: 8px; pointer-events: none; transform: scale(0.85) translateY(2px); filter: blur(4px); }
+        .status-guide.break-guide { color: var(--color-4); background: #f0fdf4; }
+
         .cancel-punch-btn { color: var(--color-2); font-size: 1.05rem; font-weight: 900; cursor: pointer; padding: 0 2px; display: inline-block; transition: opacity 0.2s; }
         .cancel-punch-btn:active { opacity: 0.5; }
 
@@ -75,7 +80,7 @@
         .out-btn { background: var(--black-grad); color: white; }
 
         /* --- 目標ゲージ --- */
-        #goal-container { display: flex; flex-direction: column; gap: 20px; margin-bottom: 25px; }
+        #goal-container { display: flex; flex-direction: column; gap: 20px; margin-bottom: 25px; margin-top: 10px; }
         .goal-item { background: white; border-radius: 22px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); position: relative; padding-bottom: 40px; }
         .goal-del-btn { position: absolute; top: 12px; right: 15px; color: var(--color-2); font-size: 1.1rem; font-weight: 800; cursor: pointer; padding: 5px; opacity: 0.4; transition: opacity 0.2s; }
         .goal-del-btn:active { opacity: 1; }
@@ -214,6 +219,21 @@
                 <div class="btn-group">
                     <button class="clock-btn in-btn" onclick="handleClockIn()">Time In</button>
                     <button class="clock-btn out-btn" onclick="handleClockOut()">Time Out</button>
+                </div>
+            </div>
+
+            <div class="record-board">
+                <div id="selected-break-title">
+                    BREAK TIME
+                    <span id="break-punch-status" class="status-guide break-guide"></span>
+                </div>
+                <div style="display:flex; gap:10px; margin-bottom:15px;">
+                    <input type="time" id="break-start" class="time-input" style="color:var(--color-4);">
+                    <input type="time" id="break-end" class="time-input" style="color:var(--color-4);">
+                </div>
+                <div class="btn-group">
+                    <button class="clock-btn in-btn" onclick="handleBreakIn()">Break In</button>
+                    <button class="clock-btn out-btn" onclick="handleBreakOut()">Break Out</button>
                 </div>
             </div>
             
@@ -450,6 +470,9 @@
         function isPunchLocked() {
             return localStorage.getItem('tempClockInV34') !== null;
         }
+        function isBreakPunchLocked() {
+            return localStorage.getItem('tempBreakInV34') !== null || localStorage.getItem('tempCompletedBreakV34') !== null;
+        }
 
         window.onload = () => {
             const nowTime = new Date();
@@ -457,8 +480,11 @@
             const currentMin = String(nowTime.getMinutes()).padStart(2, '0');
             document.getElementById('work-start').value = `${currentHour}:${currentMin}`;
             document.getElementById('work-end').value = `${currentHour}:${currentMin}`;
+            document.getElementById('break-start').value = `${currentHour}:${currentMin}`;
+            document.getElementById('break-end').value = `${currentHour}:${currentMin}`;
 
             updatePunchGuide();
+            updateBreakPunchGuide();
 
             if (configs.length > 0) {
                 const activeIndex = configs.findIndex(c => !c.deleted);
@@ -513,6 +539,11 @@
                 showAppAlert("Notice", "Please Time In first.");
                 return;
             }
+            if (localStorage.getItem('tempBreakInV34')) {
+                showAppAlert("Notice", "Please Break Out before Timing Out.");
+                return;
+            }
+
             const tempIn = JSON.parse(tempInStr);
             const outTime = document.getElementById('work-end').value;
             
@@ -522,6 +553,33 @@
             }
 
             checkOverwriteAndExecute(tempIn.time, outTime);
+        }
+
+        function handleBreakIn() {
+            if (!localStorage.getItem('tempClockInV34')) {
+                showAppAlert("Notice", "Please Time In first.");
+                return;
+            }
+            if (isBreakPunchLocked()) {
+                showAppAlert("Notice", "Break is already active or completed.");
+                return;
+            }
+            const inTime = document.getElementById('break-start').value;
+            localStorage.setItem('tempBreakInV34', inTime);
+            updateBreakPunchGuide();
+        }
+
+        function handleBreakOut() {
+            const tempInStr = localStorage.getItem('tempBreakInV34');
+            if (!tempInStr) {
+                showAppAlert("Notice", "Please Break In first.");
+                return;
+            }
+            const outTime = document.getElementById('break-end').value;
+            const breakObj = { start: tempInStr, end: outTime };
+            localStorage.setItem('tempCompletedBreakV34', JSON.stringify(breakObj));
+            localStorage.removeItem('tempBreakInV34');
+            updateBreakPunchGuide();
         }
 
         function checkOverwriteAndExecute(inTime, outTime) {
@@ -536,7 +594,23 @@
         function executeClockOut(inTime, outTime) {
             lastSavedDate = selectedDateStr;
             const currentConf = configs[currentWorkIndex];
-            const res = calculatePay(inTime, outTime, currentConf);
+
+            let bStart = null, bEnd = null;
+            const compBreakStr = localStorage.getItem('tempCompletedBreakV34');
+            if (compBreakStr) {
+                const b = JSON.parse(compBreakStr);
+                bStart = b.start;
+                bEnd = b.end;
+            } else {
+                const bs = document.getElementById('break-start').value;
+                const be = document.getElementById('break-end').value;
+                if (bs !== be) {
+                    bStart = bs;
+                    bEnd = be;
+                }
+            }
+
+            const res = calculatePay(inTime, outTime, bStart, bEnd, currentConf);
             
             logs = logs.filter(l => !(l.fullDate === selectedDateStr && (l.workIndex || 0) === currentWorkIndex));
             
@@ -548,7 +622,10 @@
                 date: selectedDateStr.split('-')[2], 
                 start: inTime, 
                 end: outTime, 
+                bStart: bStart || "",
+                bEnd: bEnd || "",
                 dur: res.dur, 
+                bDur: res.bDur,
                 wage: currentConf.wage, 
                 nr: currentConf.nightRate, 
                 ca: currentConf.transport, 
@@ -558,7 +635,9 @@
             
             localStorage.setItem('workLogsV34', JSON.stringify(logs));
             localStorage.removeItem('tempClockInV34');
+            localStorage.removeItem('tempCompletedBreakV34');
             updatePunchGuide();
+            updateBreakPunchGuide();
             updateDash();
         }
 
@@ -589,12 +668,52 @@
             }
         }
 
+        function updateBreakPunchGuide() {
+            const guide = document.getElementById('break-punch-status');
+            const tempInStr = localStorage.getItem('tempBreakInV34');
+            const tempCompStr = localStorage.getItem('tempCompletedBreakV34');
+
+            if (tempCompStr) {
+                const comp = JSON.parse(tempCompStr);
+                guide.innerHTML = `Break: ${comp.start} - ${comp.end} <span class="cancel-punch-btn" onclick="handleCancelBreakPunch(event)">&#x2715;</span>`;
+                guide.style.display = 'flex';
+                setTimeout(() => { guide.style.opacity = '1'; guide.style.transform = 'scale(1) translateY(0)'; guide.style.filter = 'blur(0)'; guide.style.pointerEvents = 'auto'; }, 10);
+            } else if (tempInStr) {
+                guide.innerHTML = `Break in at ${tempInStr} <span class="cancel-punch-btn" onclick="handleCancelBreakPunch(event)">&#x2715;</span>`;
+                guide.style.display = 'flex';
+                setTimeout(() => { guide.style.opacity = '1'; guide.style.transform = 'scale(1) translateY(0)'; guide.style.filter = 'blur(0)'; guide.style.pointerEvents = 'auto'; }, 10);
+            } else {
+                guide.style.opacity = '0';
+                guide.style.transform = 'scale(0.85) translateY(2px)';
+                guide.style.filter = 'blur(4px)';
+                guide.style.pointerEvents = 'none';
+                setTimeout(() => {
+                    if (!localStorage.getItem('tempBreakInV34') && !localStorage.getItem('tempCompletedBreakV34')) {
+                        guide.style.display = 'none';
+                        guide.innerHTML = '';
+                    }
+                }, 400);
+            }
+        }
+
         function handleCancelPunch(e) {
             if (e) e.stopPropagation();
             openConfirmModal("Cancel Time In?", "This will remove your current time-in record.", "Delete", "red", () => {
                 localStorage.removeItem('tempClockInV34');
+                localStorage.removeItem('tempBreakInV34');
+                localStorage.removeItem('tempCompletedBreakV34');
                 updatePunchGuide();
+                updateBreakPunchGuide();
                 renderCalendar(); 
+            });
+        }
+
+        function handleCancelBreakPunch(e) {
+            if (e) e.stopPropagation();
+            openConfirmModal("Cancel Break?", "This will remove your current break record.", "Delete", "red", () => {
+                localStorage.removeItem('tempBreakInV34');
+                localStorage.removeItem('tempCompletedBreakV34');
+                updateBreakPunchGuide();
             });
         }
 
@@ -936,11 +1055,39 @@
             lastSavedDate = null;
         }
 
-        function calculatePay(s, e, conf) {
+        function calculatePay(s, e, bs, be, conf) {
             const toM = (t) => { const [h,m] = t.split(':').map(Number); return h*60+m; };
-            let sM = toM(s), eM = toM(e); if(eM <= sM) eM += 1440;
-            let nMin = 0; for(let i=sM; i<eM; i++) { if((i%1440) >= 1320 || (i%1440) < 300) nMin++; }
-            const dur = (eM - sM) / 60; return { total: Math.floor((dur * conf.wage) + (nMin/60)*(conf.wage*(conf.nightRate/100)) + conf.transport), dur: dur.toFixed(1) };
+            let sM = toM(s), eM = toM(e);
+            if(eM <= sM) eM += 1440;
+
+            let bSM = bs ? toM(bs) : -1;
+            let bEM = be ? toM(be) : -1;
+            let hasBreak = bs && be;
+
+            if (hasBreak) {
+                if (bSM < sM) bSM += 1440;
+                if (bEM <= bSM) bEM += 1440;
+            }
+
+            let nMin = 0, workMin = 0, bMin = 0;
+            for(let i = sM; i < eM; i++) {
+                if (hasBreak && i >= bSM && i < bEM) {
+                    bMin++;
+                } else {
+                    workMin++;
+                    let mod = i % 1440;
+                    if(mod >= 1320 || mod < 300) nMin++;
+                }
+            }
+
+            const dur = workMin / 60;
+            const bDur = bMin / 60;
+
+            return {
+                total: Math.floor((dur * conf.wage) + (nMin/60)*(conf.wage*(conf.nightRate/100)) + conf.transport),
+                dur: dur.toFixed(1),
+                bDur: bDur.toFixed(1)
+            };
         }
         function deleteLog(id) { openConfirmModal("Delete Record?", "This will permanently remove this shift.", "Delete", "red", () => { logs = logs.filter(l => l.id !== id); localStorage.setItem('workLogsV34', JSON.stringify(logs)); updateDash(); }); }
         
@@ -963,7 +1110,10 @@
                 const isDel = configs[l.workIndex || 0]?.deleted;
                 const c = wpColors[(l.workIndex || 0) % 4];
                 const dotStyle = isDel ? `background:transparent; border:1.5px solid ${c}; box-sizing:border-box;` : `background:${c};`;
-                return `<div class="daily-item"><div style="font-weight: 800; font-size:1.1rem; color:var(--text-main); margin-bottom:2px; display:flex; align-items:center; justify-content:center;"><span style="display:inline-block; width:10px; height:10px; border-radius:50%; ${dotStyle} margin-right:8px;"></span>${l.shopName}</div><div style="font-size:0.8rem; color:var(--text-sub);">${l.start} - ${l.end} (${l.dur}h)</div><div style="font-weight: 900; font-size:1.2rem; color:var(--color-1); margin-top:6px;">\u00A5${l.amt.toLocaleString()}</div><div class="goal-del-btn" style="top:10px; right:10px;" onclick="deleteLogAndRefreshDaily(${l.id}, '${dateStr}')">&#x2715;</div></div>`;
+                
+                const bDurDisp = (l.bDur && parseFloat(l.bDur) > 0) ? ` / Break: ${l.bDur}H` : '';
+
+                return `<div class="daily-item"><div style="font-weight: 800; font-size:1.1rem; color:var(--text-main); margin-bottom:2px; display:flex; align-items:center; justify-content:center;"><span style="display:inline-block; width:10px; height:10px; border-radius:50%; ${dotStyle} margin-right:8px;"></span>${l.shopName}</div><div style="font-size:0.8rem; color:var(--text-sub);">${l.start} - ${l.end} (${l.dur}H)${bDurDisp}</div><div style="font-weight: 900; font-size:1.2rem; color:var(--color-1); margin-top:6px;">\u00A5${l.amt.toLocaleString()}</div><div class="goal-del-btn" style="top:10px; right:10px;" onclick="deleteLogAndRefreshDaily(${l.id}, '${dateStr}')">&#x2715;</div></div>`;
             }).join('');
             o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 10);
         }
@@ -995,107 +1145,3 @@
             container.style.opacity = '0'; title.style.opacity = '0';
             setTimeout(() => {
                 viewDate.setMonth(viewDate.getMonth() + dir);
-                const y = viewDate.getFullYear(), mStr = viewDate.toLocaleString('en', {month:'long'}).toUpperCase();
-                title.innerHTML = `<div style="font-size:0.8rem; color:var(--color-1); margin-bottom:4px;">${y}</div><div>${mStr} REPORT</div>`;
-                updateDash();
-                container.style.opacity = '1'; title.style.opacity = '1';
-                setTimeout(() => { isReportAnimating = false; }, 350); 
-            }, 350); 
-        }
-
-        function renderLogs(mLogs) {
-            const container = document.getElementById('log-container');
-            if (mLogs.length === 0) { container.innerHTML = '<div style="text-align:center; color:#ccc; margin-top:50px; font-weight:700;">No records found.</div>'; return; }
-            container.innerHTML = mLogs.map(l => {
-                const dO = new Date(l.fullDate.replace(/-/g,'/'));
-                const isDel = configs[l.workIndex || 0]?.deleted;
-                const c = wpColors[(l.workIndex || 0) % 4];
-                const dotStyle = isDel ? `background:transparent; border:1.5px solid ${c}; box-sizing:border-box;` : `background:${c};`;
-                return `<div class="history-item"><div class="log-row-top"><div class="log-date">${dO.getMonth()+1}/${dO.getDate()}</div><div class="log-sub-text">(${l.start}-${l.end})</div></div><div class="log-row-mid"><div class="log-shop-name log-sub-text" style="display:flex; align-items:center;"><span class="log-shop-dot" style="${dotStyle}"></span>${l.shopName || configs[0].name}</div><div class="log-right-group"><div class="log-amt">+\u00A5${l.amt.toLocaleString()}</div><div class="log-del" onclick="deleteLog(${l.id})">&#x2715;</div></div></div><div class="log-row-bottom"><div class="log-details-small">${l.dur}h / \u00A5${l.wage.toLocaleString()} / N.R-${l.nr}% / C.A-\u00A5${l.ca.toLocaleString()}</div></div></div>`;
-            }).join('');
-        }
-
-        function initSalaryCalendar(openYear = new Date().getFullYear() % 100) {
-            const container = document.getElementById('salary-manager-container');
-            container.innerHTML = '';
-            for (let y = startYear; y <= endYear; y++) {
-                let yearlyTotal = 0;
-                for (let m = 1; m <= 12; m++) yearlyTotal += (salaryData[`${y}/${m}`]?.amount || 0);
-                const section = document.createElement('div');
-                section.className = 'year-section' + (y === openYear ? ' active' : '');
-                section.id = `salary-year-${y}`;
-                section.innerHTML = `<div class="year-header" onclick="toggleSalaryYear(${y})"><div class="year-title">20${y}</div><div class="year-total">\u00A5${yearlyTotal.toLocaleString()}</div></div><div class="month-content"></div>`;
-                const grid = section.querySelector('.month-content');
-                for (let m = 1; m <= 12; m++) {
-                    const key = `${y}/${m}`, d = salaryData[key] || { amount: 0, memo: '' }, card = document.createElement('div');
-                    card.className = `month-card ${d.amount > 0 ? 'has-data' : ''}`;
-                    let lastTap = 0;
-                    card.onclick = (e) => {
-                        let n = Date.now();
-                        if (n - lastTap < 300 && n - lastTap > 0) { if (d.amount > 0) openSalaryEditModal(y, m, d); e.preventDefault(); }
-                        lastTap = n;
-                    };
-                    const animClass = (key === lastSavedSalaryKey) ? 'anim-slide-up' : '';
-                    card.innerHTML = `<div class="month-name-text">${monthNames[m-1]}</div><div class="salary-value-text ${animClass}">\u00A5${d.amount.toLocaleString()}</div>${d.memo ? `<div style="font-size:0.6rem; color:var(--color-4); margin-top:3px; font-weight:700;">\uD83D\uDCC4 ${d.memo}</div>` : ''}`;
-                    grid.appendChild(card);
-                }
-                container.appendChild(section);
-            }
-            lastSavedSalaryKey = null;
-            renderGoalGauges();
-        }
-
-        function toggleSalaryYear(y) { document.getElementById(`salary-year-${y}`).classList.toggle('active'); }
-        function showInvalidModal() { const m = document.getElementById('invalid-input-modal'); m.style.display = 'flex'; setTimeout(() => m.classList.add('active'), 10); }
-        function closeInvalidModal() { const m = document.getElementById('invalid-input-modal'); m.classList.remove('active'); setTimeout(() => m.style.display = 'none', 300); }
-
-        function handleSalaryInput() { 
-            const el = document.getElementById('salaryInput'), val = el.value.trim().toLowerCase(); 
-            if (!val) return; 
-            if (val === 'a') { showAllTotal(); el.value = ''; el.blur(); } 
-            else if (val.startsWith('g')) { if(!showGraph(val)) showInvalidModal(); el.value = ''; el.blur(); } 
-            else { 
-                const m = el.value.trim().match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/);
-                if (!m) { showInvalidModal(); el.value = ''; el.blur(); return; }
-                const y = parseInt(m[1]), mo = parseInt(m[2]);
-                if (mo < 1 || mo > 12 || y < startYear || y > endYear) { showInvalidModal(); el.value = ''; el.blur(); return; }
-                const key = `${y}/${mo}`, rawInput = el.value.trim();
-                if (salaryData[key] && !isSalaryEditMode) { openConfirmModal("Overwrite?", "Existing record found for this month.", "Overwrite", "blue", () => { saveSalaryRecord(rawInput); }); el.value = ''; el.blur(); } 
-                else { if(!saveSalaryRecord(rawInput)) showInvalidModal(); el.value = ''; el.blur(); }
-            } 
-        }
-
-        function saveSalaryRecord(input) {
-            const m = input.match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/);
-            if (!m) return false;
-            const y = parseInt(m[1]), mo = parseInt(m[2]), amt = parseInt(m[3]), memo = m[4] || '';
-            if (mo < 1 || mo > 12 || y < startYear || y > endYear) return false;
-            lastSavedSalaryKey = `${y}/${mo}`;
-            salaryData[lastSavedSalaryKey] = { amount: amt, memo: memo };
-            localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData));
-            initSalaryCalendar(y);
-            isSalaryEditMode = false;
-            return true;
-        }
-
-        function openSalaryEditModal(y, m, d) { document.getElementById('modalDate').innerText = `${monthNames[m-1]} 20${y}`; const mo = document.getElementById('salaryEditModal'); mo.style.display = 'flex'; setTimeout(() => mo.classList.add('active'), 10); document.getElementById('confirmSalaryEdit').onclick = () => { const i = document.getElementById('salaryInput'); i.value = `${y}/${m}/${d.amount}${d.memo ? '/' + d.memo : ''}`; isSalaryEditMode = true; closeSalaryModal(); setTimeout(() => { i.focus(); }, 150); }; document.getElementById('confirmSalaryReset').onclick = () => { delete salaryData[`${y}/${m}`]; localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData)); initSalaryCalendar(y); closeSalaryModal(); }; }
-        function showAllTotal() { let total = 0; Object.values(salaryData).forEach(d => total += d.amount); const overlay = document.getElementById('allTotalOverlay'); overlay.innerText = `GRAND TOTAL: \u00A5${total.toLocaleString()}`; overlay.classList.add('active'); setTimeout(closeAllTotal, 5000); }
-        function closeAllTotal() { document.getElementById('allTotalOverlay').classList.remove('active'); }
-        
-        function showGraph(cmd) { 
-            const parts = cmd.replace('g', '').split('/'), years = parts.map(p => parseInt(p)).filter(y => !isNaN(y) && y >= startYear && y <= endYear).slice(0, 4); 
-            if (years.length === 0) return false; 
-            const overlay = document.getElementById('graphOverlay'), svg = document.getElementById('graphSvgContainer'); svg.innerHTML = ''; 
-            overlay.style.display = 'flex'; setTimeout(() => overlay.classList.add('active'), 20);
-            let gTap = 0; overlay.ontouchend = (e) => { let now = Date.now(); if (now - gTap < 300 && now - gTap > 0) { closeGraph(); e.preventDefault(); } gTap = now; }; 
-            document.getElementById('graphTitle').innerHTML = years.map((y, i) => `<span style="color:${graphColors[i]}">20${y}</span>`).join(' vs '); 
-            let maxV = 1; years.forEach(y => { for(let m=1; m<=12; m++) maxV = Math.max(maxV, salaryData[`${y}/${m}`]?.amount || 0); }); 
-            const padX = 50, padY = 50, w = 380, h = 400, getX = (m) => padX + (m - 1) * ((w - padX * 2) / 11), getY = (v) => h - padY - (v / maxV) * (h - padY * 2); [0, 0.5, 1].forEach(r => { const yPos = getY(maxV * r); svg.innerHTML += `<line x1="${padX}" y1="${yPos}" x2="${w-10}" y2="${yPos}" stroke="#eee" />`; svg.innerHTML += `<text x="5" y="${yPos+3}" class="axis-label">\u00A5${Math.floor(maxV*r/1000)}k</text>`; }); years.forEach((y, idx) => { let pts = ""; for(let m=1; m<=12; m++) { const val = salaryData[`${y}/${m}`]?.amount || 0, px = getX(m), py = getY(val); pts += `${px},${py} `; if(val > 0) { const offY = (idx * 10) - 15; svg.innerHTML += `<text x="${px}" y="${py + offY}" class="data-label" text-anchor="middle" fill="${graphColors[idx]}">${(val/1000).toFixed(0)}k</text>`; } svg.innerHTML += `<circle cx="${px}" cy="${py}" r="4" fill="${graphColors[idx]}" stroke="#fff" stroke-width="1"/>`; } svg.innerHTML += `<polyline points="${pts}" fill="none" stroke="${graphColors[idx]}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />`; }); return true; 
-        }
-        function closeGraph() { const o = document.getElementById('graphOverlay'); o.classList.remove('active'); setTimeout(() => { o.style.display = 'none'; }, 400); }
-        function openHint() { const m = document.getElementById('hintModal'); m.style.display = 'flex'; setTimeout(() => m.classList.add('active'), 10); }
-        function closeHint() { const m = document.getElementById('hintModal'); m.classList.remove('active'); setTimeout(() => { m.style.display = 'none'; }, 200); }
-        function closeSalaryModal() { const m = document.getElementById('salaryEditModal'); m.classList.remove('active'); setTimeout(() => { m.style.display = 'none'; }, 200); }
-    </script>
-</body>
-</html>

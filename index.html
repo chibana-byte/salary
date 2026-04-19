@@ -763,7 +763,9 @@
                 end: outTime, 
                 dur: res.dur, 
                 brk: breakMin, 
-                wage: res.appliedWage, 
+                wage: currentConf.wage, // 元の時給を保存
+                pType: res.appliedPremType,
+                pAmt: res.appliedPremAmt,
                 nr: currentConf.nightRate, 
                 ca: currentConf.transport, 
                 shopName: currentConf.name, 
@@ -1246,6 +1248,9 @@
             const dur = totalWorkMin / 60; 
             
             let baseWage = conf.wage;
+            let appliedPremType = null;
+            let appliedPremAmt = 0;
+
             if (dateStr) {
                 const dt = new Date(dateStr.replace(/-/g,'/'));
                 const dayOfWeek = dt.getDay();
@@ -1261,13 +1266,20 @@
                     else if (conf.holTarget === 'sun_hol' && (isSun || isHol)) applyPremium = true;
                     else if (conf.holTarget === 'sat_sun_hol' && (isSat || isSun || isHol)) applyPremium = true;
                     else if (conf.holTarget === 'hol' && isHol) applyPremium = true;
-                    if(applyPremium) baseWage += (conf.holWage || 0);
+                    
+                    if(applyPremium) {
+                        baseWage += (conf.holWage || 0);
+                        appliedPremType = 'fixed';
+                        appliedPremAmt = conf.holWage || 0;
+                    }
                 } else if (pDays.length > 0) {
                     if (pDays.includes('sat') && isSat) applyPremium = true;
                     if (pDays.includes('sun') && isSun) applyPremium = true;
                     if (pDays.includes('hol') && isHol) applyPremium = true;
                     
                     if (applyPremium && conf.premAmt) {
+                        appliedPremType = conf.premType;
+                        appliedPremAmt = conf.premAmt;
                         if (conf.premType === 'percent') {
                             baseWage += Math.floor(conf.wage * (conf.premAmt / 100));
                         } else {
@@ -1280,7 +1292,8 @@
             return { 
                 total: Math.floor((dur * baseWage) + (nMin/60)*(baseWage*(conf.nightRate/100)) + conf.transport), 
                 dur: dur.toFixed(1),
-                appliedWage: baseWage
+                appliedPremType,
+                appliedPremAmt
             };
         }
 
@@ -1305,7 +1318,11 @@
                 const isDel = configs[l.workIndex || 0]?.deleted;
                 const c = wpColors[(l.workIndex || 0) % 4];
                 const dotStyle = isDel ? `background:transparent; border:1.5px solid ${c}; box-sizing:border-box;` : `background:${c};`;
-                return `<div class="daily-item"><div style="font-weight: 800; font-size:1.1rem; color:var(--text-main); margin-bottom:2px; display:flex; align-items:center; justify-content:center;"><span style="display:inline-block; width:10px; height:10px; border-radius:50%; ${dotStyle} margin-right:8px;"></span>${l.shopName}</div><div style="font-size:0.8rem; color:var(--text-sub);">${l.start} - ${l.end} (${l.dur}H/Brk:${l.brk || 0}M)</div><div style="font-weight: 900; font-size:1.2rem; color:var(--color-1); margin-top:6px;">\u00A5${l.amt.toLocaleString()}</div><div class="goal-del-btn" style="top:10px; right:10px;" onclick="deleteLogAndRefreshDaily(${l.id}, '${dateStr}')">&#x2715;</div></div>`;
+                
+                const brkText = l.brk > 0 ? `/Brk:${l.brk}M` : '';
+                const premText = l.pAmt > 0 ? `<span style="color:var(--text-sub); font-size:0.8rem; margin-left:4px;">(pre.${l.pType === 'percent' ? l.pAmt + '%' : '\u00A5' + l.pAmt.toLocaleString()})</span>` : '';
+
+                return `<div class="daily-item"><div style="font-weight: 800; font-size:1.1rem; color:var(--text-main); margin-bottom:2px; display:flex; align-items:center; justify-content:center;"><span style="display:inline-block; width:10px; height:10px; border-radius:50%; ${dotStyle} margin-right:8px;"></span>${l.shopName}</div><div style="font-size:0.8rem; color:var(--text-sub);">${l.start} - ${l.end} (${l.dur}H${brkText})</div><div style="font-weight: 900; font-size:1.2rem; color:var(--color-1); margin-top:6px; display:flex; align-items:center; justify-content:center;">\u00A5${l.amt.toLocaleString()}${premText}</div><div class="goal-del-btn" style="top:10px; right:10px;" onclick="deleteLogAndRefreshDaily(${l.id}, '${dateStr}')">&#x2715;</div></div>`;
             }).join('');
             o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 10);
         }
@@ -1353,7 +1370,11 @@
                 const isDel = configs[l.workIndex || 0]?.deleted;
                 const c = wpColors[(l.workIndex || 0) % 4];
                 const dotStyle = isDel ? `background:transparent; border:1.5px solid ${c}; box-sizing:border-box;` : `background:${c};`;
-                return `<div class="history-item"><div class="log-row-top"><div style="display:flex; align-items:baseline;"><div class="log-date">${dO.getMonth()+1}/${dO.getDate()}</div><div class="log-sub-text">(${l.start}-${l.end}) ${l.dur}H/Brk:${l.brk || 0}M</div></div></div><div class="log-row-mid"><div class="log-shop-name log-sub-text" style="display:flex; align-items:center;"><span class="log-shop-dot" style="${dotStyle}"></span>${l.shopName || configs[0].name}</div><div class="log-right-group"><div class="log-amt">+\u00A5${l.amt.toLocaleString()}</div><div class="log-del" onclick="deleteLog(${l.id})">&#x2715;</div></div></div><div class="log-row-bottom"><div class="log-details-small">\u00A5${l.wage.toLocaleString()} / N.R-${l.nr}% / C.A-\u00A5${l.ca.toLocaleString()}</div></div></div>`;
+                
+                const brkText = l.brk > 0 ? `/Brk:${l.brk}M` : '';
+                const premText = l.pAmt > 0 ? (l.pType === 'percent' ? ` / PRE-${l.pAmt}%` : ` / PRE-\u00A5${l.pAmt.toLocaleString()}`) : '';
+
+                return `<div class="history-item"><div class="log-row-top"><div style="display:flex; align-items:baseline;"><div class="log-date">${dO.getMonth()+1}/${dO.getDate()}</div><div class="log-sub-text">(${l.start}-${l.end}) ${l.dur}H${brkText}</div></div></div><div class="log-row-mid"><div class="log-shop-name log-sub-text" style="display:flex; align-items:center;"><span class="log-shop-dot" style="${dotStyle}"></span>${l.shopName || configs[0].name}</div><div class="log-right-group"><div class="log-amt">\u00A5${l.amt.toLocaleString()}</div><div class="log-del" onclick="deleteLog(${l.id})">&#x2715;</div></div></div><div class="log-row-bottom"><div class="log-details-small">\u00A5${l.wage.toLocaleString()}${premText} / N.R-${l.nr}% / C.A-\u00A5${l.ca.toLocaleString()}</div></div></div>`;
             }).join('');
         }
 

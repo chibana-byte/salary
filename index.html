@@ -275,6 +275,7 @@
             <button class="menu-btn btn-edit" onclick="showEditScreen()">Edit Setting</button>
             <button class="menu-btn btn-add-work" onclick="showAddWorkplaceScreen()">Add Workplace</button>
             <button class="menu-btn btn-goal" onclick="showGoalScreen()">Goal Amount</button>
+            <button style="background:none; border:none; color:#a1a1aa; font-weight:700; padding:10px; margin-top:10px; width:100%; cursor:pointer;" onclick="closeSettingsMenu()">Back</button>
         </div>
     </div>
 
@@ -1006,7 +1007,16 @@
 
         function saveInitialSetup() {
             const n = document.getElementById('setup-shop').value.trim(), w = document.getElementById('setup-wage').value.trim(), r = document.getElementById('setup-night-rate').value.trim(), t = document.getElementById('setup-transport').value.trim();
-            let req = []; if (!n) req.push("Name"); if (!w || parseInt(w) === 0) req.push("Hourly Wage"); if (req.length > 0) { showValidationModal(req, true, false); return; }
+            const daysContainer = document.getElementById('setup-prem-days');
+            const activeDays = Array.from(daysContainer.querySelectorAll('.active')).map(b => b.getAttribute('data-val'));
+            const pAmt = document.getElementById('setup-prem-amt').value.trim();
+            
+            let req = []; 
+            if (!n) req.push("Name"); 
+            if (!w || parseInt(w) === 0) req.push("Hourly Wage"); 
+            if (!activeDays.includes('none') && (!pAmt || parseInt(pAmt) === 0)) req.push("Premium");
+
+            if (req.length > 0) { showValidationModal(req, true, false); return; }
             let opt = []; if (!r || parseInt(r) === 0) opt.push("Night Rate"); if (!t || parseInt(t) === 0) opt.push("Commuting Allowance"); if (opt.length > 0) { showValidationModal(opt, false, false); return; }
             finalizeInitialSetup();
         }
@@ -1029,7 +1039,16 @@
 
         function saveAddWorkplace() {
             const n = document.getElementById('add-shop').value.trim(), w = document.getElementById('add-wage').value.trim(), r = document.getElementById('add-night-rate').value.trim(), t = document.getElementById('add-transport').value.trim();
-            let req = []; if (!n) req.push("Name"); if (!w || parseInt(w) === 0) req.push("Hourly Wage"); if (req.length > 0) { showValidationModal(req, true, 'add'); return; }
+            const daysContainer = document.getElementById('add-prem-days');
+            const activeDays = Array.from(daysContainer.querySelectorAll('.active')).map(b => b.getAttribute('data-val'));
+            const pAmt = document.getElementById('add-prem-amt').value.trim();
+            
+            let req = []; 
+            if (!n) req.push("Name"); 
+            if (!w || parseInt(w) === 0) req.push("Hourly Wage"); 
+            if (!activeDays.includes('none') && (!pAmt || parseInt(pAmt) === 0)) req.push("Premium");
+
+            if (req.length > 0) { showValidationModal(req, true, 'add'); return; }
             let opt = []; if (!r || parseInt(r) === 0) opt.push("Night Rate"); if (!t || parseInt(t) === 0) opt.push("Commuting Allowance"); if (opt.length > 0) { showValidationModal(opt, false, 'add'); return; }
             finalizeAddWorkplace();
         }
@@ -1052,7 +1071,16 @@
 
         function saveEditSetup() {
             const n = document.getElementById('edit-shop').value.trim(), w = document.getElementById('edit-wage').value.trim(), r = document.getElementById('edit-night-rate').value.trim(), t = document.getElementById('edit-transport').value.trim();
-            let req = []; if (!n) req.push("Name"); if (!w || parseInt(w) === 0) req.push("Hourly Wage"); if (req.length > 0) { showValidationModal(req, true, true); return; }
+            const daysContainer = document.getElementById('edit-prem-days');
+            const activeDays = Array.from(daysContainer.querySelectorAll('.active')).map(b => b.getAttribute('data-val'));
+            const pAmt = document.getElementById('edit-prem-amt').value.trim();
+            
+            let req = []; 
+            if (!n) req.push("Name"); 
+            if (!w || parseInt(w) === 0) req.push("Hourly Wage"); 
+            if (!activeDays.includes('none') && (!pAmt || parseInt(pAmt) === 0)) req.push("Premium");
+
+            if (req.length > 0) { showValidationModal(req, true, true); return; }
             let opt = []; if (!r || parseInt(r) === 0) opt.push("Night Rate"); if (!t || parseInt(t) === 0) opt.push("Commuting Allowance"); if (opt.length > 0) { showValidationModal(opt, false, true); return; }
             finalizeEditSetup();
         }
@@ -1208,7 +1236,8 @@
             const container = document.getElementById('daily-container');
             container.innerHTML = dayLogs.map(l => {
                 const isDel = configs[l.workIndex || 0]?.deleted, c = wpColors[(l.workIndex || 0) % 4], dotStyle = isDel ? `background:transparent; border:1.5px solid ${c}; box-sizing:border-box;` : `background:${c};`;
-                const brkStr = l.brk > 0 ? `/Brk:${l.brk}M` : '';
+                const brkH = l.brk / 60;
+                const brkStr = l.brk > 0 ? `/Brk:${brkH % 1 === 0 ? brkH : brkH.toFixed(1)}H` : '';
                 const preStr = l.preType === 'percent' ? `${l.preVal}%` : `\u00A5${(l.preVal || 0).toLocaleString()}`;
                 return `<div class="daily-item"><div style="font-weight: 800; font-size:1.1rem; color:var(--text-main); margin-bottom:2px; display:flex; align-items:center; justify-content:center;"><span style="display:inline-block; width:10px; height:10px; border-radius:50%; ${dotStyle} margin-right:8px;"></span>${l.shopName}</div><div style="font-size:0.8rem; color:var(--text-sub);">${l.start} - ${l.end} (${l.dur}H${brkStr})</div><div style="font-weight: 900; font-size:1.2rem; color:var(--color-1); margin-top:6px;">\u00A5${l.amt.toLocaleString()}<span style="font-size:0.75rem; color:var(--text-sub); font-weight:normal;">(pre.${preStr})</span></div><div class="goal-del-btn" style="top:10px; right:10px;" onclick="deleteLogAndRefreshDaily(${l.id}, '${dateStr}')">&#x2715;</div></div>`;
             }).join('');
@@ -1252,7 +1281,8 @@
             if (mLogs.length === 0) { container.innerHTML = '<div style="text-align:center; color:#ccc; margin-top:50px; font-weight:700;">No records found.</div>'; return; }
             container.innerHTML = mLogs.map(l => {
                 const dO = new Date(l.fullDate.replace(/-/g,'/')), isDel = configs[l.workIndex || 0]?.deleted, c = wpColors[(l.workIndex || 0) % 4], dotStyle = isDel ? `background:transparent; border:1.5px solid ${c}; box-sizing:border-box;` : `background:${c};`;
-                const brkStr = l.brk > 0 ? `/Brk:${l.brk}M` : '';
+                const brkH = l.brk / 60;
+                const brkStr = l.brk > 0 ? `/Brk:${brkH % 1 === 0 ? brkH : brkH.toFixed(1)}H` : '';
                 const preStr = l.preType === 'percent' ? `${l.preVal}%` : `\u00A5${(l.preVal || 0).toLocaleString()}`;
                 const baseW = (l.baseWage || l.wage).toLocaleString();
                 return `<div class="history-item"><div class="log-row-top"><div style="display:flex; align-items:baseline;"><div class="log-date">${dO.getMonth()+1}/${dO.getDate()}</div><div class="log-sub-text">(${l.start}-${l.end}) ${l.dur}H${brkStr}</div></div></div><div class="log-row-mid"><div class="log-shop-name log-sub-text" style="display:flex; align-items:center;"><span class="log-shop-dot" style="${dotStyle}"></span>${l.shopName || configs[0].name}</div><div class="log-right-group"><div class="log-amt">\u00A5${l.amt.toLocaleString()}</div><div class="log-del" onclick="deleteLog(${l.id})">&#x2715;</div></div></div><div class="log-row-bottom"><div class="log-details-small">\u00A5${baseW}/PRE-${preStr}/N.R-${l.nr}%/C.A-\u00A5${l.ca.toLocaleString()}</div></div></div>`;

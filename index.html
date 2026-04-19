@@ -235,12 +235,16 @@
                 <div style="display:flex; gap:10px; margin-bottom:15px;">
                     <input type="time" id="work-start" class="time-input">
                     <input type="time" id="work-end" class="time-input">
-                    <input type="time" id="work-break" class="time-input" value="00:00">
                 </div>
                 
                 <div class="btn-group" style="margin-bottom: 20px;">
                     <button class="clock-btn in-btn" onclick="createRipple(event); handleClockIn()">Time In</button>
                     <button class="clock-btn out-btn" onclick="createRipple(event); handleClockOut()">Time Out</button>
+                </div>
+
+                <div style="text-align: center;">
+                    <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-sub); margin-bottom: 5px;">BREAK TIME</div>
+                    <input type="time" id="work-break" class="time-input" value="00:00" style="max-width: 120px; display: inline-block;">
                 </div>
             </div>
             
@@ -719,9 +723,6 @@
         }
 
         function executeClockOut(inTime, outTime) {
-            lastSavedDate = selectedDateStr;
-            const currentConf = configs[currentWorkIndex];
-            
             let breakMin = 0;
             const breakInputVal = document.getElementById('work-break').value;
             if (breakInputVal) {
@@ -729,6 +730,19 @@
                 breakMin = (bH * 60) + bM;
             }
 
+            const toM = (t) => { const [h,m] = t.split(':').map(Number); return h*60+m; };
+            let sM = toM(inTime), eM = toM(outTime); 
+            if(eM <= sM) eM += 1440;
+            let totalWorkMin = (eM - sM) - breakMin;
+
+            if (totalWorkMin <= 0) {
+                showAppAlert("Invalid Time", "Break time exceeds working hours.", false);
+                return;
+            }
+
+            lastSavedDate = selectedDateStr;
+            const currentConf = configs[currentWorkIndex];
+            
             const res = calculatePay(inTime, outTime, breakMin, currentConf, selectedDateStr);
             
             logs = logs.filter(l => !(l.fullDate === selectedDateStr && (l.workIndex || 0) === currentWorkIndex));

@@ -53,7 +53,6 @@
         .cal-cell.selected.locked { border-color: var(--color-2) !important; }
         .cal-date-num { font-size: 0.85rem; font-weight: 700; }
         
-        /* カレンダー休日の色付け用 */
         .text-red { color: var(--color-2) !important; font-weight: 900; }
         .text-blue { color: var(--color-3) !important; font-weight: 900; }
 
@@ -74,7 +73,6 @@
 
         .btn-group { display: flex; gap: 10px; margin-top: 5px; }
         
-        /* リップルエフェクト */
         .clock-btn { flex: 1; border: none; padding: 18px; border-radius: 16px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: transform 0.1s; position: relative; overflow: hidden; }
         .clock-btn:active { transform: scale(0.96); }
         .in-btn { background: var(--blue-grad); color: white; }
@@ -83,7 +81,6 @@
         .ripple { position: absolute; border-radius: 50%; transform: scale(0); animation: ripple-anim 0.6s linear; background: rgba(255, 255, 255, 0.4); pointer-events: none; }
         @keyframes ripple-anim { to { transform: scale(4); opacity: 0; } }
 
-        /* --- 目標ゲージ --- */
         #goal-container { display: flex; flex-direction: column; gap: 20px; margin-bottom: 25px; }
         .goal-item { background: white; border-radius: 22px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); position: relative; padding-bottom: 40px; }
         .goal-del-btn { position: absolute; top: 12px; right: 15px; color: var(--color-2); font-size: 1.1rem; font-weight: 800; cursor: pointer; padding: 5px; opacity: 0.4; transition: opacity 0.2s; }
@@ -102,7 +99,6 @@
         .gauge-percent { font-size: 2rem; font-weight: 950; color: var(--text-main); line-height: 1; }
         .gauge-amount { font-size: 0.65rem; font-weight: 800; color: var(--text-sub); margin-top: 6px; }
 
-        /* --- PAGE 2: 給与記録 --- */
         .hint-btn { position: fixed; top: 15px; left: 15px; width: 35px; height: 35px; background: rgba(0,0,0,0.03); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-sub); font-size: 14px; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
         #allTotalOverlay { position: fixed; top: 15px; right: 15px; background: rgba(0,0,0,0.85); color: #fff; padding: 12px 22px; border-radius: 40px; z-index: 3000; font-weight: 700; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
         #allTotalOverlay.active { opacity: 1; pointer-events: auto; }
@@ -123,7 +119,6 @@
         .data-label { font-size: 9px; font-weight: 900; }
         .footer-fixed { position: fixed; bottom: 0; left: 0; right: 0; padding: 10px 20px 30px; z-index: 900; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
         
-        /* 入力欄とクリアボタンのデザイン調整 */
         .input-container { display: flex; gap: 10px; max-width: 600px; margin: 0 auto; }
         .input-wrapper { position: relative; flex: 1; display: flex; align-items: center; }
         input[type="text"].salary-record-input { width: 100%; padding: 12px 35px 12px 18px; font-size: 16px; border: none; border-radius: 14px; outline: none; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
@@ -131,7 +126,6 @@
 
         .blue-save-btn { padding: 0 22px; background: var(--blue-grad); color: white; border: none; border-radius: 14px; font-weight: 800; font-size: 0.9rem; box-shadow: 0 5px 15px rgba(0,122,255,0.25); cursor: pointer; }
 
-        /* --- 共通モダール --- */
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(8px); z-index: 1000000; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
         .modal-overlay.active { opacity: 1; }
         .modal-content { background: white; width: 80%; max-width: 280px; padding: 25px; border-radius: 28px; text-align: center; transform: scale(0.85); opacity: 0; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -142,7 +136,6 @@
 
         #validation-modal-overlay .modal-content { max-width: 320px; }
 
-        /* --- シェイクアニメーション --- */
         @keyframes shakeEffect {
             0%, 100% { transform: scale(1) translateX(0); }
             20%, 60% { transform: scale(1) translateX(-6px); }
@@ -150,7 +143,6 @@
         }
         .shake-error { animation: shakeEffect 0.4s cubic-bezier(.36,.07,.19,.97) both !important; }
 
-        /* --- 紙吹雪アニメーション (フェードアウト追加) --- */
         .confetti { position: fixed; top: -10px; z-index: 9999999; pointer-events: none; animation: fall linear forwards; }
         @keyframes fall { 
             0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
@@ -158,7 +150,6 @@
             100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } 
         }
 
-        /* --- セットアップ画面 --- */
         .setup-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(12px); z-index: 999999; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.4s ease; }
         .setup-overlay.active { opacity: 1; }
         .setup-panel { background: white; width: 90%; max-width: 360px; padding: 45px 25px; border-radius: 35px; text-align: center; transform: translateY(100vh); transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1); }
@@ -175,14 +166,12 @@
         .btn-add-work { background: linear-gradient(135deg, #34d399 0%, #10b981 100%); color: white; }
         .btn-goal { background: linear-gradient(135deg, #a855f7 0%, #d946ef 100%); color: white; }
 
-        /* Premium 設定UIの追加スタイル */
         .day-toggle-group { display: flex; gap: 8px; margin-bottom: 12px; }
         .day-toggle-btn { flex: 1; padding: 10px 0; border-radius: 12px; border: 2px solid #f1f1f5; background: #f9f9fb; font-weight: 800; font-size: 0.9rem; color: var(--text-sub); cursor: pointer; transition: all 0.2s; }
         .day-toggle-btn.active { background: var(--color-1); color: white; border-color: var(--color-1); }
         .premium-input-group { display: flex; gap: 10px; }
         .premium-type-select { width: 85px; padding: 12px; border-radius: 12px; border: 2px solid #f1f1f5; background: #f9f9fb; font-size: 1rem; font-weight: 800; color: var(--text-main); outline: none; text-align: center; -webkit-appearance: none; }
 
-        /* MONTHLY REPORT 画面 */
         #report-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(242, 242, 247, 0.98); backdrop-filter: blur(25px); z-index: 500000; flex-direction: column; padding: 30px 15px 10px; opacity: 0; transition: opacity 0.4s ease; }
         #report-modal-overlay.active { opacity: 1; display: flex; }
         .report-modal-header { text-align: center; margin-bottom: 15px; }
@@ -203,7 +192,6 @@
         .log-row-bottom { display: block; }
         .close-report-btn { background: none; border: none; color: #8e8e93; font-weight: 700; font-size: 0.9rem; padding: 10px; cursor: pointer; text-align: center; width: 100%; }
 
-        /* DAILY REPORT */
         #daily-report-overlay .modal-content { max-width: 300px; padding: 25px 15px; }
         .daily-report-title { font-weight: 950; font-size: 1.2rem; letter-spacing: 1px; margin-bottom: 15px; color: var(--text-main); border-bottom: 2px solid #f1f1f5; padding-bottom: 10px; }
         .daily-item { background: #f8fafc; border-radius: 14px; padding: 15px; margin-bottom: 10px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02); position: relative; }
@@ -247,16 +235,12 @@
                 <div style="display:flex; gap:10px; margin-bottom:15px;">
                     <input type="time" id="work-start" class="time-input">
                     <input type="time" id="work-end" class="time-input">
+                    <input type="time" id="work-break" class="time-input" value="00:00">
                 </div>
                 
                 <div class="btn-group" style="margin-bottom: 20px;">
                     <button class="clock-btn in-btn" onclick="createRipple(event); handleClockIn()">Time In</button>
                     <button class="clock-btn out-btn" onclick="createRipple(event); handleClockOut()">Time Out</button>
-                </div>
-
-                <div style="text-align: center;">
-                    <div style="font-size: 0.75rem; font-weight: 800; color: var(--text-sub); margin-bottom: 5px;">BREAK TIME</div>
-                    <input type="time" id="work-break" class="time-input" value="00:00" style="max-width: 120px; display: inline-block;">
                 </div>
             </div>
             
@@ -291,7 +275,6 @@
             <button class="menu-btn btn-edit" onclick="showEditScreen()">Edit Setting</button>
             <button class="menu-btn btn-add-work" onclick="showAddWorkplaceScreen()">Add Workplace</button>
             <button class="menu-btn btn-goal" onclick="showGoalScreen()">Goal Amount</button>
-            <button style="background:none; border:none; color:#a1a1aa; font-weight:700; padding:10px; margin-top:10px; width:100%; cursor:pointer;" onclick="closeSettingsMenu()">Cancel</button>
         </div>
     </div>
 
@@ -512,7 +495,6 @@
     </div>
 
     <script>
-        // 日本の祝日データ (2024 - 2027) 振替休日含む
         const jpHolidays = ["2024-01-01","2024-01-08","2024-02-11","2024-02-12","2024-02-23","2024-03-20","2024-04-29","2024-05-03","2024-05-04","2024-05-05","2024-05-06","2024-07-15","2024-08-11","2024-08-12","2024-09-16","2024-09-22","2024-09-23","2024-10-14","2024-11-03","2024-11-04","2024-11-23","2025-01-01","2025-01-13","2025-02-11","2025-02-23","2025-02-24","2025-03-20","2025-04-29","2025-05-03","2025-05-04","2025-05-05","2025-05-06","2025-07-21","2025-08-11","2025-09-15","2025-09-23","2025-10-13","2025-11-03","2025-11-23","2025-11-24","2026-01-01","2026-01-12","2026-02-11","2026-02-23","2026-03-20","2026-04-29","2026-05-03","2026-05-04","2026-05-05","2026-05-06","2026-07-20","2026-08-11","2026-09-21","2026-09-22","2026-09-23","2026-10-12","2026-11-03","2026-11-23","2027-01-01","2027-01-11","2027-02-11","2027-02-23","2027-03-21","2027-03-22","2027-04-29","2027-05-03","2027-05-04","2027-05-05","2027-07-19","2027-08-11","2027-09-20","2027-09-23","2027-10-11","2027-11-03","2027-11-23"];
 
         let configs = JSON.parse(localStorage.getItem('workConfigsListV34')) || [];
@@ -581,7 +563,6 @@
             }
         };
 
-        // --- アニメーション＆UI便利機能 ---
         function updateClearBtn() {
             const val = document.getElementById('salaryInput').value;
             document.getElementById('clearInputBtn').style.display = val.length > 0 ? 'block' : 'none';
@@ -676,8 +657,6 @@
         cardBg.addEventListener('touchend', () => { clearTimeout(pressTimer); });
         cardBg.addEventListener('touchmove', () => { clearTimeout(pressTimer); });
 
-        // ------------------------------------------------
-
         function showAppAlert(title, msg, shouldShake = false) {
             document.getElementById('app-alert-title').innerText = title;
             document.getElementById('app-alert-msg').innerText = msg;
@@ -763,9 +742,10 @@
                 end: outTime, 
                 dur: res.dur, 
                 brk: breakMin, 
-                wage: currentConf.wage, // 元の時給を保存
-                pType: res.appliedPremType,
-                pAmt: res.appliedPremAmt,
+                wage: res.appliedWage, 
+                baseWage: res.baseWage,
+                preVal: res.preVal,
+                preType: res.preType,
                 nr: currentConf.nightRate, 
                 ca: currentConf.transport, 
                 shopName: currentConf.name, 
@@ -1035,20 +1015,14 @@
             closeValidationModal();
             const n = document.getElementById('setup-shop').value.trim();
             const w = document.getElementById('setup-wage').value.trim();
-            
             const daysContainer = document.getElementById('setup-prem-days');
             const activeDays = Array.from(daysContainer.querySelectorAll('.active')).map(b => b.getAttribute('data-val'));
             const pDays = activeDays.includes('none') ? [] : activeDays;
             const pType = document.getElementById('setup-prem-type').value;
             const pAmt = parseInt(document.getElementById('setup-prem-amt').value) || 0;
-
             const r = document.getElementById('setup-night-rate').value.trim();
             const t = document.getElementById('setup-transport').value.trim();
-            
-            configs.push({ 
-                name: n, wage: parseInt(w), nightRate: parseInt(r) || 0, transport: parseInt(t) || 0, 
-                premDays: pDays, premType: pType, premAmt: pAmt 
-            }); 
+            configs.push({ name: n, wage: parseInt(w), nightRate: parseInt(r) || 0, transport: parseInt(t) || 0, premDays: pDays, premType: pType, premAmt: pAmt }); 
             localStorage.setItem('workConfigsListV34', JSON.stringify(configs));
             currentWorkIndex = 0; const o = document.getElementById('initial-setup-overlay'); o.classList.remove('active'); setTimeout(() => { o.style.display = 'none'; updateDash(); initSalaryCalendar(new Date().getFullYear() % 100); }, 400);
         }
@@ -1064,20 +1038,14 @@
             closeValidationModal();
             const n = document.getElementById('add-shop').value.trim();
             const w = document.getElementById('add-wage').value.trim();
-            
             const daysContainer = document.getElementById('add-prem-days');
             const activeDays = Array.from(daysContainer.querySelectorAll('.active')).map(b => b.getAttribute('data-val'));
             const pDays = activeDays.includes('none') ? [] : activeDays;
             const pType = document.getElementById('add-prem-type').value;
             const pAmt = parseInt(document.getElementById('add-prem-amt').value) || 0;
-
             const r = document.getElementById('add-night-rate').value.trim();
             const t = document.getElementById('add-transport').value.trim();
-            
-            configs.push({ 
-                name: n, wage: parseInt(w), nightRate: parseInt(r) || 0, transport: parseInt(t) || 0, 
-                premDays: pDays, premType: pType, premAmt: pAmt 
-            }); 
+            configs.push({ name: n, wage: parseInt(w), nightRate: parseInt(r) || 0, transport: parseInt(t) || 0, premDays: pDays, premType: pType, premAmt: pAmt }); 
             localStorage.setItem('workConfigsListV34', JSON.stringify(configs));
             currentWorkIndex = configs.length - 1; const o = document.getElementById('add-work-overlay'); o.classList.remove('active'); setTimeout(() => { o.style.display = 'none'; updateDash(); }, 400);
         }
@@ -1093,27 +1061,20 @@
             closeValidationModal();
             const n = document.getElementById('edit-shop').value.trim();
             const w = document.getElementById('edit-wage').value.trim();
-            
             const daysContainer = document.getElementById('edit-prem-days');
             const activeDays = Array.from(daysContainer.querySelectorAll('.active')).map(b => b.getAttribute('data-val'));
             const pDays = activeDays.includes('none') ? [] : activeDays;
             const pType = document.getElementById('edit-prem-type').value;
             const pAmt = parseInt(document.getElementById('edit-prem-amt').value) || 0;
-
             const r = document.getElementById('edit-night-rate').value.trim();
             const t = document.getElementById('edit-transport').value.trim();
-            
-            configs[currentWorkIndex] = { 
-                name: n, wage: parseInt(w), nightRate: parseInt(r) || 0, transport: parseInt(t) || 0, 
-                premDays: pDays, premType: pType, premAmt: pAmt 
-            }; 
+            configs[currentWorkIndex] = { name: n, wage: parseInt(w), nightRate: parseInt(r) || 0, transport: parseInt(t) || 0, premDays: pDays, premType: pType, premAmt: pAmt }; 
             localStorage.setItem('workConfigsListV34', JSON.stringify(configs));
             const o = document.getElementById('edit-setup-overlay'); o.classList.remove('active'); setTimeout(() => { o.style.display = 'none'; updateDash(); }, 400);
         }
 
         function changeWorkplace(dir) {
             if (isPunchLocked()) { openLockWarningModal(); return; }
-
             const activeCount = configs.filter(c => !c.deleted).length;
             if (activeCount <= 1) return;
             const cardBg = document.getElementById('work-card-bg');
@@ -1135,16 +1096,13 @@
         function updateDash() {
             if(configs.filter(c=>!c.deleted).length === 0) return;
             const currentConf = configs[currentWorkIndex];
-            
             document.getElementById('work-card-bg').style.background = wpGradients[currentWorkIndex % 4];
             document.getElementById('display-shop').innerText = currentConf.name.toUpperCase();
             document.getElementById('display-month').innerText = viewDate.toLocaleString('en', {month:'long'}).toUpperCase();
-            
             const monthKey = `${viewDate.getFullYear()%100}/${viewDate.getMonth()+1}`;
             const mLogs = logs.filter(l => l.monthKey === monthKey && (l.workIndex || 0) === currentWorkIndex);
             const total = mLogs.reduce((s, l) => s + l.amt, 0);
             document.getElementById('display-total').innerText = `\u00A5${total.toLocaleString()}`;
-            
             renderCalendar();
             const allMLogs = logs.filter(l => l.monthKey === monthKey).sort((a,b) => parseInt(a.date) - parseInt(b.date));
             renderLogs(allMLogs);
@@ -1153,7 +1111,6 @@
 
         function changeMonth(dir) {
             if (isPunchLocked()) { openLockWarningModal(); return; }
-
             lastSavedDate = null;
             const cal = document.getElementById('cal-body'), total = document.getElementById('display-total');
             cal.style.opacity = '0'; total.style.opacity = '0';
@@ -1169,66 +1126,34 @@
             for(let d=1; d<=last; d++) {
                 const f = `${y}-${(m+1).toString().padStart(2,'0')}-${d.toString().padStart(2,'0')}`;
                 const cell = document.createElement('div');
-                
                 const isLockedDay = isPunchLocked() && selectedDateStr === f;
                 cell.className = `cal-cell ${selectedDateStr === f ? 'selected' : ''} ${isLockedDay ? 'locked' : ''}`;
-                
                 if (y === now.getFullYear() && m === now.getMonth() && d === now.getDate()) cell.classList.add('is-today');
-                
-                // 休日と曜日の判定
                 const dayOfWeek = new Date(y, m, d).getDay();
-                const isSat = dayOfWeek === 6;
-                const isSun = dayOfWeek === 0;
-                const isHol = jpHolidays.includes(f);
-                
+                const isSat = dayOfWeek === 6, isSun = dayOfWeek === 0, isHol = jpHolidays.includes(f);
                 let textColorClass = '';
                 if (isSun || isHol) textColorClass = 'text-red';
                 else if (isSat) textColorClass = 'text-blue';
-
                 const dayLogs = logs.filter(l => l.fullDate === f);
                 let dotsHtml = '';
-                
                 if (dayLogs.length > 0) {
                     const animClass = (f === lastSavedDate) ? 'anim-slide-up' : '';
                     const uniqueWorkIndices = [...new Set(dayLogs.map(l => l.workIndex || 0))].sort();
                     const N = uniqueWorkIndices.length;
                     let topDots = [], bottomDots = [];
-                    
                     if (N === 5) { topDots = uniqueWorkIndices.slice(0,3); bottomDots = uniqueWorkIndices.slice(3); }
                     else if (N === 4) { topDots = uniqueWorkIndices.slice(0,2); bottomDots = uniqueWorkIndices.slice(2); }
                     else if (N === 3) { topDots = uniqueWorkIndices.slice(0,2); bottomDots = uniqueWorkIndices.slice(2); }
                     else { topDots = uniqueWorkIndices; }
-
-                    dotsHtml = `<div class="cal-dots-wrapper ${animClass}">`;
-                    dotsHtml += '<div class="cal-dots-row">' + topDots.map(idx => {
-                        const isDel = configs[idx]?.deleted;
-                        const c = wpColors[idx % 4];
-                        return `<span class="dot" style="box-sizing:border-box; ${isDel ? `background:transparent; border:1.5px solid ${c};` : `background:${c};`}"></span>`;
-                    }).join('') + '</div>';
-                    if (bottomDots.length > 0) {
-                        dotsHtml += '<div class="cal-dots-row">' + bottomDots.map(idx => {
-                            const isDel = configs[idx]?.deleted;
-                            const c = wpColors[idx % 4];
-                            return `<span class="dot" style="box-sizing:border-box; ${isDel ? `background:transparent; border:1.5px solid ${c};` : `background:${c};`}"></span>`;
-                        }).join('') + '</div>';
-                    }
+                    dotsHtml = `<div class="cal-dots-wrapper ${animClass}"><div class="cal-dots-row">` + topDots.map(idx => { const isDel = configs[idx]?.deleted; const c = wpColors[idx % 4]; return `<span class="dot" style="box-sizing:border-box; ${isDel ? `background:transparent; border:1.5px solid ${c};` : `background:${c};`}"></span>`; }).join('') + '</div>';
+                    if (bottomDots.length > 0) dotsHtml += '<div class="cal-dots-row">' + bottomDots.map(idx => { const isDel = configs[idx]?.deleted; const c = wpColors[idx % 4]; return `<span class="dot" style="box-sizing:border-box; ${isDel ? `background:transparent; border:1.5px solid ${c};` : `background:${c};`}"></span>`; }).join('') + '</div>';
                     dotsHtml += '</div>';
                 }
-                
                 cell.innerHTML = `<div class="cal-date-num ${textColorClass}">${d}</div>${dotsHtml}`;
-                
                 cell.onclick = (e) => {
                     const ct = new Date().getTime(), tl = ct - lastClickTime;
-                    if (tl < 300 && tl > 0) { 
-                        if(dayLogs.length > 0) openDailyReport(f, dayLogs); 
-                        e.preventDefault(); 
-                    } else {
-                        if (isPunchLocked() && f !== selectedDateStr) {
-                            openLockWarningModal();
-                            return;
-                        }
-                        selectedDateStr = f; updateDash(); 
-                    }
+                    if (tl < 300 && tl > 0) { if(dayLogs.length > 0) openDailyReport(f, dayLogs); e.preventDefault(); }
+                    else { if (isPunchLocked() && f !== selectedDateStr) { openLockWarningModal(); return; } selectedDateStr = f; updateDash(); }
                     lastClickTime = ct;
                 };
                 body.appendChild(cell);
@@ -1239,62 +1164,29 @@
         function calculatePay(s, e, breakMin, conf, dateStr) {
             const toM = (t) => { const [h,m] = t.split(':').map(Number); return h*60+m; };
             let sM = toM(s), eM = toM(e); if(eM <= sM) eM += 1440;
-            
             let totalWorkMin = (eM - sM) - breakMin;
             if (totalWorkMin < 0) totalWorkMin = 0;
-            
             let nMin = 0; for(let i=sM; i<eM; i++) { if((i%1440) >= 1320 || (i%1440) < 300) nMin++; }
-            
             const dur = totalWorkMin / 60; 
-            
-            let baseWage = conf.wage;
-            let appliedPremType = null;
-            let appliedPremAmt = 0;
-
+            let baseWage = conf.wage, preVal = 0, preType = conf.premType || 'fixed';
             if (dateStr) {
                 const dt = new Date(dateStr.replace(/-/g,'/'));
-                const dayOfWeek = dt.getDay();
-                const isHol = jpHolidays.includes(dateStr);
-                const isSun = dayOfWeek === 0;
-                const isSat = dayOfWeek === 6;
-                
-                const pDays = conf.premDays || [];
+                const dayOfWeek = dt.getDay(), isHol = jpHolidays.includes(dateStr), isSun = dayOfWeek === 0, isSat = dayOfWeek === 6, pDays = conf.premDays || [];
                 let applyPremium = false;
-                
                 if (conf.holTarget) {
                     if (conf.holTarget === 'sun' && isSun) applyPremium = true;
                     else if (conf.holTarget === 'sun_hol' && (isSun || isHol)) applyPremium = true;
                     else if (conf.holTarget === 'sat_sun_hol' && (isSat || isSun || isHol)) applyPremium = true;
                     else if (conf.holTarget === 'hol' && isHol) applyPremium = true;
-                    
-                    if(applyPremium) {
-                        baseWage += (conf.holWage || 0);
-                        appliedPremType = 'fixed';
-                        appliedPremAmt = conf.holWage || 0;
-                    }
+                    if(applyPremium) preVal = (conf.holWage || 0);
                 } else if (pDays.length > 0) {
-                    if (pDays.includes('sat') && isSat) applyPremium = true;
-                    if (pDays.includes('sun') && isSun) applyPremium = true;
-                    if (pDays.includes('hol') && isHol) applyPremium = true;
-                    
-                    if (applyPremium && conf.premAmt) {
-                        appliedPremType = conf.premType;
-                        appliedPremAmt = conf.premAmt;
-                        if (conf.premType === 'percent') {
-                            baseWage += Math.floor(conf.wage * (conf.premAmt / 100));
-                        } else {
-                            baseWage += conf.premAmt;
-                        }
-                    }
+                    if ((pDays.includes('sat') && isSat) || (pDays.includes('sun') && isSun) || (pDays.includes('hol') && isHol)) { applyPremium = true; preVal = conf.premAmt; preType = conf.premType || 'fixed'; }
                 }
             }
-
-            return { 
-                total: Math.floor((dur * baseWage) + (nMin/60)*(baseWage*(conf.nightRate/100)) + conf.transport), 
-                dur: dur.toFixed(1),
-                appliedPremType,
-                appliedPremAmt
-            };
+            let appliedWage = baseWage;
+            if (preType === 'percent') appliedWage += Math.floor(baseWage * (preVal / 100));
+            else appliedWage += preVal;
+            return { total: Math.floor((dur * appliedWage) + (nMin/60)*(appliedWage*(conf.nightRate/100)) + conf.transport), dur: dur.toFixed(1), appliedWage: appliedWage, baseWage: baseWage, preVal: preVal, preType: preType };
         }
 
         function deleteLog(id) { openConfirmModal("Delete Record?", "This will permanently remove this shift.", "Delete", "red", () => { logs = logs.filter(l => l.id !== id); localStorage.setItem('workLogsV34', JSON.stringify(logs)); updateDash(); }); }
@@ -1315,14 +1207,10 @@
             document.getElementById('daily-title-text').innerText = dateStr.replace(/-/g, '/');
             const container = document.getElementById('daily-container');
             container.innerHTML = dayLogs.map(l => {
-                const isDel = configs[l.workIndex || 0]?.deleted;
-                const c = wpColors[(l.workIndex || 0) % 4];
-                const dotStyle = isDel ? `background:transparent; border:1.5px solid ${c}; box-sizing:border-box;` : `background:${c};`;
-                
-                const brkText = l.brk > 0 ? `/Brk:${l.brk}M` : '';
-                const premText = l.pAmt > 0 ? `<span style="color:var(--text-sub); font-size:0.8rem; margin-left:4px;">(pre.${l.pType === 'percent' ? l.pAmt + '%' : '\u00A5' + l.pAmt.toLocaleString()})</span>` : '';
-
-                return `<div class="daily-item"><div style="font-weight: 800; font-size:1.1rem; color:var(--text-main); margin-bottom:2px; display:flex; align-items:center; justify-content:center;"><span style="display:inline-block; width:10px; height:10px; border-radius:50%; ${dotStyle} margin-right:8px;"></span>${l.shopName}</div><div style="font-size:0.8rem; color:var(--text-sub);">${l.start} - ${l.end} (${l.dur}H${brkText})</div><div style="font-weight: 900; font-size:1.2rem; color:var(--color-1); margin-top:6px; display:flex; align-items:center; justify-content:center;">\u00A5${l.amt.toLocaleString()}${premText}</div><div class="goal-del-btn" style="top:10px; right:10px;" onclick="deleteLogAndRefreshDaily(${l.id}, '${dateStr}')">&#x2715;</div></div>`;
+                const isDel = configs[l.workIndex || 0]?.deleted, c = wpColors[(l.workIndex || 0) % 4], dotStyle = isDel ? `background:transparent; border:1.5px solid ${c}; box-sizing:border-box;` : `background:${c};`;
+                const brkStr = l.brk > 0 ? `/Brk:${l.brk}M` : '';
+                const preStr = l.preType === 'percent' ? `${l.preVal}%` : `\u00A5${(l.preVal || 0).toLocaleString()}`;
+                return `<div class="daily-item"><div style="font-weight: 800; font-size:1.1rem; color:var(--text-main); margin-bottom:2px; display:flex; align-items:center; justify-content:center;"><span style="display:inline-block; width:10px; height:10px; border-radius:50%; ${dotStyle} margin-right:8px;"></span>${l.shopName}</div><div style="font-size:0.8rem; color:var(--text-sub);">${l.start} - ${l.end} (${l.dur}H${brkStr})</div><div style="font-weight: 900; font-size:1.2rem; color:var(--color-1); margin-top:6px;">\u00A5${l.amt.toLocaleString()}<span style="font-size:0.75rem; color:var(--text-sub); font-weight:normal;">(pre.${preStr})</span></div><div class="goal-del-btn" style="top:10px; right:10px;" onclick="deleteLogAndRefreshDaily(${l.id}, '${dateStr}')">&#x2715;</div></div>`;
             }).join('');
             o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 10);
         }
@@ -1332,21 +1220,18 @@
         function openReportModal() {
             const o = document.getElementById('report-modal-overlay');
             const title = document.getElementById('modal-month-name');
-            const y = viewDate.getFullYear();
-            const mStr = viewDate.toLocaleString('en', {month:'long'}).toUpperCase();
+            const y = viewDate.getFullYear(), mStr = viewDate.toLocaleString('en', {month:'long'}).toUpperCase();
             title.innerHTML = `<div style="font-size:0.8rem; color:var(--color-1); margin-bottom:4px;">${y}</div><div>${mStr} REPORT</div>`;
             o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 10);
             updateDash();
         }
         function closeReportModal() { const o = document.getElementById('report-modal-overlay'); o.classList.remove('active'); setTimeout(() => o.style.display = 'none', 400); }
 
-        let reportTouchStartX = 0; let reportTouchEndX = 0; let isReportAnimating = false; 
+        let reportTouchStartX = 0, reportTouchEndX = 0, isReportAnimating = false; 
         const reportOverlay = document.getElementById('report-modal-overlay');
         reportOverlay.addEventListener('touchstart', e => { reportTouchStartX = e.changedTouches[0].screenX; }, {passive: true});
         reportOverlay.addEventListener('touchend', e => { reportTouchEndX = e.changedTouches[0].screenX; handleReportSwipe(); }, {passive: true});
-        
         function handleReportSwipe() { if (isReportAnimating) return; const diff = reportTouchStartX - reportTouchEndX; if (Math.abs(diff) > 50) { if (diff > 0) changeReportMonth(1); else changeReportMonth(-1); } }
-
         function changeReportMonth(dir) {
             if (isReportAnimating) return;
             isReportAnimating = true;
@@ -1366,15 +1251,11 @@
             const container = document.getElementById('log-container');
             if (mLogs.length === 0) { container.innerHTML = '<div style="text-align:center; color:#ccc; margin-top:50px; font-weight:700;">No records found.</div>'; return; }
             container.innerHTML = mLogs.map(l => {
-                const dO = new Date(l.fullDate.replace(/-/g,'/'));
-                const isDel = configs[l.workIndex || 0]?.deleted;
-                const c = wpColors[(l.workIndex || 0) % 4];
-                const dotStyle = isDel ? `background:transparent; border:1.5px solid ${c}; box-sizing:border-box;` : `background:${c};`;
-                
-                const brkText = l.brk > 0 ? `/Brk:${l.brk}M` : '';
-                const premText = l.pAmt > 0 ? (l.pType === 'percent' ? ` / PRE-${l.pAmt}%` : ` / PRE-\u00A5${l.pAmt.toLocaleString()}`) : '';
-
-                return `<div class="history-item"><div class="log-row-top"><div style="display:flex; align-items:baseline;"><div class="log-date">${dO.getMonth()+1}/${dO.getDate()}</div><div class="log-sub-text">(${l.start}-${l.end}) ${l.dur}H${brkText}</div></div></div><div class="log-row-mid"><div class="log-shop-name log-sub-text" style="display:flex; align-items:center;"><span class="log-shop-dot" style="${dotStyle}"></span>${l.shopName || configs[0].name}</div><div class="log-right-group"><div class="log-amt">\u00A5${l.amt.toLocaleString()}</div><div class="log-del" onclick="deleteLog(${l.id})">&#x2715;</div></div></div><div class="log-row-bottom"><div class="log-details-small">\u00A5${l.wage.toLocaleString()}${premText} / N.R-${l.nr}% / C.A-\u00A5${l.ca.toLocaleString()}</div></div></div>`;
+                const dO = new Date(l.fullDate.replace(/-/g,'/')), isDel = configs[l.workIndex || 0]?.deleted, c = wpColors[(l.workIndex || 0) % 4], dotStyle = isDel ? `background:transparent; border:1.5px solid ${c}; box-sizing:border-box;` : `background:${c};`;
+                const brkStr = l.brk > 0 ? `/Brk:${l.brk}M` : '';
+                const preStr = l.preType === 'percent' ? `${l.preVal}%` : `\u00A5${(l.preVal || 0).toLocaleString()}`;
+                const baseW = (l.baseWage || l.wage).toLocaleString();
+                return `<div class="history-item"><div class="log-row-top"><div style="display:flex; align-items:baseline;"><div class="log-date">${dO.getMonth()+1}/${dO.getDate()}</div><div class="log-sub-text">(${l.start}-${l.end}) ${l.dur}H${brkStr}</div></div></div><div class="log-row-mid"><div class="log-shop-name log-sub-text" style="display:flex; align-items:center;"><span class="log-shop-dot" style="${dotStyle}"></span>${l.shopName || configs[0].name}</div><div class="log-right-group"><div class="log-amt">\u00A5${l.amt.toLocaleString()}</div><div class="log-del" onclick="deleteLog(${l.id})">&#x2715;</div></div></div><div class="log-row-bottom"><div class="log-details-small">\u00A5${baseW}/PRE-${preStr}/N.R-${l.nr}%/C.A-\u00A5${l.ca.toLocaleString()}</div></div></div>`;
             }).join('');
         }
 
@@ -1382,8 +1263,7 @@
             const container = document.getElementById('salary-manager-container');
             container.innerHTML = '';
             for (let y = startYear; y <= endYear; y++) {
-                let yearlyTotal = 0;
-                for (let m = 1; m <= 12; m++) yearlyTotal += (salaryData[`${y}/${m}`]?.amount || 0);
+                let yearlyTotal = 0; for (let m = 1; m <= 12; m++) yearlyTotal += (salaryData[`${y}/${m}`]?.amount || 0);
                 const section = document.createElement('div');
                 section.className = 'year-section' + (y === openYear ? ' active' : '');
                 section.id = `salary-year-${y}`;
@@ -1404,65 +1284,36 @@
                 }
                 container.appendChild(section);
             }
-            lastSavedSalaryKey = null;
-            renderGoalGauges();
+            lastSavedSalaryKey = null; renderGoalGauges();
         }
 
         function toggleSalaryYear(y) { document.getElementById(`salary-year-${y}`).classList.toggle('active'); }
-        
-        function showInvalidModal() { 
-            const m = document.getElementById('invalid-input-modal'); 
-            m.style.display = 'flex'; 
-            setTimeout(() => { 
-                m.classList.add('active'); 
-                triggerShake('invalid-input-modal'); 
-            }, 10); 
-        }
+        function showInvalidModal() { const m = document.getElementById('invalid-input-modal'); m.style.display = 'flex'; setTimeout(() => { m.classList.add('active'); triggerShake('invalid-input-modal'); }, 10); }
         function closeInvalidModal() { const m = document.getElementById('invalid-input-modal'); m.classList.remove('active'); setTimeout(() => m.style.display = 'none', 300); }
 
         function handleSalaryInput() { 
             const el = document.getElementById('salaryInput'), val = el.value.trim().toLowerCase(); 
             if (!val) return; 
             if (val === 'a') { showAllTotal(); el.value = ''; el.blur(); updateClearBtn(); } 
-            else if (val.startsWith('g')) { 
-                if(!showGraph(val)) showInvalidModal(); 
-                el.value = ''; el.blur(); updateClearBtn(); 
-            } 
+            else if (val.startsWith('g')) { if(!showGraph(val)) showInvalidModal(); el.value = ''; el.blur(); updateClearBtn(); } 
             else { 
                 const m = el.value.trim().match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/);
                 if (!m) { showInvalidModal(); el.value = ''; el.blur(); updateClearBtn(); return; }
                 const y = parseInt(m[1]), mo = parseInt(m[2]);
                 if (mo < 1 || mo > 12 || y < startYear || y > endYear) { showInvalidModal(); el.value = ''; el.blur(); updateClearBtn(); return; }
                 const key = `${y}/${mo}`, rawInput = el.value.trim();
-                
-                if (salaryData[key] && !isSalaryEditMode) { 
-                    openConfirmModal("Overwrite?", "Existing record found for this month.", "Overwrite", "blue", () => { 
-                        if(saveSalaryRecord(rawInput)) showConfetti(); 
-                    }); 
-                    el.value = ''; el.blur(); updateClearBtn(); 
-                } 
-                else { 
-                    if(!saveSalaryRecord(rawInput)) {
-                        showInvalidModal(); 
-                    } else {
-                        showConfetti(); 
-                    }
-                    el.value = ''; el.blur(); updateClearBtn(); 
-                }
+                if (salaryData[key] && !isSalaryEditMode) { openConfirmModal("Overwrite?", "Existing record found for this month.", "Overwrite", "blue", () => { if(saveSalaryRecord(rawInput)) showConfetti(); }); el.value = ''; el.blur(); updateClearBtn(); } 
+                else { if(!saveSalaryRecord(rawInput)) showInvalidModal(); else showConfetti(); el.value = ''; el.blur(); updateClearBtn(); }
             } 
         }
 
         function saveSalaryRecord(input) {
-            const m = input.match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/);
-            if (!m) return false;
+            const m = input.match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/); if (!m) return false;
             const y = parseInt(m[1]), mo = parseInt(m[2]), amt = parseInt(m[3]), memo = m[4] || '';
             if (mo < 1 || mo > 12 || y < startYear || y > endYear) return false;
-            lastSavedSalaryKey = `${y}/${mo}`;
-            salaryData[lastSavedSalaryKey] = { amount: amt, memo: memo };
+            lastSavedSalaryKey = `${y}/${mo}`; salaryData[lastSavedSalaryKey] = { amount: amt, memo: memo };
             localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData));
-            initSalaryCalendar(y);
-            isSalaryEditMode = false;
-            return true;
+            initSalaryCalendar(y); isSalaryEditMode = false; return true;
         }
 
         function openSalaryEditModal(y, m, d) { 
@@ -1470,15 +1321,10 @@
             const mo = document.getElementById('salaryEditModal'); 
             mo.style.display = 'flex'; setTimeout(() => mo.classList.add('active'), 10); 
             document.getElementById('confirmSalaryEdit').onclick = () => { 
-                const i = document.getElementById('salaryInput'); 
-                i.value = `${y}/${m}/${d.amount}${d.memo ? '/' + d.memo : ''}`; 
-                isSalaryEditMode = true; closeSalaryModal(); 
-                setTimeout(() => { i.focus(); updateClearBtn(); }, 150); 
+                const i = document.getElementById('salaryInput'); i.value = `${y}/${m}/${d.amount}${d.memo ? '/' + d.memo : ''}`; 
+                isSalaryEditMode = true; closeSalaryModal(); setTimeout(() => { i.focus(); updateClearBtn(); }, 150); 
             }; 
-            document.getElementById('confirmSalaryReset').onclick = () => { 
-                delete salaryData[`${y}/${m}`]; localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData)); 
-                initSalaryCalendar(y); closeSalaryModal(); 
-            }; 
+            document.getElementById('confirmSalaryReset').onclick = () => { delete salaryData[`${y}/${m}`]; localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData)); initSalaryCalendar(y); closeSalaryModal(); }; 
         }
         function showAllTotal() { let total = 0; Object.values(salaryData).forEach(d => total += d.amount); const overlay = document.getElementById('allTotalOverlay'); overlay.innerText = `GRAND TOTAL: \u00A5${total.toLocaleString()}`; overlay.classList.add('active'); setTimeout(closeAllTotal, 5000); }
         function closeAllTotal() { document.getElementById('allTotalOverlay').classList.remove('active'); }

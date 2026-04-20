@@ -880,7 +880,7 @@
         
         function showAddWorkplaceScreen() {
             if (configs.filter(c => !c.deleted).length >= 5) {
-                closeSettingsMenu(); setTimeout(() => { const m = document.getElementById('limit-modal-overlay'); m.style.display = 'flex'; setTimeout(() => { m.classList.add('active'); triggerShake('limit-modal-overlay'); }, 10); }, 450); return;
+                closeSettingsMenu(); setTimeout(() => { const m = document.getElementById('limit-modal-overlay'); m.style.display = 'flex'; setTimeout(() => { m.classList.add('active'); }, 10); }, 450); return;
             }
             document.getElementById('add-shop').value = ''; 
             document.getElementById('add-wage').value = ''; 
@@ -899,7 +899,7 @@
         
         function showGoalScreen() { 
             if (goals.length >= 6) {
-                closeSettingsMenu(); setTimeout(() => { const m = document.getElementById('limit-modal-overlay'); m.style.display = 'flex'; setTimeout(() => { m.classList.add('active'); triggerShake('limit-modal-overlay'); }, 10); }, 450); return;
+                closeSettingsMenu(); setTimeout(() => { const m = document.getElementById('limit-modal-overlay'); m.style.display = 'flex'; setTimeout(() => { m.classList.add('active'); }, 10); }, 450); return;
             }
             closeSettingsMenu(); 
             setTimeout(() => { const o = document.getElementById('goal-setup-overlay'); o.style.display = 'flex'; setTimeout(() => o.classList.add('active'), 50); }, 450); 
@@ -1016,7 +1016,6 @@
             m.style.display = 'flex'; 
             setTimeout(() => { 
                 m.classList.add('active'); 
-                triggerShake('validation-modal-overlay'); 
             }, 10);
         }
         function closeValidationModal() { const m = document.getElementById('validation-modal-overlay'); m.classList.remove('active'); setTimeout(() => m.style.display = 'none', 300); }

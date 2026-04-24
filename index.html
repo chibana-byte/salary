@@ -1344,20 +1344,45 @@
             if (val === 'a') { showAllTotal(); el.value = ''; el.blur(); updateClearBtn(); } 
             else if (val.startsWith('g')) { if(!showGraph(val)) showInvalidModal(); el.value = ''; el.blur(); updateClearBtn(); } 
             else { 
-                const m = el.value.trim().match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/);
+                const m = el.value.trim().match(/^(\d+)\/(\d+)\/([0-9+\-*\/( ).]+)(?:\/(.*))?$/);
                 if (!m) { showInvalidModal(); el.value = ''; el.blur(); updateClearBtn(); return; }
                 const y = parseInt(m[1]), mo = parseInt(m[2]);
                 if (mo < 1 || mo > 12 || y < startYear || y > endYear) { showInvalidModal(); el.value = ''; el.blur(); updateClearBtn(); return; }
+                
+                let calcAmt = 0;
+                try { 
+                    calcAmt = Math.round(Function('"use strict";return (' + m[3] + ')')()); 
+                    if(isNaN(calcAmt) || calcAmt < 0 || !isFinite(calcAmt)) throw new Error(); 
+                } catch(e) { 
+                    showInvalidModal(); el.value = ''; el.blur(); updateClearBtn(); return; 
+                }
+
                 const key = `${y}/${mo}`, rawInput = el.value.trim();
-                if (salaryData[key] && !isSalaryEditMode) { openConfirmModal("Overwrite?", "Existing record found for this month.", "Overwrite", "blue", () => { if(saveSalaryRecord(rawInput)) showConfetti(); }); el.value = ''; el.blur(); updateClearBtn(); } 
-                else { if(!saveSalaryRecord(rawInput)) showInvalidModal(); else showConfetti(); el.value = ''; el.blur(); updateClearBtn(); }
+                if (salaryData[key] && !isSalaryEditMode) { 
+                    openConfirmModal("Overwrite?", "Existing record found for this month.", "Overwrite", "blue", () => { 
+                        if(saveSalaryRecord(rawInput)) showConfetti(); 
+                    }); 
+                    el.value = ''; el.blur(); updateClearBtn(); 
+                } 
+                else { 
+                    if(!saveSalaryRecord(rawInput)) showInvalidModal(); 
+                    else showConfetti(); 
+                    el.value = ''; el.blur(); updateClearBtn(); 
+                }
             } 
         }
 
         function saveSalaryRecord(input) {
-            const m = input.match(/^(\d+)\/(\d+)\/(\d+)(?:\/(.*))?$/); if (!m) return false;
-            const y = parseInt(m[1]), mo = parseInt(m[2]), amt = parseInt(m[3]), memo = m[4] || '';
+            const m = input.match(/^(\d+)\/(\d+)\/([0-9+\-*\/( ).]+)(?:\/(.*))?$/); if (!m) return false;
+            const y = parseInt(m[1]), mo = parseInt(m[2]), memo = m[4] || '';
             if (mo < 1 || mo > 12 || y < startYear || y > endYear) return false;
+            
+            let amt = 0;
+            try { 
+                amt = Math.round(Function('"use strict";return (' + m[3] + ')')()); 
+                if(isNaN(amt) || amt < 0 || !isFinite(amt)) return false; 
+            } catch(e) { return false; }
+            
             lastSavedSalaryKey = `${y}/${mo}`; salaryData[lastSavedSalaryKey] = { amount: amt, memo: memo };
             localStorage.setItem('myTenYearSalaryData', JSON.stringify(salaryData));
             initSalaryCalendar(y); isSalaryEditMode = false; return true;

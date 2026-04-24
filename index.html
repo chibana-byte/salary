@@ -99,6 +99,7 @@
         .gauge-percent { font-size: 2rem; font-weight: 950; color: var(--text-main); line-height: 1; }
         .gauge-amount { font-size: 0.65rem; font-weight: 800; color: var(--text-sub); margin-top: 6px; }
 
+        /* --- PAGE 2: 給与記録 --- */
         .hint-btn { position: fixed; top: 15px; left: 15px; width: 35px; height: 35px; background: rgba(0,0,0,0.03); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-sub); font-size: 14px; z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
         #allTotalOverlay { position: fixed; top: 15px; right: 15px; background: rgba(0,0,0,0.85); color: #fff; padding: 12px 22px; border-radius: 40px; z-index: 3000; font-weight: 700; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
         #allTotalOverlay.active { opacity: 1; pointer-events: auto; }
@@ -126,6 +127,7 @@
 
         .blue-save-btn { padding: 0 22px; background: var(--blue-grad); color: white; border: none; border-radius: 14px; font-weight: 800; font-size: 0.9rem; box-shadow: 0 5px 15px rgba(0,122,255,0.25); cursor: pointer; }
 
+        /* --- モーダル・ダイアログ --- */
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(8px); z-index: 1000000; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s ease; }
         .modal-overlay.active { opacity: 1; }
         .modal-content { background: white; width: 80%; max-width: 280px; padding: 25px; border-radius: 28px; text-align: center; transform: scale(0.85); opacity: 0; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
@@ -437,7 +439,7 @@
 
     <div id="lock-warning-modal-overlay" class="modal-overlay" onclick="closeLockWarningModal()">
         <div class="modal-content dissolve-modal-content" onclick="event.stopPropagation()">
-            <div style="font-weight:950; font-size:1.15rem; margin-bottom:10px;">Action Locked</div>
+            <div style="font-weight:950; font-size:1.15rem; margin-bottom:10px; color:var(--text-main);">Action Locked</div>
             <div style="font-size:0.85rem; font-weight:600; color:var(--text-sub); margin-bottom:20px;">Please confirm Time Out first.</div>
             <div style="font-size:0.65rem; color:var(--text-sub); font-weight:700;">Tap outside to close</div>
         </div>
@@ -445,7 +447,7 @@
 
     <div id="app-alert-modal-overlay" class="modal-overlay" onclick="closeAppAlertModal()">
         <div class="modal-content dissolve-modal-content" onclick="event.stopPropagation()">
-            <div id="app-alert-title" style="font-weight:950; font-size:1.15rem; margin-bottom:10px; color:var(--text-main);">Notice</div>
+            <div id="app-alert-title" style="font-weight:950; font-size:1.15rem; margin-bottom:10px; color:var(--text-main);">Error</div>
             <div id="app-alert-msg" style="font-size:0.85rem; font-weight:600; color:var(--text-sub); margin-bottom:20px;"></div>
             <div style="font-size:0.65rem; color:var(--text-sub); font-weight:700;">Tap outside to close</div>
         </div>
@@ -1251,8 +1253,8 @@
             const container = document.getElementById('daily-container');
             container.innerHTML = dayLogs.map(l => {
                 const isDel = configs[l.workIndex || 0]?.deleted, c = wpColors[(l.workIndex || 0) % 4], dotStyle = isDel ? `background:transparent; border:1.5px solid ${c}; box-sizing:border-box;` : `background:${c};`;
-                const brkH = l.brk / 60;
-                const brkStr = l.brk > 0 ? `/Brk:${brkH % 1 === 0 ? brkH : brkH.toFixed(1)}H` : '';
+                const brkH = (l.brk || 0) / 60;
+                const brkStr = (l.brk || 0) > 0 ? `/Brk:${brkH % 1 === 0 ? brkH : brkH.toFixed(1)}H` : '';
                 const preStr = l.preType === 'percent' ? `${l.preVal}%` : `\u00A5${(l.preVal || 0).toLocaleString()}`;
                 return `<div class="daily-item"><div style="font-weight: 800; font-size:1.1rem; color:var(--text-main); margin-bottom:2px; display:flex; align-items:center; justify-content:center;"><span style="display:inline-block; width:10px; height:10px; border-radius:50%; ${dotStyle} margin-right:8px;"></span>${l.shopName}</div><div style="font-size:0.8rem; color:var(--text-sub);">${l.start} - ${l.end} (${l.dur}H${brkStr})</div><div style="font-weight: 900; font-size:1.2rem; color:var(--color-1); margin-top:6px;">\u00A5${l.amt.toLocaleString()}<span style="font-size:0.75rem; color:var(--text-sub); font-weight:normal;">(pre.${preStr})</span></div><div class="goal-del-btn" style="top:10px; right:10px;" onclick="deleteLogAndRefreshDaily(${l.id}, '${dateStr}')">&#x2715;</div></div>`;
             }).join('');
@@ -1296,8 +1298,8 @@
             if (mLogs.length === 0) { container.innerHTML = '<div style="text-align:center; color:#ccc; margin-top:50px; font-weight:700;">No records found.</div>'; return; }
             container.innerHTML = mLogs.map(l => {
                 const dO = new Date(l.fullDate.replace(/-/g,'/')), isDel = configs[l.workIndex || 0]?.deleted, c = wpColors[(l.workIndex || 0) % 4], dotStyle = isDel ? `background:transparent; border:1.5px solid ${c}; box-sizing:border-box;` : `background:${c};`;
-                const brkH = l.brk / 60;
-                const brkStr = l.brk > 0 ? `/Brk:${brkH % 1 === 0 ? brkH : brkH.toFixed(1)}H` : '';
+                const brkH = (l.brk || 0) / 60;
+                const brkStr = (l.brk || 0) > 0 ? `/Brk:${brkH % 1 === 0 ? brkH : brkH.toFixed(1)}H` : '';
                 const preStr = l.preType === 'percent' ? `${l.preVal}%` : `\u00A5${(l.preVal || 0).toLocaleString()}`;
                 const baseW = (l.baseWage || l.wage).toLocaleString();
                 return `<div class="history-item"><div class="log-row-top"><div style="display:flex; align-items:baseline;"><div class="log-date">${dO.getMonth()+1}/${dO.getDate()}</div><div class="log-sub-text">(${l.start}-${l.end}) ${l.dur}H${brkStr}</div></div></div><div class="log-row-mid"><div class="log-shop-name log-sub-text" style="display:flex; align-items:center;"><span class="log-shop-dot" style="${dotStyle}"></span>${l.shopName || configs[0].name}</div><div class="log-right-group"><div class="log-amt">\u00A5${l.amt.toLocaleString()}</div><div class="log-del" onclick="deleteLog(${l.id})">&#x2715;</div></div></div><div class="log-row-bottom"><div class="log-details-small">\u00A5${baseW}/PRE-${preStr}/N.R-${l.nr}%/C.A-\u00A5${l.ca.toLocaleString()}</div></div></div>`;
